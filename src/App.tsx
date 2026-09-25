@@ -11,25 +11,19 @@ import {
   Moon,
   Sun,
   Sparkles,
-  ExternalLink,
-  Heart,
-  Search,
-  Plus,
-  User,
-  Bell,
+  GitBranch,
 } from 'lucide-react';
-import { PhoneSimulator, TabType } from './components/PhoneSimulator';
+import { UnifiedShadowApp } from './components/UnifiedShadowApp';
 import { ConceptOverview } from './components/ConceptOverview';
 import { ExpoCodeViewer } from './components/ExpoCodeViewer';
 import { StoryViewerModal } from './components/StoryViewerModal';
 import { StoryItem, INITIAL_STORIES } from './data/mockData';
 
-type AppViewMode = 'simulator' | 'overview' | 'code';
+type AppViewMode = 'app' | 'code' | 'overview';
 
 export default function App() {
-  const [viewMode, setViewMode] = useState<AppViewMode>('simulator');
+  const [viewMode, setViewMode] = useState<AppViewMode>('app');
   const [isDark, setIsDark] = useState(true);
-  const [activeTab, setActiveTab] = useState<TabType>('home');
   const [activeStory, setActiveStory] = useState<StoryItem | null>(null);
 
   const toggleTheme = () => {
@@ -77,8 +71,9 @@ export default function App() {
               <span className="font-shadow-script text-2xl text-white tracking-wide">
                 Shadow
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30 uppercase tracking-wider">
-                Expo SDK 51
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30 uppercase tracking-wider flex items-center gap-1">
+                <GitBranch size={10} />
+                Unified App
               </span>
             </div>
           </div>
@@ -87,27 +82,16 @@ export default function App() {
         {/* View Mode Switcher */}
         <div className="flex items-center p-1 bg-white/5 border border-white/10 rounded-2xl gap-1">
           <button
-            onClick={() => setViewMode('simulator')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              viewMode === 'simulator'
+            onClick={() => setViewMode('app')}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+              viewMode === 'app'
                 ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Smartphone size={14} />
-            <span className="hidden sm:inline">Simulador Interactivo</span>
-          </button>
-
-          <button
-            onClick={() => setViewMode('overview')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              viewMode === 'overview'
-                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Layers size={14} />
-            <span className="hidden sm:inline">Concepto (Imagen de Referencia)</span>
+            <span className="hidden sm:inline">Shadow App (Nuevo UI + Datos Reales)</span>
+            <span className="sm:hidden">App</span>
           </button>
 
           <button
@@ -119,7 +103,21 @@ export default function App() {
             }`}
           >
             <Code size={14} />
-            <span className="hidden sm:inline">Código React Native</span>
+            <span className="hidden sm:inline">Código Monorepo</span>
+            <span className="sm:hidden">Código</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode('overview')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+              viewMode === 'overview'
+                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Layers size={14} />
+            <span className="hidden sm:inline">Concept Overview</span>
+            <span className="sm:hidden">Diseño</span>
           </button>
         </div>
 
@@ -128,7 +126,7 @@ export default function App() {
           <button
             onClick={toggleTheme}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold transition-all text-slate-300"
-            title="Alternar tema del simulador"
+            title="Alternar tema de Shadow"
           >
             {isDark ? <Sun size={14} className="text-yellow-400" /> : <Moon size={14} className="text-purple-400" />}
             <span className="hidden md:inline">{isDark ? 'Modo Oscuro' : 'Modo Claro'}</span>
@@ -136,75 +134,40 @@ export default function App() {
         </div>
       </header>
 
-      {/* 2. Main Content Area according to active view mode */}
+      {/* 2. Main Content Area */}
       <main className="flex-1 flex flex-col">
-        {/* VIEW 1: Interactive Device Simulator */}
-        {viewMode === 'simulator' && (
-          <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 bg-gradient-to-b from-[#131422] via-[#0E0F1A] to-[#0A0B12]">
-            {/* Quick Screen Selector Pills */}
-            <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar max-w-full px-2">
-              <span className="text-xs text-slate-400 mr-1 hidden sm:inline">Pantalla:</span>
-              {[
-                { id: 'home', label: '1. Home / Feed', icon: Smartphone },
-                { id: 'explore', label: '2. Explorar', icon: Search },
-                { id: 'reels', label: '3. Reels (Nuevo UI)', icon: Sparkles },
-                { id: 'shop', label: '4. Tienda', icon: Layers },
-                { id: 'profile', label: '5. Perfil Mauricio', icon: User },
-                { id: 'notifications', label: 'Actividad (Top Corazón)', icon: Heart },
-                { id: 'create', label: 'Crear (Top +)', icon: Plus },
-              ].map((item) => {
-                const isSelected = activeTab === item.id;
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id as any)}
-                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 ${
-                      isSelected
-                        ? 'bg-white text-slate-950 shadow-md shadow-white/10'
-                        : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <Icon size={12} />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
+        {/* VIEW 1: ONE Unified Shadow Application */}
+        {viewMode === 'app' && (
+          <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
+            <div className="max-w-md w-full mb-3 text-center">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/25 text-pink-400 text-xs font-semibold">
+                <Sparkles size={12} />
+                Nuevo Sistema Visual Concept + Funcionalidad Real Shadow
+              </span>
+              <p className="text-[11px] text-slate-400 mt-1">
+                Feed interactivo, creación de publicaciones, historias, reels y perfil con Shadow Identity.
+              </p>
             </div>
 
-            {/* The Live Interactive Phone Chassis */}
-            <div className="transition-transform duration-300">
-              <PhoneSimulator
-                isDark={isDark}
-                onToggleTheme={toggleTheme}
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-                onSelectStory={setActiveStory}
-                standalone={true}
-              />
-            </div>
-
-            {/* Hint / Feature note */}
-            <p className="text-[11px] text-slate-400 mt-6 text-center max-w-sm leading-relaxed">
-              Toca las historias para ver el visor a pantalla completa, dale <span className="text-pink-400 font-bold">Me gusta</span> a las fotos o prueba el botón <span className="text-purple-400 font-bold">Seguir</span> en el perfil.
-            </p>
+            <UnifiedShadowApp
+              isDark={isDark}
+              onToggleTheme={toggleTheme}
+            />
           </div>
         )}
 
-        {/* VIEW 2: Concept Overview Replicating Reference Screenshot */}
+        {/* VIEW 2: Monorepo Code Viewer */}
+        {viewMode === 'code' && <ExpoCodeViewer />}
+
+        {/* VIEW 3: Concept Overview */}
         {viewMode === 'overview' && (
           <ConceptOverview
             onSelectStory={setActiveStory}
-            onFocusDevice={(tab, dark) => {
-              setActiveTab(tab);
-              setIsDark(dark);
-              setViewMode('simulator');
+            onFocusDevice={() => {
+              setViewMode('app');
             }}
           />
         )}
-
-        {/* VIEW 3: React Native + Expo Source Code Viewer */}
-        {viewMode === 'code' && <ExpoCodeViewer />}
       </main>
 
       {/* 3. Interactive Fullscreen Story Viewer Modal */}

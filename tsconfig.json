@@ -25,5 +25,5 @@
     "noEmit": true
   },
   "include": ["src"],
-  "exclude": ["expo-code", "src/screens", "node_modules", "dist"]
+  "exclude": ["apps", "packages", "prisma", "expo-code", "src/screens", "node_modules", "dist", "tests", "docs"]
 }
