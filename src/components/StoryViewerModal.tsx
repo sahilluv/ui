@@ -61,7 +61,7 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
             </div>
             <div>
               <p className="text-white text-sm font-bold tracking-tight drop-shadow-sm">{story.username}</p>
-              <p className="text-white/70 text-xs">Hace 3 h</p>
+              <p className="text-white/70 text-xs">3h ago</p>
             </div>
           </div>
 
@@ -92,7 +92,7 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
           <div className="flex-1 bg-white/20 backdrop-blur-md rounded-full px-4 py-2.5 border border-white/20">
             <input
               type="text"
-              placeholder={`Responder a ${story.username}...`}
+              placeholder={`Reply to ${story.username}...`}
               className="w-full bg-transparent text-white placeholder-white/60 text-xs focus:outline-none"
             />
           </div>

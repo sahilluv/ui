@@ -31,7 +31,7 @@ const DEFAULT_COMMENTS: ReelComment[] = [
       username: 'marco.visuals',
       avatarGradient: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 50%, #3B82F6 100%)',
     },
-    text: '¡La luz natural y la paleta de colores en Madrid son impresionantes! Brutal toma 🔥',
+    text: 'The natural light and color palette in Madrid are stunning! Unreal shot 🔥',
     timeAgo: '15m',
     likesCount: 24,
     isLiked: false,
@@ -44,7 +44,7 @@ const DEFAULT_COMMENTS: ReelComment[] = [
       username: 'clara_design',
       avatarGradient: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)',
     },
-    text: '¿Qué lente y cámara usaste para esta transición suave? Quedó de cine.',
+    text: 'What lens and camera did you use for that smooth transition? Looks cinematic.',
     timeAgo: '42m',
     likesCount: 18,
     isLiked: true,
@@ -57,7 +57,7 @@ const DEFAULT_COMMENTS: ReelComment[] = [
       username: 'sofia.mtz',
       avatarGradient: 'linear-gradient(135deg, #FF6B4A 0%, #FF3366 100%)',
     },
-    text: 'Esa combinación de tonos lilas y dorados es pura poesía visual ✨🙌',
+    text: 'That combination of violet and golden tones is pure visual poetry ✨🙌',
     timeAgo: '2h',
     likesCount: 9,
     isLiked: false,
@@ -70,7 +70,7 @@ const DEFAULT_COMMENTS: ReelComment[] = [
       username: 'lucas.vane',
       avatarGradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
     },
-    text: 'Ghent en otoño tiene una atmósfera incomparable. Grandes tonos terrosos 🤎',
+    text: 'Ghent in autumn has such an unmatched atmosphere. Great earthy tones 🤎',
     timeAgo: '1h',
     likesCount: 14,
     isLiked: false,
@@ -130,12 +130,12 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
       id: `comment_${Date.now()}`,
       reelId: reel.id,
       author: {
-        name: 'Tú',
-        username: 'tu.perfil',
+        name: 'You',
+        username: 'your.profile',
         avatarGradient: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #7928CA 100%)',
       },
       text: trimmed,
-      timeAgo: 'Ahora',
+      timeAgo: 'Just now',
       likesCount: 0,
       isLiked: false,
     };
@@ -143,7 +143,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
     setComments((prev) => [newComment, ...prev]);
     onCommentAdded?.(reel.id, trimmed);
     setCommentText('');
-    showToast('¡Comentario publicado!');
+    showToast('Comment posted!');
   };
 
   const handleAppendEmoji = (emoji: string) => {
@@ -191,9 +191,9 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
               <MessageCircle size={15} />
             </div>
             <div>
-              <h4 className="text-sm font-extrabold tracking-tight">Comentarios</h4>
+              <h4 className="text-sm font-extrabold tracking-tight">Comments</h4>
               <p className="text-[11px] text-slate-400">
-                @{reel.author.username} • {reel.comments} comentarios
+                @{reel.author.username} • {reel.comments} comments
               </p>
             </div>
           </div>
@@ -299,7 +299,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
             type="text"
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
-            placeholder="Añadir un comentario..."
+            placeholder="Add a comment..."
             className={`flex-1 h-9 px-3.5 rounded-full text-xs focus:outline-none border transition-colors ${
               isDark
                 ? 'bg-black/30 border-white/10 text-white placeholder-slate-500 focus:border-[#FF0A78]'

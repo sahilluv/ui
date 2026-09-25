@@ -19,7 +19,7 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
           Shadow — Concept UI
         </h1>
         <p className="text-xs sm:text-sm text-slate-300/80 mt-2 font-medium max-w-lg mx-auto leading-relaxed">
-          Feed, explorar y perfil en modo claro y oscuro. Todas las pantallas son interactivas: toca las historias, los tabs, el botón seguir y los me gusta.
+          Feed, explore, and profile in light and dark modes. All screens are interactive: tap stories, tabs, follow button, and likes.
         </p>
       </div>
 
@@ -29,7 +29,7 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
         <div className="flex flex-col items-center">
           <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-purple-950/60 border border-purple-500/30 text-[11px] font-semibold text-purple-200">
             <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-            Explorar / Discover (Modo Oscuro)
+            Explore / Discover (Dark Mode)
           </div>
           <div className="transform hover:scale-[1.01] transition-transform duration-300">
             <PhoneSimulator
@@ -48,7 +48,7 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
           <div className="flex flex-col items-center">
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-slate-800/80 border border-white/10 text-[11px] font-semibold text-slate-300">
               <span className="w-2 h-2 rounded-full bg-pink-500" />
-              Feed / Home (Modo Claro)
+              Feed / Home (Light Mode)
             </div>
             <div className="transform hover:scale-[1.01] transition-transform duration-300">
               <PhoneSimulator
@@ -65,7 +65,7 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
           <div className="flex flex-col items-center">
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-slate-900/90 border border-purple-500/20 text-[11px] font-semibold text-purple-300">
               <span className="w-2 h-2 rounded-full bg-purple-500" />
-              Feed / Home (Modo Oscuro)
+              Feed / Home (Dark Mode)
             </div>
             <div className="transform hover:scale-[1.01] transition-transform duration-300">
               <PhoneSimulator
@@ -82,7 +82,7 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
           <div className="flex flex-col items-center">
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-pink-950/60 border border-pink-500/30 text-[11px] font-semibold text-pink-200">
               <span className="w-2 h-2 rounded-full bg-pink-400" />
-              Perfil Mauricio Lopez (Modo Claro)
+              Profile Mauricio Lopez (Light Mode)
             </div>
             <div className="transform hover:scale-[1.01] transition-transform duration-300">
               <PhoneSimulator

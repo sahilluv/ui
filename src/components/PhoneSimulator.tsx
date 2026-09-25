@@ -513,13 +513,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         isDark ? 'text-slate-400' : 'text-slate-600'
                       }`}
                     >
-                      Les gusta a{' '}
+                      Liked by{' '}
                       <span className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         danieldelax
                       </span>{' '}
-                      y{' '}
+                      and{' '}
                       <span className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                        {post.likesCount.toLocaleString()} personas más
+                        {post.likesCount.toLocaleString()} others
                       </span>
                     </p>
 
@@ -541,7 +541,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         isDark ? 'text-slate-500' : 'text-slate-400'
                       }`}
                     >
-                      Ver los {post.commentsCount} comentarios
+                      View all {post.commentsCount} comments
                     </button>
 
                     {/* Exact comment from reference Image 2 */}
@@ -550,7 +550,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         Perla_Pipol
                       </span>
                       <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>
-                        Esta edición está super genial, que pro!!
+                        This edit is so incredible, pure genius!!
                       </span>
                     </p>
                   </div>
@@ -600,7 +600,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   <Search size={16} className="opacity-50 shrink-0" />
                   <input
                     type="text"
-                    placeholder="Buscar"
+                    placeholder="Search"
                     className="w-full bg-transparent text-xs focus:outline-none placeholder-slate-400"
                   />
                 </div>
@@ -610,14 +610,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               </div>
             </div>
 
-            {/* Populares Heading */}
+            {/* Popular Heading */}
             <div className="px-5 mt-2 mb-3">
               <h2
                 className={`text-xl font-extrabold tracking-tight ${
                   isDark ? 'text-white' : 'text-[#12131D]'
                 }`}
               >
-                Populares
+                Popular
               </h2>
             </div>
 
@@ -680,14 +680,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                     ? 'bg-white/10 hover:bg-white/15 text-white active:bg-white/20'
                     : 'bg-black/5 hover:bg-black/10 text-slate-800 active:bg-black/15'
                 }`}
-                title="Desliza o haz clic para refrescar reels"
+                title="Swipe or click to refresh reels"
               >
                 <RotateCw
                   size={12}
                   className={`${isRefreshingReels ? 'animate-spin text-[#FF0A78]' : 'text-current'}`}
                 />
                 <span className={isRefreshingReels ? 'text-[#FF0A78] font-bold' : ''}>
-                  {isRefreshingReels ? 'Actualizando...' : 'Refrescar'}
+                  {isRefreshingReels ? 'Refreshing...' : 'Refresh'}
                 </span>
               </button>
             </div>
@@ -697,7 +697,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               <div className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#FF0A78]/20 via-[#7928CA]/20 to-[#06B6D4]/20 border border-[#FF0A78]/30 flex items-center justify-center gap-2 text-xs font-semibold animate-pulse shadow-sm">
                 <RotateCw size={13} className="animate-spin text-[#FF0A78]" />
                 <span className={isDark ? 'text-white' : 'text-slate-900'}>
-                  Obteniendo nuevos reels cinemáticos...
+                  Fetching new cinematic reels...
                 </span>
               </div>
             )}
@@ -813,9 +813,9 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   isDark ? 'text-white' : 'text-[#12131D]'
                 }`}
               >
-                Tienda Shadow
+                Shadow Shop
               </h2>
-              <span className="text-xs font-semibold text-pink-500">Colecciones</span>
+              <span className="text-xs font-semibold text-pink-500">Collections</span>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -858,12 +858,12 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 >
                   <X size={20} />
                 </button>
-                <h2 className="text-base font-bold">Crear Publicación</h2>
+                <h2 className="text-base font-bold">Create Post</h2>
                 <button
                   onClick={handlePublishPost}
                   className="text-xs font-bold text-pink-500 hover:text-pink-400"
                 >
-                  Publicar
+                  Publish
                 </button>
               </div>
 
@@ -880,7 +880,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
               {/* Gradient Selector */}
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Paleta de Arte
+                Art Palette
               </p>
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar mb-4">
                 {gradientPresets.map((preset, idx) => (
@@ -906,13 +906,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               <div className="space-y-3">
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                    Título de la Obra
+                    Artwork Title
                   </label>
                   <input
                     type="text"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    placeholder="Ej: SACRIFICE | VIRUS"
+                    placeholder="Ex: SACRIFICE | VIRUS"
                     className={`w-full h-10 px-3.5 rounded-xl border text-xs focus:outline-none transition-colors ${
                       isDark
                         ? 'bg-[#161826] border-white/5 text-white'
@@ -923,13 +923,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                    Inspiración y Descripción
+                    Inspiration & Description
                   </label>
                   <textarea
                     value={newCaption}
                     onChange={(e) => setNewCaption(e.target.value)}
                     rows={3}
-                    placeholder="Describe el concepto visual de tu obra..."
+                    placeholder="Describe the visual concept of your artwork..."
                     className={`w-full p-3 rounded-xl border text-xs focus:outline-none transition-colors resize-none ${
                       isDark
                         ? 'bg-[#161826] border-white/5 text-white'
@@ -941,7 +941,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 {/* Post Format Tabs */}
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                    Formato
+                    Format
                   </label>
                   <div className="flex gap-2">
                     {(['feed', 'story', 'igtv'] as const).map((type) => (
@@ -956,7 +956,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                             : 'bg-slate-100 text-slate-600'
                         }`}
                       >
-                        {type === 'feed' ? 'Feed' : type === 'story' ? 'Historia' : 'IGTV'}
+                        {type === 'feed' ? 'Feed' : type === 'story' ? 'Story' : 'IGTV'}
                       </button>
                     ))}
                   </div>
@@ -965,13 +965,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 {/* Visibility */}
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                    Audiencia
+                    Audience
                   </label>
                   <div className="flex gap-2">
                     {[
-                      { id: 'public', label: 'Público', icon: Globe },
-                      { id: 'followers', label: 'Seguidores', icon: Users },
-                      { id: 'close_friends', label: 'Cercanos', icon: Star },
+                      { id: 'public', label: 'Public', icon: Globe },
+                      { id: 'followers', label: 'Followers', icon: Users },
+                      { id: 'close_friends', label: 'Close Friends', icon: Star },
                     ].map((item) => {
                       const Icon = item.icon;
                       const isSel = newVisibility === item.id;
@@ -1005,7 +1005,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
               }}
             >
-              Compartir en Shadow
+              Share to Shadow
             </button>
           </div>
         )}
@@ -1021,10 +1021,10 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   isDark ? 'text-white' : 'text-[#12131D]'
                 }`}
               >
-                Actividad
+                Activity
               </h2>
               <button className="text-xs font-semibold text-pink-500 hover:underline">
-                Marcar leídas
+                Mark as read
               </button>
             </div>
 
@@ -1032,7 +1032,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             <div className="px-5 py-2 flex items-center gap-2">
               {(['all', 'likes', 'comments'] as const).map((filter) => {
                 const isSelected = notifFilter === filter;
-                const label = filter === 'all' ? 'Todas' : filter === 'likes' ? 'Me gusta' : 'Comentarios';
+                const label = filter === 'all' ? 'All' : filter === 'likes' ? 'Likes' : 'Comments';
                 return (
                   <button
                     key={filter}
@@ -1155,7 +1155,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   isDark ? 'text-slate-400' : 'text-slate-500'
                 }`}
               >
-                Diseño ui/ux y Fotografía · Zihuatanejo, Mexico
+                UI/UX Design & Photography · Zihuatanejo, Mexico
               </p>
 
               <p className="text-xs text-[#FF0A78] font-bold text-center mb-4 tracking-tight">
@@ -1183,7 +1183,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   >
                     876
                   </span>
-                  <span className="text-[11px] text-slate-400 font-medium">Seguidores</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Followers</span>
                 </div>
 
                 <div className="text-center">
@@ -1194,11 +1194,11 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   >
                     568
                   </span>
-                  <span className="text-[11px] text-slate-400 font-medium">Seguidos</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Following</span>
                 </div>
               </div>
 
-              {/* Follow Button ("Seguir" in vivid pink/magenta gradient) */}
+              {/* Follow Button */}
               <button
                 onClick={() => setIsFollowingMauricio(!isFollowingMauricio)}
                 className={`w-full max-w-[260px] h-10 rounded-full font-bold text-sm shadow-lg shadow-pink-500/30 flex items-center justify-center transition-transform active:scale-95 mb-5 ${
@@ -1215,11 +1215,11 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                       }
                 }
               >
-                {isFollowingMauricio ? 'Siguiendo' : 'Seguir'}
+                {isFollowingMauricio ? 'Following' : 'Follow'}
               </button>
             </div>
 
-            {/* Story Highlights (Mejores fotos, Mis cosas, Chidos, Comida) */}
+            {/* Story Highlights */}
             <div className="px-5 flex items-center gap-3.5 overflow-x-auto no-scrollbar mb-4">
               {HIGHLIGHTS.map((hl) => (
                 <div
@@ -1267,7 +1267,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               ))}
             </div>
 
-            {/* Profile Tabs: Post, Etiquetas, IGTV */}
+            {/* Profile Tabs: Posts, Tagged, IGTV */}
             <div
               className={`flex border-b text-xs font-semibold px-4 mb-3 ${
                 isDark ? 'border-white/10' : 'border-black/5'
@@ -1275,7 +1275,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             >
               {(['posts', 'tags', 'igtv'] as const).map((tab) => {
                 const isSelected = activeProfileTab === tab;
-                const label = tab === 'posts' ? 'Post' : tab === 'tags' ? 'Etiquetas' : 'IGTV';
+                const label = tab === 'posts' ? 'Posts' : tab === 'tags' ? 'Tagged' : 'IGTV';
                 return (
                   <button
                     key={tab}
@@ -1375,7 +1375,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   : 'text-[#12131D]'
                 : 'hover:text-slate-300'
             }`}
-            title="Explorar"
+            title="Explore"
           >
             <Search size={21} strokeWidth={currentTab === 'explore' ? 2.5 : 2} />
             {currentTab === 'explore' && (

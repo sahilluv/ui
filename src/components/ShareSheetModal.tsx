@@ -80,13 +80,13 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
       // Fallback
     }
     setCopied(true);
-    showToast('¡Enlace copiado al portapapeles!');
+    showToast('Link copied to clipboard!');
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleShareToStory = () => {
     setSharedToStory(true);
-    showToast('¡Publicación añadida a tu historia!');
+    showToast('Post added to your story!');
     onShareToStory?.(post);
     setTimeout(() => {
       setSharedToStory(false);
@@ -101,7 +101,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
       [friend.id]: !isCurrentlySent,
     }));
     if (!isCurrentlySent) {
-      showToast(`Enviado a @${friend.username}`);
+      showToast(`Sent to @${friend.username}`);
     }
   };
 
@@ -134,7 +134,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
           <div className="flex items-center gap-2">
             <Share2 size={18} className="text-[#FF0A78]" />
             <h3 className="font-extrabold text-base tracking-tight">
-              Compartir publicación
+              Share Post
             </h3>
           </div>
           <button
@@ -196,7 +196,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
                 copied ? 'text-emerald-500' : ''
               }`}
             >
-              {copied ? '¡Copiado!' : 'Copiar enlace'}
+              {copied ? 'Copied!' : 'Copy link'}
             </span>
           </button>
 
@@ -223,7 +223,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
                 sharedToStory ? 'text-[#FF0A78]' : ''
               }`}
             >
-              {sharedToStory ? '¡Publicado!' : 'Tu historia'}
+              {sharedToStory ? 'Published!' : 'Your story'}
             </span>
           </button>
 
@@ -247,7 +247,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
               <Send size={19} className="ml-0.5" />
             </div>
             <span className="text-[11px] font-bold tracking-tight text-center">
-              Enviar a amigos
+              Send to friends
             </span>
           </button>
         </div>
@@ -255,7 +255,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
         {/* Quick Send to Friends Section */}
         <div className="flex-1 overflow-y-auto no-scrollbar">
           <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
-            Amigos recientes
+            Recent friends
           </p>
           <div className="space-y-2">
             {RECENT_FRIENDS.map((friend) => {
@@ -298,7 +298,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
                         : 'bg-slate-200 hover:bg-slate-300 text-[#0EA5E9]'
                     }`}
                   >
-                    {isSent ? 'Enviado' : 'Enviar'}
+                    {isSent ? 'Sent' : 'Send'}
                   </button>
                 </div>
               );

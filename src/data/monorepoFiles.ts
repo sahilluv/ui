@@ -547,6 +547,18 @@ model Post {
 }`,
   },
   {
+    path: '.env.example',
+    name: '.env.example',
+    category: 'Packages & Infra',
+    description: 'Local environment configuration for PostgreSQL, Redis, JWT authentication, and API endpoints.',
+    code: `DATABASE_URL="postgresql://shadow:shadowpassword@localhost:5432/shadow"
+REDIS_URL="redis://localhost:6379"
+JWT_SECRET="change-me-in-local-dev"
+API_BASE_URL="http://localhost:3000"
+PORT=3000
+NODE_ENV="development"`,
+  },
+  {
     path: 'docker-compose.yml',
     name: 'docker-compose.yml',
     category: 'Packages & Infra',

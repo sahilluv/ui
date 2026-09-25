@@ -40,7 +40,7 @@ export interface FeedPost {
 }
 
 const INITIAL_STORIES = [
-  { id: 'user_story', username: 'Tu historia', isCurrentUser: true, gradient: ['#FF0A78', '#991BEA', '#7928CA'] },
+  { id: 'user_story', username: 'Your story', isCurrentUser: true, gradient: ['#FF0A78', '#991BEA', '#7928CA'] },
   { id: 's1', username: 'Ezequias', gradient: ['#FF6B4A', '#FF3366', '#C026D3'] },
   { id: 's2', username: 'Alice_002', gradient: ['#C026D3', '#7928CA', '#3B82F6'] },
   { id: 's3', username: 'Paulette_R', gradient: ['#FF2D55', '#B026FF', '#4F46E5'] },
@@ -53,7 +53,7 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     authorName: 'Maoo Lopez',
     username: 'maoo.lopez',
     avatarGradient: ['#FF0A78', '#991BEA', '#6366F1'],
-    timeAgo: 'Hace 20 min',
+    timeAgo: '20m ago',
     imageGradient: ['#4E137D', '#791DA6', '#C724B1', '#FF3B8A'],
     content: 'This photomanipulation inspired by generative biology and organic surrealism. What do you think of this color palette?',
     captionTitle: 'SACRIFICE | VIRUS',
@@ -67,7 +67,7 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     authorName: 'Eliott Johnson',
     username: 'eliott.j',
     avatarGradient: ['#6366F1', '#8B5CF6', '#EC4899'],
-    timeAgo: 'Hace 2 h',
+    timeAgo: '2h ago',
     imageGradient: ['#7A58E6', '#B77DE8', '#F5A7C4', '#FCD5B5'],
     content: 'Central campus library west wing is open 24/7 during finals sprint. Plenty of charging stations on the 3rd floor!',
     captionTitle: 'CAMPUS SPACES',
@@ -81,7 +81,7 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     authorName: 'Sofia Reyes',
     username: 'sofia.design',
     avatarGradient: ['#06B6D4', '#3B82F6', '#6366F1'],
-    timeAgo: 'Hace 4 h',
+    timeAgo: '4h ago',
     imageGradient: ['#0A3A40', '#0E626B', '#13928E', '#20C997'],
     content: 'Looking for 2 UI developers for our upcoming inter-college hackathon build. Drop a comment if interested!',
     captionTitle: 'HACKATHON COLLAB',
@@ -95,7 +95,7 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
 const EXPLORE_CATEGORIES = [
   { id: 'igtv', title: 'IGTV', icon: Tv, gradient: ['#7928CA', '#A855F7', '#C084FC'] },
   { id: 'campus', title: 'CAMPUS', icon: ShoppingBag, gradient: ['#EC4899', '#F43F5E', '#FB7185'] },
-  { id: 'viajes', title: 'VIAJES', icon: Sparkles, gradient: ['#06B6D4', '#0EA5E9', '#3B82F6'] },
+  { id: 'viajes', title: 'TRAVEL', icon: Sparkles, gradient: ['#06B6D4', '#0EA5E9', '#3B82F6'] },
   { id: 'wellness', title: 'WELLNESS', icon: Heart, gradient: ['#F97316', '#FB923C', '#F43F5E'] },
 ];
 
@@ -115,7 +115,7 @@ const REELS_DATA = [
     username: 'eliott.j',
     location: 'Madrid, Spain',
     gradient: ['#796A9E', '#AA86B7', '#DCAABF', '#F4CCD8'],
-    likes: '2,4k',
+    likes: '2.4k',
     likesCount: 2400,
     comments: '175',
     isLiked: true,
@@ -126,7 +126,7 @@ const REELS_DATA = [
     username: 'christian.lue',
     location: 'Ghent, Belgium',
     gradient: ['#1A2B4C', '#2C4A7A', '#4A72B0', '#7AA5E0'],
-    likes: '3,8k',
+    likes: '3.8k',
     likesCount: 3820,
     comments: '290',
     isLiked: false,
@@ -139,8 +139,8 @@ const NOTIFICATIONS_DATA = [
     user: 'Elena Rostova',
     username: 'elena.art',
     gradient: ['#EC4899', '#F43F5E', '#FB7185'],
-    action: 'le gustó tu publicación "SACRIFICE | VIRUS"',
-    time: 'Hace 5 min',
+    action: 'liked your post "SACRIFICE | VIRUS"',
+    time: '5m ago',
     unread: true,
   },
   {
@@ -148,8 +148,8 @@ const NOTIFICATIONS_DATA = [
     user: 'Carlos Valenzuela',
     username: 'carlos_v',
     gradient: ['#06B6D4', '#3B82F6', '#6366F1'],
-    action: 'comentó: "La paleta de color y la composición son increíbles 🔥"',
-    time: 'Hace 23 min',
+    action: 'commented: "The color palette and composition are incredible 🔥"',
+    time: '23m ago',
     unread: true,
   },
   {
@@ -157,8 +157,8 @@ const NOTIFICATIONS_DATA = [
     user: 'Sofia Mendez',
     username: 'sofia_art',
     gradient: ['#F59E0B', '#D97706', '#78350F'],
-    action: 'ha comenzado a seguirte.',
-    time: 'Hace 2 h',
+    action: 'started following you.',
+    time: '2h ago',
     unread: false,
   },
 ];
@@ -185,7 +185,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
   const [currentUser, setCurrentUser] = useState({
     name: 'Mauricio Lopez',
     email: 'mauricio@shadow.campus',
-    bio: 'Diseñador visual y Fotografía - Campus Community',
+    bio: 'Visual Designer & Photography - Campus Community',
     shadowId: 'sh_89f02a91',
     shadowRank: 'PAWN',
     verification: 'VERIFIED',
@@ -242,7 +242,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
   const handleCreatePost = (e: React.FormEvent) => {
     e.preventDefault();
     if (!createBody.trim() && !createTitle.trim()) {
-      showToast('Por favor escribe algo para publicar.');
+      showToast('Please write something to post.');
       return;
     }
 
@@ -259,10 +259,10 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
       authorName: currentUser.name,
       username: currentUser.name.toLowerCase().replace(/\s+/g, '.'),
       avatarGradient: ['#FF0A78', '#991BEA', '#6366F1'],
-      timeAgo: 'Justo ahora',
+      timeAgo: 'Just now',
       imageGradient: gradientPresets[selectedGradientIndex] as any,
       content: createBody.trim() || 'Shared via Shadow Mobile',
-      captionTitle: createTitle.trim() || 'NUEVA PUBLICACIÓN',
+      captionTitle: createTitle.trim() || 'NEW POST',
       likesCount: 1,
       commentsCount: 0,
       isLiked: true,
@@ -274,7 +274,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     setCreateTitle('');
     setCreateBody('');
     setCurrentTab('home');
-    showToast('¡Publicado con éxito en el feed de Shadow!');
+    showToast('Successfully posted to Shadow feed!');
   };
 
   const unreadNotifsCount = notifications.filter((n) => n.unread).length;
@@ -381,7 +381,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     <div
                       key={story.id}
                       className="flex flex-col items-center gap-1 shrink-0 cursor-pointer"
-                      onClick={() => showToast(`Viendo historia de ${story.username}`)}
+                      onClick={() => showToast(`Viewing story by ${story.username}`)}
                     >
                       <div
                         className="w-16 h-16 rounded-full p-0.5 shadow-md flex items-center justify-center"
@@ -497,7 +497,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           </button>
 
                           <button
-                            onClick={() => showToast('Abriendo comentarios del post...')}
+                            onClick={() => showToast('Opening post comments...')}
                             className="hover:scale-110 active:scale-95 transition-transform"
                           >
                             <MessageCircle size={20} style={{ color: colors.text }} />
@@ -518,7 +518,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                                 p.id === post.id ? { ...p, isSaved: !p.isSaved } : p
                               )
                             );
-                            showToast(post.isSaved ? 'Eliminado de guardados' : 'Guardado en tu colección');
+                            showToast(post.isSaved ? 'Removed from saved items' : 'Saved to your collection');
                           }}
                           className="hover:scale-110 active:scale-95 transition-transform"
                         >
@@ -533,7 +533,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       {/* Likes Count & Text */}
                       <div className="px-4 pb-3 pt-1">
                         <span className="text-xs font-bold block" style={{ color: colors.text }}>
-                          {post.likesCount.toLocaleString()} me gusta
+                          {post.likesCount.toLocaleString()} likes
                         </span>
                       </div>
                     </div>
@@ -547,7 +547,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               <div className="p-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-extrabold" style={{ color: colors.text }}>
-                    Explorar
+                    Explore
                   </h2>
                   <button
                     onClick={onToggleTheme}
@@ -566,7 +566,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   <Search size={16} style={{ color: colors.secondaryText }} />
                   <input
                     type="text"
-                    placeholder="Buscar creadores, temas o campus..."
+                    placeholder="Search creators, topics, or campus..."
                     className="w-full text-xs bg-transparent focus:outline-none placeholder:text-slate-400"
                     style={{ color: colors.text }}
                   />
@@ -579,7 +579,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     return (
                       <button
                         key={cat.id}
-                        onClick={() => showToast(`Filtrando por ${cat.title}`)}
+                        onClick={() => showToast(`Filtering by ${cat.title}`)}
                         className="px-3 py-1.5 rounded-full border flex items-center gap-2 shrink-0 transition-all hover:opacity-90"
                         style={{ backgroundColor: colors.surface, borderColor: colors.border }}
                       >
@@ -604,7 +604,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   {EXPLORE_CARDS.map((card) => (
                     <div
                       key={card.id}
-                      onClick={() => showToast(`Explorando ${card.title}`)}
+                      onClick={() => showToast(`Exploring ${card.title}`)}
                       className="rounded-2xl p-3 flex flex-col justify-end shadow-md cursor-pointer hover:scale-[1.02] transition-transform"
                       style={{
                         height: card.height,
@@ -628,7 +628,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     Reels
                   </h2>
                   <span className="text-xs font-bold text-pink-400 uppercase tracking-wider">
-                    En vivo
+                    Live
                   </span>
                 </div>
 
@@ -666,7 +666,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         </button>
 
                         <button
-                          onClick={() => showToast('Abriendo comentarios de Reel...')}
+                          onClick={() => showToast('Opening Reel comments...')}
                           className="flex flex-col items-center gap-0.5 text-white"
                         >
                           <div className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
@@ -676,7 +676,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         </button>
 
                         <button
-                          onClick={() => showToast('Reel compartido')}
+                          onClick={() => showToast('Reel shared')}
                           className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
                         >
                           <Send size={18} />
@@ -697,17 +697,17 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     className="text-xs font-semibold hover:opacity-80"
                     style={{ color: colors.secondaryText }}
                   >
-                    Cancelar
+                    Cancel
                   </button>
                   <h2 className="text-base font-bold" style={{ color: colors.text }}>
-                    Crear Publicación
+                    Create Post
                   </h2>
                   <button
                     onClick={handleCreatePost}
                     className="text-xs font-bold px-3 py-1.5 rounded-full text-white shadow-md hover:opacity-95"
                     style={{ backgroundColor: colors.accent }}
                   >
-                    Publicar
+                    Publish
                   </button>
                 </div>
 
@@ -726,10 +726,10 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 >
                   <div className="bg-black/40 backdrop-blur-sm rounded-xl p-2.5">
                     <span className="text-[11px] font-bold text-white block">
-                      {createTitle.trim() || 'VISTA PREVIA DEL TÍTULO'}
+                      {createTitle.trim() || 'TITLE PREVIEW'}
                     </span>
                     <span className="text-[10px] text-slate-200 block truncate">
-                      {createBody.trim() || 'Escribe tu contenido abajo para previsualizar...'}
+                      {createBody.trim() || 'Write your content below to preview...'}
                     </span>
                   </div>
                 </div>
@@ -737,7 +737,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 {/* Palette Selector */}
                 <div>
                   <label className="text-[10px] font-extrabold uppercase tracking-wider block mb-2" style={{ color: colors.secondaryText }}>
-                    Gradiente Visual
+                    Visual Gradient
                   </label>
                   <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                     {['Cyber Violet', 'Pastel Dusk', 'Moody Blue', 'Teal Aurora', 'Bronze'].map(
@@ -762,13 +762,13 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 {/* Title Input */}
                 <div>
                   <label className="text-[10px] font-extrabold uppercase tracking-wider block mb-1.5" style={{ color: colors.secondaryText }}>
-                    Título
+                    Title
                   </label>
                   <input
                     type="text"
                     value={createTitle}
                     onChange={(e) => setCreateTitle(e.target.value)}
-                    placeholder="Título destacado..."
+                    placeholder="Featured title..."
                     className="w-full text-xs px-3.5 py-2.5 rounded-xl border focus:outline-none"
                     style={{
                       backgroundColor: colors.inputBackground,
@@ -781,13 +781,13 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 {/* Description Body Input */}
                 <div>
                   <label className="text-[10px] font-extrabold uppercase tracking-wider block mb-1.5" style={{ color: colors.secondaryText }}>
-                    Contenido / Descripción
+                    Content / Description
                   </label>
                   <textarea
                     rows={4}
                     value={createBody}
                     onChange={(e) => setCreateBody(e.target.value)}
-                    placeholder="¿Qué estás creando o compartiendo hoy en el campus?..."
+                    placeholder="What are you creating or sharing on campus today?..."
                     className="w-full text-xs px-3.5 py-2.5 rounded-xl border focus:outline-none resize-none"
                     style={{
                       backgroundColor: colors.inputBackground,
@@ -804,16 +804,16 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               <div className="p-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-extrabold" style={{ color: colors.text }}>
-                    Notificaciones
+                    Notifications
                   </h2>
                   <button
                     onClick={() => {
                       setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
-                      showToast('Todas marcadas como leídas');
+                      showToast('All marked as read');
                     }}
                     className="text-xs font-bold text-pink-400 hover:underline"
                   >
-                    Marcar leídas
+                    Mark as read
                   </button>
                 </div>
 
@@ -868,7 +868,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               <div className="p-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-extrabold" style={{ color: colors.text }}>
-                    Perfil
+                    Profile
                   </h2>
                   <div className="flex items-center gap-2">
                     <button
@@ -880,11 +880,11 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     </button>
                     <button
                       onClick={() => {
-                        showToast('Sesión cerrada');
+                        showToast('Logged out');
                         setIsAuthenticated(false);
                       }}
                       className="w-8 h-8 rounded-full flex items-center justify-center text-red-400 hover:bg-red-500/10"
-                      title="Cerrar sesión"
+                      title="Log out"
                     >
                       <LogOut size={16} />
                     </button>
@@ -961,7 +961,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         {currentUser.followersCount}
                       </span>
                       <span className="text-[10px] uppercase font-bold" style={{ color: colors.secondaryText }}>
-                        Seguidores
+                        Followers
                       </span>
                     </div>
                     <div>
@@ -969,30 +969,30 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         {currentUser.followingCount}
                       </span>
                       <span className="text-[10px] uppercase font-bold" style={{ color: colors.secondaryText }}>
-                        Seguidos
+                        Following
                       </span>
                     </div>
                   </div>
 
                   {/* Action Follow/Edit Button */}
                   <button
-                    onClick={() => showToast('Perfil actualizado')}
+                    onClick={() => showToast('Profile updated')}
                     className="w-full mt-3 py-2.5 rounded-full font-bold text-xs text-white shadow-lg transition-transform active:scale-95"
                     style={{
                       background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
                     }}
                   >
-                    Editar Perfil
+                    Edit Profile
                   </button>
                 </div>
 
                 {/* Highlights */}
                 <div className="pt-2">
                   <span className="text-[10px] font-extrabold uppercase tracking-wider block mb-2" style={{ color: colors.secondaryText }}>
-                    Destacados
+                    Highlights
                   </span>
                   <div className="flex gap-3 overflow-x-auto no-scrollbar">
-                    {['Mejores fotos', 'Mis viajes', 'Otoño', 'Comida'].map((title, i) => (
+                    {['Best shots', 'My travels', 'Autumn', 'Food'].map((title, i) => (
                       <div key={title} className="flex flex-col items-center gap-1 shrink-0">
                         <div
                           className="w-14 h-14 rounded-full p-0.5"

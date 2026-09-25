@@ -90,7 +90,7 @@ export default function App() {
             }`}
           >
             <Smartphone size={14} />
-            <span className="hidden sm:inline">Shadow App (Nuevo UI + Datos Reales)</span>
+            <span className="hidden sm:inline">Shadow App (New UI + Real Data)</span>
             <span className="sm:hidden">App</span>
           </button>
 
@@ -103,8 +103,8 @@ export default function App() {
             }`}
           >
             <Code size={14} />
-            <span className="hidden sm:inline">Código Monorepo</span>
-            <span className="sm:hidden">Código</span>
+            <span className="hidden sm:inline">Monorepo Code</span>
+            <span className="sm:hidden">Code</span>
           </button>
 
           <button
@@ -117,7 +117,7 @@ export default function App() {
           >
             <Layers size={14} />
             <span className="hidden sm:inline">Concept Overview</span>
-            <span className="sm:hidden">Diseño</span>
+            <span className="sm:hidden">Design</span>
           </button>
         </div>
 
@@ -126,10 +126,10 @@ export default function App() {
           <button
             onClick={toggleTheme}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold transition-all text-slate-300"
-            title="Alternar tema de Shadow"
+            title="Toggle Shadow theme"
           >
             {isDark ? <Sun size={14} className="text-yellow-400" /> : <Moon size={14} className="text-purple-400" />}
-            <span className="hidden md:inline">{isDark ? 'Modo Oscuro' : 'Modo Claro'}</span>
+            <span className="hidden md:inline">{isDark ? 'Dark Mode' : 'Light Mode'}</span>
           </button>
         </div>
       </header>
@@ -142,10 +142,10 @@ export default function App() {
             <div className="max-w-md w-full mb-3 text-center">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/25 text-pink-400 text-xs font-semibold">
                 <Sparkles size={12} />
-                Nuevo Sistema Visual Concept + Funcionalidad Real Shadow
+                New Concept Visual System + Real Shadow Functionality
               </span>
               <p className="text-[11px] text-slate-400 mt-1">
-                Feed interactivo, creación de publicaciones, historias, reels y perfil con Shadow Identity.
+                Interactive feed, post creation, stories, reels, and profile with Shadow Identity.
               </p>
             </div>
 
