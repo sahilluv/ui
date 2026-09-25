@@ -14,10 +14,10 @@ import { ReelCommentsDrawer } from '../components/ReelCommentsDrawer';
 import { useTheme } from '../context/ThemeContext';
 import { ReelItem } from '../types';
 
-const { width } = Dimensions.get('window');
-const REEL_CARD_HEIGHT = 540;
-const REEL_CARD_GAP = 16;
-const SNAP_INTERVAL = REEL_CARD_HEIGHT + REEL_CARD_GAP;
+const { width, height } = Dimensions.get('window');
+const REEL_CARD_HEIGHT = height;
+const REEL_CARD_GAP = 0;
+const SNAP_INTERVAL = REEL_CARD_HEIGHT;
 
 export default function ReelsScreen({ navigation }: any) {
   const { colors, isDark } = useTheme();
@@ -74,12 +74,12 @@ export default function ReelsScreen({ navigation }: any) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Top Header */}
+    <View style={[styles.container, { backgroundColor: '#000' }]}>
+      {/* Top Floating Transparent Header */}
       <View style={styles.topHeader}>
-        <Text style={[styles.reelsTitle, { color: colors.text }]}>Reels</Text>
+        <Text style={styles.reelsTitle}>Reels</Text>
         <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.navigate('Create')}>
-          <Feather name="camera" size={22} color={colors.text} />
+          <Feather name="camera" size={22} color="#FFF" />
         </TouchableOpacity>
       </View>
 
@@ -87,6 +87,7 @@ export default function ReelsScreen({ navigation }: any) {
         showsVerticalScrollIndicator={false}
         snapToInterval={SNAP_INTERVAL}
         decelerationRate="fast"
+        pagingEnabled={Platform.OS === 'android'}
         contentContainerStyle={styles.scrollContent}
       >
         {reels.map((reel) => (
@@ -149,35 +150,50 @@ export default function ReelsScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
   },
   topHeader: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 44 : 12,
+    left: 0,
+    right: 0,
+    zIndex: 20,
     height: 52,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+    backgroundColor: 'transparent',
   },
   reelsTitle: {
     fontSize: 20,
     fontWeight: '800',
     letterSpacing: -0.3,
+    color: '#FFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   headerBtn: {
     padding: 6,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderRadius: 20,
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 40,
-    gap: REEL_CARD_GAP,
+    paddingHorizontal: 0,
+    paddingBottom: 0,
+    gap: 0,
   },
   reelCardWrapper: {
     height: REEL_CARD_HEIGHT,
-    borderRadius: 28,
+    width: width,
+    borderRadius: 0,
     overflow: 'hidden',
   },
   reelMediaCard: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingBottom: Platform.OS === 'ios' ? 84 : 70,
     justifyContent: 'flex-end',
   },
   contentOverlay: {
@@ -186,7 +202,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   authorBadge: {
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.45)',
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 10,

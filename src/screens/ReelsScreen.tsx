@@ -18,10 +18,10 @@ import { ThemeColors } from '../theme';
 
 const { width, height } = Dimensions.get('window');
 
-// High-fidelity cinematic vertical snap dimensions
-export const REEL_CARD_HEIGHT = 540;
-export const REEL_CARD_GAP = 16;
-export const SNAP_INTERVAL = REEL_CARD_HEIGHT + REEL_CARD_GAP;
+// Maximum full-screen immersive vertical snapping layout
+export const REEL_CARD_HEIGHT = height;
+export const REEL_CARD_GAP = 0;
+export const SNAP_INTERVAL = REEL_CARD_HEIGHT;
 
 interface ReelsScreenProps {
   colors: ThemeColors;
@@ -280,29 +280,27 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 24,
-    gap: REEL_CARD_GAP,
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
+    gap: 0,
   },
   cardContainer: {
     width: '100%',
     height: REEL_CARD_HEIGHT,
-    borderRadius: 36,
+    borderRadius: 0,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.15,
-    shadowRadius: 18,
-    elevation: 8,
   },
   reelCard: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? 44 : 20,
+    paddingBottom: Platform.OS === 'ios' ? 84 : 70,
     justifyContent: 'space-between',
-    borderRadius: 36,
+    borderRadius: 0,
   },
   authorRow: {
     flexDirection: 'row',

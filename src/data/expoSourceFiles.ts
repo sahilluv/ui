@@ -1575,12 +1575,12 @@ import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ReelItem } from '../types';
 import { ThemeColors } from '../theme';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-// Vertical snapping dimensions for cinematic Reels experience
-const REEL_CARD_HEIGHT = 540;
-const REEL_CARD_GAP = 16;
-const SNAP_INTERVAL = REEL_CARD_HEIGHT + REEL_CARD_GAP;
+// Maximum full-screen immersive vertical snapping layout
+const REEL_CARD_HEIGHT = height;
+const REEL_CARD_GAP = 0;
+const SNAP_INTERVAL = REEL_CARD_HEIGHT;
 
 interface ReelsScreenProps {
   colors: ThemeColors;
@@ -1794,26 +1794,24 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    gap: REEL_CARD_GAP,
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    gap: 0,
   },
   cardWrapper: {
     width: '100%',
     height: REEL_CARD_HEIGHT,
-    borderRadius: 36,
+    borderRadius: 0,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    elevation: 8,
   },
   gradientCard: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? 44 : 20,
+    paddingBottom: Platform.OS === 'ios' ? 84 : 70,
     justifyContent: 'space-between',
   },
   authorHeader: {

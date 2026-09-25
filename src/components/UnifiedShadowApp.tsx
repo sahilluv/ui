@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Heart,
   MessageCircle,
@@ -14,12 +14,20 @@ import {
   Sun,
   X,
   Play,
+  Pause,
   Check,
   LogOut,
   Shield,
   Layers,
   Sparkles,
+  Volume2,
+  VolumeX,
+  Camera,
+  Music,
+  Disc,
+  MapPin,
 } from 'lucide-react';
+import { ReelCommentsDrawer } from './ReelCommentsDrawer';
 import { darkColors, lightColors, shadowGradients, ThemeColors } from '../../expo-code/src/theme';
 
 export type UnifiedTab = 'home' | 'explore' | 'reels' | 'create' | 'notifications' | 'profile';
@@ -108,7 +116,27 @@ const EXPLORE_CARDS = [
   { id: 'm6', height: 180, gradient: ['#4E137D', '#791DA6', '#C724B1'], title: 'Neon Bloom' },
 ];
 
-const REELS_DATA = [
+export interface ReelData {
+  id: string;
+  author: string;
+  username: string;
+  location: string;
+  gradient: string[];
+  likes: string;
+  likesCount: number;
+  comments: string;
+  commentsCount: number;
+  bookmarksCount: number;
+  isLiked: boolean;
+  isSaved: boolean;
+  isFollowing?: boolean;
+  caption: string;
+  tags: string[];
+  audioTrack: string;
+  avatarGradient: string[];
+}
+
+const REELS_DATA: ReelData[] = [
   {
     id: 'reel_1',
     author: 'Eliott Johnson',
@@ -118,7 +146,15 @@ const REELS_DATA = [
     likes: '2.4k',
     likesCount: 2400,
     comments: '175',
+    commentsCount: 175,
+    bookmarksCount: 89,
     isLiked: true,
+    isSaved: false,
+    isFollowing: true,
+    caption: 'Architectural Brutalism & sunset reflections across Madrid 🏛️✨',
+    tags: ['#campus', '#architecture', '#design', '#madrid'],
+    audioTrack: 'Eliott Johnson • Sunset Echoes (Original Audio)',
+    avatarGradient: ['#3A3B4D', '#2B2C3B', '#1E1F2A'],
   },
   {
     id: 'reel_2',
@@ -129,7 +165,53 @@ const REELS_DATA = [
     likes: '3.8k',
     likesCount: 3820,
     comments: '290',
+    commentsCount: 290,
+    bookmarksCount: 142,
     isLiked: false,
+    isSaved: true,
+    isFollowing: false,
+    caption: 'Late night design studio session in Ghent ☕️💻 Crafting new Shadow interactions',
+    tags: ['#creativestudio', '#shadowapp', '#nightshift'],
+    audioTrack: 'Lofi Beats • Studio Chill Vol. 3',
+    avatarGradient: ['#1B2A4A', '#283E6B', '#3B5998'],
+  },
+  {
+    id: 'reel_3',
+    author: 'Sofia Martinez',
+    username: 'sofia.mtz',
+    location: 'Tokyo, Japan',
+    gradient: ['#1A365D', '#2B6CB0', '#4299E1', '#90CDF4'],
+    likes: '5.1k',
+    likesCount: 5120,
+    comments: '412',
+    commentsCount: 412,
+    bookmarksCount: 320,
+    isLiked: false,
+    isSaved: false,
+    isFollowing: true,
+    caption: 'Neon reflections across Shibuya crossing under midnight rain 🌧️⚡️',
+    tags: ['#tokyo', '#cyberpunk', '#streetphotography'],
+    audioTrack: 'Sofia Martinez • Tokyo Rain (Ambient Mix)',
+    avatarGradient: ['#1A2536', '#131C2A', '#0D1420'],
+  },
+  {
+    id: 'reel_4',
+    author: 'Mauricio Lopez',
+    username: 'mauricio.lopez',
+    location: 'Valencia, Spain',
+    gradient: ['#4E137D', '#791DA6', '#C724B1', '#FF3B8A'],
+    likes: '4.2k',
+    likesCount: 4210,
+    comments: '330',
+    commentsCount: 330,
+    bookmarksCount: 195,
+    isLiked: true,
+    isSaved: true,
+    isFollowing: false,
+    caption: 'Shadow Dynamic Lighting & Concept Component System preview 🔮🎨',
+    tags: ['#shadowcampus', '#uidesign', '#minimalism'],
+    audioTrack: 'Mauricio Lopez • Shadow Pulse',
+    avatarGradient: ['#FF0A78', '#991BEA', '#6366F1'],
   },
 ];
 
@@ -225,6 +307,43 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     );
   };
 
+  // Scroll-Responsive Bottom Navigation State
+  const [isCompactNav, setIsCompactNav] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [pausedReels, setPausedReels] = useState<Record<string, boolean>>({});
+  const [heartPopReelId, setHeartPopReelId] = useState<string | null>(null);
+
+  const reelsScrollRef = useRef<HTMLDivElement>(null);
+  const feedScrollRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevFeedScrollTop = useRef(0);
+
+  const handleFeedScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollTop = e.currentTarget.scrollTop;
+    const isScrollingDown = scrollTop > prevFeedScrollTop.current && scrollTop > 20;
+    prevFeedScrollTop.current = scrollTop;
+
+    if (isScrollingDown) {
+      setIsCompactNav(true);
+    } else if (scrollTop <= 10) {
+      setIsCompactNav(false);
+    }
+
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsCompactNav(false);
+    }, 900);
+  };
+
+  const handleReelsScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setIsCompactNav(true);
+
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsCompactNav(false);
+    }, 900);
+  };
+
   const handleToggleReelLike = (reelId: string) => {
     setReels((prev) =>
       prev.map((r) =>
@@ -237,6 +356,48 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
           : r
       )
     );
+  };
+
+  const handleToggleReelSave = (reelId: string) => {
+    setReels((prev) =>
+      prev.map((r) => {
+        if (r.id === reelId) {
+          const nextSaved = !r.isSaved;
+          showToast(nextSaved ? 'Saved Reel to your collection' : 'Removed Reel from saved');
+          return {
+            ...r,
+            isSaved: nextSaved,
+            bookmarksCount: nextSaved ? r.bookmarksCount + 1 : Math.max(0, r.bookmarksCount - 1),
+          };
+        }
+        return r;
+      })
+    );
+  };
+
+  const handleToggleFollow = (reelId: string) => {
+    setReels((prev) =>
+      prev.map((r) => {
+        if (r.id === reelId) {
+          const nextFollow = !r.isFollowing;
+          showToast(nextFollow ? `Following ${r.author}` : `Unfollowed ${r.author}`);
+          return { ...r, isFollowing: nextFollow };
+        }
+        return r;
+      })
+    );
+  };
+
+  const handleReelDoubleClick = (reelId: string) => {
+    setReels((prev) =>
+      prev.map((r) => (r.id === reelId && !r.isLiked ? { ...r, isLiked: true, likesCount: r.likesCount + 1 } : r))
+    );
+    setHeartPopReelId(reelId);
+    setTimeout(() => setHeartPopReelId(null), 900);
+  };
+
+  const handleTogglePlayPause = (reelId: string) => {
+    setPausedReels((prev) => ({ ...prev, [reelId]: !prev[reelId] }));
   };
 
   const handleCreatePost = (e: React.FormEvent) => {
@@ -306,24 +467,310 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
           style={{ backgroundColor: colors.background, color: colors.text }}
         >
           {/* Status Bar */}
-          <div className="h-10 pt-2 px-6 flex items-center justify-between text-[11px] font-bold select-none shrink-0 z-30">
+          <div
+            className={`h-10 pt-2 px-6 flex items-center justify-between text-[11px] font-bold select-none shrink-0 z-40 transition-colors ${
+              currentTab === 'reels' ? 'absolute top-0 left-0 right-0 text-white pointer-events-none drop-shadow-md' : ''
+            }`}
+            style={{ color: currentTab === 'reels' ? '#FFFFFF' : colors.text }}
+          >
             <span>9:41</span>
             <div className="flex items-center gap-1.5">
               <span>5G</span>
               <div
                 className="w-5 h-2.5 border rounded-[3px] p-0.5 flex items-center"
-                style={{ borderColor: colors.text }}
+                style={{ borderColor: currentTab === 'reels' ? '#FFFFFF' : colors.text }}
               >
                 <div
                   className="w-full h-full rounded-[1px]"
-                  style={{ backgroundColor: colors.text }}
+                  style={{ backgroundColor: currentTab === 'reels' ? '#FFFFFF' : colors.text }}
                 />
               </div>
             </div>
           </div>
 
-          {/* MAIN SCREEN SWITCHER */}
-          <div className="flex-1 overflow-y-auto no-scrollbar pb-20">
+          {/* 3. REELS SCREEN (TRUE 100% MAXIMUM FULL-SCREEN IMMERSIVE VERTICAL VIDEO) */}
+          {currentTab === 'reels' && (
+            <div
+              ref={reelsScrollRef}
+              onScroll={handleReelsScroll}
+              className="absolute inset-0 z-10 snap-y snap-mandatory overflow-y-scroll no-scrollbar bg-black"
+            >
+              {reels.map((reel) => {
+                const isPaused = !!pausedReels[reel.id];
+                const isHeartPopping = heartPopReelId === reel.id;
+
+                return (
+                  <div
+                    key={reel.id}
+                    className="w-full h-full snap-start snap-always relative shrink-0 overflow-hidden flex flex-col justify-between select-none"
+                    style={{
+                      background: `linear-gradient(135deg, ${reel.gradient.join(', ')})`,
+                    }}
+                    onDoubleClick={() => handleReelDoubleClick(reel.id)}
+                  >
+                    {/* Ambient subtle animated shimmer overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/60 pointer-events-none" />
+
+                    {/* Central Play/Pause Tap Target */}
+                    <div
+                      onClick={() => handleTogglePlayPause(reel.id)}
+                      className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer"
+                    >
+                      {isPaused && (
+                        <div className="w-16 h-16 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white/90 shadow-2xl animate-scale-in border border-white/20">
+                          <Play size={28} className="translate-x-0.5 fill-white text-white" />
+                        </div>
+                      )}
+
+                      {/* Double tap heart pop animation */}
+                      {isHeartPopping && (
+                        <div className="absolute flex items-center justify-center animate-ping pointer-events-none">
+                          <Heart size={90} className="fill-[#FF2A55] text-[#FF2A55] drop-shadow-2xl" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Top Floating Overlay (Reels Header & Controls) */}
+                    <div className="relative z-20 pt-11 px-5 flex items-center justify-between bg-gradient-to-b from-black/80 via-black/40 to-transparent pb-6 pointer-events-auto">
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-xl font-extrabold text-white tracking-tight drop-shadow-md">
+                          Reels
+                        </span>
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-pink-500/30 border border-pink-400/40 text-[10px] font-bold text-pink-300 uppercase tracking-wider backdrop-blur-md">
+                          <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse" />
+                          Live
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsMuted(!isMuted);
+                            showToast(isMuted ? 'Sound unmuted' : 'Sound muted');
+                          }}
+                          className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/15 flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+                          title={isMuted ? 'Unmute' : 'Mute'}
+                        >
+                          {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+                        </button>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            showToast('Camera launched for new Reel');
+                          }}
+                          className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/15 flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+                          title="Record Reel"
+                        >
+                          <Camera size={15} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Bottom-Left Information Overlay */}
+                    <div className="relative z-20 pb-16 px-4 flex items-end justify-between pointer-events-auto">
+                      <div className="flex flex-col gap-2 max-w-[72%] text-white">
+                        {/* Author row */}
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className="w-9 h-9 rounded-full p-0.5 flex items-center justify-center shadow-lg"
+                            style={{
+                              background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                            }}
+                          >
+                            <div
+                              className="w-full h-full rounded-full flex items-center justify-center text-[11px] font-extrabold text-white"
+                              style={{
+                                background: `linear-gradient(135deg, ${reel.avatarGradient.join(', ')})`,
+                              }}
+                            >
+                              {reel.author[0]}
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-extrabold text-white drop-shadow-sm">
+                                {reel.author}
+                              </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleFollow(reel.id);
+                                }}
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all ${
+                                  reel.isFollowing
+                                    ? 'bg-white/20 border-white/30 text-white'
+                                    : 'bg-pink-500/90 border-pink-400 text-white shadow-sm'
+                                }`}
+                              >
+                                {reel.isFollowing ? 'Following' : 'Follow'}
+                              </button>
+                            </div>
+                            <div className="flex items-center gap-1 text-[11px] text-white/80">
+                              <MapPin size={10} className="text-pink-400" />
+                              <span>{reel.location}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Caption & Tags */}
+                        <p className="text-xs text-white/95 leading-relaxed drop-shadow-sm">
+                          {reel.caption}
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {reel.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                showToast(`Explore tag ${tag}`);
+                              }}
+                              className="text-[10px] font-semibold text-pink-300 hover:text-pink-200 cursor-pointer drop-shadow-sm"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Music Audio Ticker with Sound Waves */}
+                        <div className="flex items-center gap-2 mt-0.5 py-1 px-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 self-start text-[10px] text-white/90">
+                          <Music size={11} className="text-pink-400 animate-pulse shrink-0" />
+                          <span className="truncate max-w-[190px] font-medium">
+                            {reel.audioTrack}
+                          </span>
+                          <div className="flex items-end gap-0.5 h-2.5 shrink-0">
+                            <span className="w-0.5 h-1.5 bg-pink-400 rounded-full animate-bounce" />
+                            <span className="w-0.5 h-2.5 bg-purple-400 rounded-full animate-bounce [animation-delay:0.15s]" />
+                            <span className="w-0.5 h-2 bg-indigo-400 rounded-full animate-bounce [animation-delay:0.3s]" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right Action Stack */}
+                      <div className="flex flex-col items-center gap-3 text-white pb-2">
+                        {/* Like Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleReelLike(reel.id);
+                          }}
+                          className="flex flex-col items-center gap-0.5 group"
+                        >
+                          <div
+                            className={`w-11 h-11 rounded-full backdrop-blur-md border flex items-center justify-center transition-all group-active:scale-90 ${
+                              reel.isLiked
+                                ? 'bg-pink-500/30 border-pink-400/50 shadow-lg shadow-pink-500/20'
+                                : 'bg-black/45 border-white/15 hover:bg-black/60'
+                            }`}
+                          >
+                            <Heart
+                              size={21}
+                              className={
+                                reel.isLiked
+                                  ? 'fill-[#FF2A55] text-[#FF2A55] scale-110'
+                                  : 'text-white group-hover:scale-110 transition-transform'
+                              }
+                            />
+                          </div>
+                          <span className="text-[11px] font-extrabold drop-shadow-md">
+                            {reel.likesCount.toLocaleString()}
+                          </span>
+                        </button>
+
+                        {/* Comments Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveReelComments(reel);
+                          }}
+                          className="flex flex-col items-center gap-0.5 group"
+                        >
+                          <div className="w-11 h-11 rounded-full bg-black/45 backdrop-blur-md border border-white/15 flex items-center justify-center hover:bg-black/60 transition-all group-active:scale-90">
+                            <MessageCircle size={21} className="text-white group-hover:scale-110 transition-transform" />
+                          </div>
+                          <span className="text-[11px] font-extrabold drop-shadow-md">
+                            {reel.commentsCount}
+                          </span>
+                        </button>
+
+                        {/* Bookmark Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleReelSave(reel.id);
+                          }}
+                          className="flex flex-col items-center gap-0.5 group"
+                        >
+                          <div
+                            className={`w-11 h-11 rounded-full backdrop-blur-md border flex items-center justify-center transition-all group-active:scale-90 ${
+                              reel.isSaved
+                                ? 'bg-amber-500/30 border-amber-400/50 shadow-lg shadow-amber-500/20'
+                                : 'bg-black/45 border-white/15 hover:bg-black/60'
+                            }`}
+                          >
+                            <Bookmark
+                              size={20}
+                              className={
+                                reel.isSaved
+                                  ? 'fill-amber-400 text-amber-400 scale-110'
+                                  : 'text-white group-hover:scale-110 transition-transform'
+                              }
+                            />
+                          </div>
+                          <span className="text-[11px] font-extrabold drop-shadow-md">
+                            {reel.bookmarksCount}
+                          </span>
+                        </button>
+
+                        {/* Share Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator?.clipboard?.writeText?.(window.location.href);
+                            showToast('Reel link copied to clipboard!');
+                          }}
+                          className="flex flex-col items-center gap-0.5 group"
+                        >
+                          <div className="w-11 h-11 rounded-full bg-black/45 backdrop-blur-md border border-white/15 flex items-center justify-center hover:bg-black/60 transition-all group-active:scale-90">
+                            <Send size={19} className="text-white -rotate-12 group-hover:scale-110 transition-transform" />
+                          </div>
+                          <span className="text-[11px] font-extrabold drop-shadow-md">
+                            Share
+                          </span>
+                        </button>
+
+                        {/* Spinning Music Disc */}
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            showToast(`Audio: ${reel.audioTrack}`);
+                          }}
+                          className="w-10 h-10 rounded-full border-2 border-white/30 bg-black/60 backdrop-blur-md flex items-center justify-center cursor-pointer shadow-lg animate-spin [animation-duration:5s] hover:scale-105 transition-transform"
+                        >
+                          <Disc size={18} className="text-pink-400" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-20">
+                      <div className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 w-2/3 animate-pulse" />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* MAIN SCREEN SWITCHER (For Home, Explore, Create, Notifications, Profile) */}
+          {currentTab !== 'reels' && (
+            <div
+              ref={feedScrollRef}
+              onScroll={handleFeedScroll}
+              className="flex-1 overflow-y-auto no-scrollbar pb-20"
+            >
             {/* 1. HOME SCREEN (Real Feed + Concept Stories & Visual PostCards) */}
             {currentTab === 'home' && (
               <div>
@@ -617,74 +1064,6 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {/* 3. REELS SCREEN (Snapping Video Cards) */}
-            {currentTab === 'reels' && (
-              <div className="p-4 space-y-4">
-                <div className="flex items-center justify-between pb-2">
-                  <h2 className="text-xl font-extrabold tracking-tight" style={{ color: colors.text }}>
-                    Reels
-                  </h2>
-                  <span className="text-xs font-bold text-pink-400 uppercase tracking-wider">
-                    Live
-                  </span>
-                </div>
-
-                {reels.map((reel) => (
-                  <div
-                    key={reel.id}
-                    className="w-full h-[480px] rounded-3xl p-5 flex flex-col justify-end shadow-2xl relative overflow-hidden"
-                    style={{
-                      background: `linear-gradient(135deg, ${reel.gradient.join(', ')})`,
-                    }}
-                  >
-                    <div className="flex items-end justify-between z-10">
-                      <div className="bg-black/40 backdrop-blur-md rounded-2xl p-3 max-w-[70%]">
-                        <span className="text-xs font-extrabold text-white block">
-                          {reel.author}
-                        </span>
-                        <span className="text-[11px] text-slate-300 block">
-                          {reel.location}
-                        </span>
-                      </div>
-
-                      {/* Reel Right Actions */}
-                      <div className="flex flex-col items-center gap-3">
-                        <button
-                          onClick={() => handleToggleReelLike(reel.id)}
-                          className="flex flex-col items-center gap-0.5 text-white"
-                        >
-                          <div className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
-                            <Heart
-                              size={20}
-                              className={reel.isLiked ? 'fill-[#FF2A55] text-[#FF2A55]' : ''}
-                            />
-                          </div>
-                          <span className="text-[10px] font-bold">{reel.likesCount}</span>
-                        </button>
-
-                        <button
-                          onClick={() => showToast('Opening Reel comments...')}
-                          className="flex flex-col items-center gap-0.5 text-white"
-                        >
-                          <div className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
-                            <MessageCircle size={20} />
-                          </div>
-                          <span className="text-[10px] font-bold">{reel.comments}</span>
-                        </button>
-
-                        <button
-                          onClick={() => showToast('Reel shared')}
-                          className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white"
-                        >
-                          <Send size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
               </div>
             )}
 
@@ -1017,29 +1396,53 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               </div>
             )}
           </div>
+          )}
 
-          {/* 7. FLOATING 5-DESTINATION CONCEPT BOTTOM NAVIGATION */}
-          <div className="absolute bottom-2 left-4 right-4 z-30">
+          {/* 7. FLOATING 5-DESTINATION CONCEPT BOTTOM NAVIGATION (Scroll-Responsive Sizing) */}
+          <div
+            className={`absolute left-0 right-0 z-30 flex justify-center pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              isCompactNav ? 'bottom-2' : 'bottom-3'
+            }`}
+          >
             <div
-              className="h-14 rounded-full border px-4 flex items-center justify-around shadow-2xl backdrop-blur-xl"
+              className={`pointer-events-auto rounded-full border flex items-center justify-around transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] shadow-2xl ${
+                isCompactNav
+                  ? 'h-10 w-[272px] px-2.5 shadow-lg'
+                  : 'h-14 w-[355px] px-4 shadow-2xl'
+              }`}
               style={{
-                backgroundColor: isDark ? 'rgba(18, 20, 32, 0.92)' : 'rgba(255, 255, 255, 0.92)',
-                borderColor: colors.border,
+                backgroundColor: currentTab === 'reels'
+                  ? (isCompactNav ? 'rgba(12, 14, 22, 0.88)' : 'rgba(12, 14, 22, 0.94)')
+                  : (isDark
+                      ? (isCompactNav ? 'rgba(18, 20, 32, 0.88)' : 'rgba(18, 20, 32, 0.94)')
+                      : (isCompactNav ? 'rgba(255, 255, 255, 0.90)' : 'rgba(255, 255, 255, 0.95)')),
+                borderColor: currentTab === 'reels' ? 'rgba(255, 255, 255, 0.16)' : colors.border,
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
               }}
             >
               {/* Home */}
               <button
                 onClick={() => setCurrentTab('home')}
-                className="flex flex-col items-center justify-center p-2 relative hover:opacity-80 transition-opacity"
+                className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
               >
-                <div className="relative">
-                  <span className="text-xl" style={{ color: currentTab === 'home' ? colors.tabActive : colors.tabInactive }}>
-                    ⌂
-                  </span>
-                </div>
+                <span
+                  className={`font-semibold leading-none transition-all duration-300 ${
+                    isCompactNav ? 'text-base' : 'text-xl'
+                  }`}
+                  style={{
+                    color: currentTab === 'home'
+                      ? colors.tabActive
+                      : (currentTab === 'reels' ? '#94A3B8' : colors.tabInactive),
+                  }}
+                >
+                  ⌂
+                </span>
                 {currentTab === 'home' && (
                   <div
-                    className="w-3 h-0.5 rounded-full absolute bottom-1"
+                    className={`rounded-full absolute bottom-0.5 transition-all duration-300 ${
+                      isCompactNav ? 'w-2 h-0.5' : 'w-3 h-0.5'
+                    }`}
                     style={{ backgroundColor: colors.text }}
                   />
                 )}
@@ -1048,15 +1451,22 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               {/* Explore */}
               <button
                 onClick={() => setCurrentTab('explore')}
-                className="flex flex-col items-center justify-center p-2 relative hover:opacity-80 transition-opacity"
+                className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
               >
                 <Search
-                  size={19}
-                  style={{ color: currentTab === 'explore' ? colors.tabActive : colors.tabInactive }}
+                  size={isCompactNav ? 16 : 19}
+                  className="transition-all duration-300"
+                  style={{
+                    color: currentTab === 'explore'
+                      ? colors.tabActive
+                      : (currentTab === 'reels' ? '#94A3B8' : colors.tabInactive),
+                  }}
                 />
                 {currentTab === 'explore' && (
                   <div
-                    className="w-3 h-0.5 rounded-full absolute bottom-1"
+                    className={`rounded-full absolute bottom-0.5 transition-all duration-300 ${
+                      isCompactNav ? 'w-2 h-0.5' : 'w-3 h-0.5'
+                    }`}
                     style={{ backgroundColor: colors.text }}
                   />
                 )}
@@ -1065,16 +1475,23 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               {/* Reels */}
               <button
                 onClick={() => setCurrentTab('reels')}
-                className="flex flex-col items-center justify-center p-2 relative hover:opacity-80 transition-opacity"
+                className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
               >
                 <Play
-                  size={19}
-                  style={{ color: currentTab === 'reels' ? colors.tabActive : colors.tabInactive }}
+                  size={isCompactNav ? 16 : 19}
+                  className="transition-all duration-300"
+                  style={{
+                    color: currentTab === 'reels'
+                      ? '#FFFFFF'
+                      : colors.tabInactive,
+                  }}
                 />
                 {currentTab === 'reels' && (
                   <div
-                    className="w-3 h-0.5 rounded-full absolute bottom-1"
-                    style={{ backgroundColor: colors.text }}
+                    className={`rounded-full absolute bottom-0.5 transition-all duration-300 ${
+                      isCompactNav ? 'w-2 h-0.5' : 'w-3 h-0.5'
+                    }`}
+                    style={{ backgroundColor: '#FFFFFF' }}
                   />
                 )}
               </button>
@@ -1082,33 +1499,44 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               {/* Create */}
               <button
                 onClick={() => setCurrentTab('create')}
-                className="flex flex-col items-center justify-center p-2 relative hover:opacity-80 transition-opacity"
+                className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
               >
                 <Plus
-                  size={20}
-                  style={{ color: currentTab === 'create' ? colors.tabActive : colors.tabInactive }}
+                  size={isCompactNav ? 17 : 20}
+                  className="transition-all duration-300"
+                  style={{
+                    color: currentTab === 'create'
+                      ? colors.tabActive
+                      : (currentTab === 'reels' ? '#94A3B8' : colors.tabInactive),
+                  }}
                 />
                 {currentTab === 'create' && (
                   <div
-                    className="w-3 h-0.5 rounded-full absolute bottom-1"
+                    className={`rounded-full absolute bottom-0.5 transition-all duration-300 ${
+                      isCompactNav ? 'w-2 h-0.5' : 'w-3 h-0.5'
+                    }`}
                     style={{ backgroundColor: colors.text }}
                   />
                 )}
               </button>
 
-              {/* Profile Avatar Ring */}
+              {/* Profile Avatar */}
               <button
                 onClick={() => setCurrentTab('profile')}
                 className="flex flex-col items-center justify-center p-1 relative hover:opacity-80 transition-opacity"
               >
                 <div
-                  className="w-7 h-7 rounded-full p-0.5 flex items-center justify-center"
+                  className={`rounded-full p-0.5 flex items-center justify-center transition-all duration-300 ${
+                    isCompactNav ? 'w-5.5 h-5.5' : 'w-7 h-7'
+                  }`}
                   style={{
                     background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
                   }}
                 >
                   <div
-                    className="w-full h-full rounded-full flex items-center justify-center text-white text-[10px] font-extrabold"
+                    className={`w-full h-full rounded-full flex items-center justify-center text-white font-extrabold transition-all duration-300 ${
+                      isCompactNav ? 'text-[8px]' : 'text-[10px]'
+                    }`}
                     style={{ backgroundColor: colors.surface }}
                   >
                     {currentUser.name[0]}
@@ -1116,7 +1544,9 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 </div>
                 {currentTab === 'profile' && (
                   <div
-                    className="w-3 h-0.5 rounded-full absolute bottom-0.5"
+                    className={`rounded-full absolute bottom-0 transition-all duration-300 ${
+                      isCompactNav ? 'w-2 h-0.5' : 'w-3 h-0.5'
+                    }`}
                     style={{ backgroundColor: colors.text }}
                   />
                 )}
@@ -1125,6 +1555,34 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Reel Comments Drawer Integration */}
+      <ReelCommentsDrawer
+        isOpen={!!activeReelComments}
+        onClose={() => setActiveReelComments(null)}
+        reel={activeReelComments ? {
+          id: activeReelComments.id,
+          author: {
+            name: activeReelComments.author,
+            username: activeReelComments.username,
+            location: activeReelComments.location,
+            avatarGradient: activeReelComments.avatarGradient?.join(', ') || '#3A3B4D, #2B2C3B',
+          },
+          gradient: activeReelComments.gradient,
+          likes: activeReelComments.likes,
+          likesCount: activeReelComments.likesCount,
+          comments: activeReelComments.comments,
+          commentsCount: activeReelComments.commentsCount,
+          isLiked: activeReelComments.isLiked,
+          isSaved: activeReelComments.isSaved,
+        } as any : null}
+        isDark={isDark}
+        onCommentAdded={(reelId, text) => {
+          setReels((prev) =>
+            prev.map((r) => (r.id === reelId ? { ...r, commentsCount: r.commentsCount + 1 } : r))
+          );
+        }}
+      />
     </div>
   );
 };
