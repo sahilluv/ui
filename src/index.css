@@ -18,6 +18,76 @@
   }
 }
 
+/* Custom animations for heart burst, mini heart pop, and bookmark pop */
+@keyframes heartBurst {
+  0% {
+    transform: scale(0) rotate(-15deg);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1.35) rotate(5deg) translateY(-10px);
+    opacity: 1;
+  }
+  65% {
+    transform: scale(1.15) rotate(0deg) translateY(-20px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.85) rotate(6deg) translateY(-36px);
+    opacity: 0;
+  }
+}
+
+@keyframes miniHeartPop {
+  0% {
+    transform: scale(0.3) translateY(0);
+    opacity: 0;
+  }
+  35% {
+    transform: scale(1.6) translateY(-8px);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.2) translateY(-16px);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(0.7) translateY(-28px);
+    opacity: 0;
+  }
+}
+
+@keyframes bookmarkPop {
+  0% {
+    transform: scale(0.4) translateY(0);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.4) translateY(-10px);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(1.1) translateY(-20px);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(0.7) translateY(-32px);
+    opacity: 0;
+  }
+}
+
+.animate-heart-burst {
+  animation: heartBurst 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-mini-heart-pop {
+  animation: miniHeartPop 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-bookmark-pop {
+  animation: bookmarkPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
 /* Custom smooth dark background pattern for preview frame */
 body {
   margin: 0;

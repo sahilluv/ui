@@ -6,25 +6,23 @@
 import React, { useState } from 'react';
 import {
   Smartphone,
-  Layers,
-  Code,
+  Columns3,
+  LayoutGrid,
   Moon,
   Sun,
   Sparkles,
-  GitBranch,
 } from 'lucide-react';
-import { UnifiedShadowApp } from './components/UnifiedShadowApp';
-import { ConceptOverview } from './components/ConceptOverview';
-import { ExpoCodeViewer } from './components/ExpoCodeViewer';
+import { PhoneSimulator, TabType } from './components/PhoneSimulator';
 import { StoryViewerModal } from './components/StoryViewerModal';
 import { StoryItem, INITIAL_STORIES } from './data/mockData';
 
-type AppViewMode = 'app' | 'code' | 'overview';
+type AppViewMode = 'single' | 'side-by-side' | 'gallery';
 
 export default function App() {
-  const [viewMode, setViewMode] = useState<AppViewMode>('app');
+  const [viewMode, setViewMode] = useState<AppViewMode>('single');
   const [isDark, setIsDark] = useState(true);
   const [activeStory, setActiveStory] = useState<StoryItem | null>(null);
+  const [currentTab, setCurrentTab] = useState<TabType>('home');
 
   const toggleTheme = () => {
     setIsDark((prev) => !prev);
@@ -51,18 +49,18 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0B0C14] text-white">
+    <div className="min-h-screen flex flex-col bg-[#0D0F17] text-white">
       {/* 1. Global Navigation Bar */}
-      <header className="h-16 px-4 sm:px-8 border-b border-white/10 bg-[#0F101C]/90 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between">
+      <header className="h-16 px-4 sm:px-8 border-b border-white/10 bg-[#0F111D]/95 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between">
         {/* Brand Lockup */}
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-2xl p-0.5 shadow-md shadow-pink-500/30 flex items-center justify-center"
+            className="w-9 h-9 rounded-2xl p-0.5 shadow-md shadow-pink-500/30 flex items-center justify-center shrink-0"
             style={{
               background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
             }}
           >
-            <div className="w-full h-full rounded-[14px] bg-[#0F101C] flex items-center justify-center">
+            <div className="w-full h-full rounded-[14px] bg-[#0F111D] flex items-center justify-center">
               <span className="font-shadow-script text-xl text-pink-400">S</span>
             </div>
           </div>
@@ -71,9 +69,9 @@ export default function App() {
               <span className="font-shadow-script text-2xl text-white tracking-wide">
                 Shadow
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30 uppercase tracking-wider flex items-center gap-1">
-                <GitBranch size={10} />
-                Unified App
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30 uppercase tracking-wider hidden sm:inline-flex items-center gap-1">
+                <Sparkles size={10} />
+                Pixel-Perfect UI
               </span>
             </div>
           </div>
@@ -82,91 +80,202 @@ export default function App() {
         {/* View Mode Switcher */}
         <div className="flex items-center p-1 bg-white/5 border border-white/10 rounded-2xl gap-1">
           <button
-            onClick={() => setViewMode('app')}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              viewMode === 'app'
+            onClick={() => setViewMode('single')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+              viewMode === 'single'
                 ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Smartphone size={14} />
-            <span className="hidden sm:inline">Shadow App (New UI + Real Data)</span>
-            <span className="sm:hidden">App</span>
+            <span className="hidden sm:inline">Interactive Phone</span>
+            <span className="sm:hidden">Single</span>
           </button>
 
           <button
-            onClick={() => setViewMode('code')}
+            onClick={() => setViewMode('side-by-side')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              viewMode === 'code'
+              viewMode === 'side-by-side'
                 ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <Code size={14} />
-            <span className="hidden sm:inline">Monorepo Code</span>
-            <span className="sm:hidden">Code</span>
+            <Columns3 size={14} />
+            <span className="hidden sm:inline">3 Mockups Side-by-Side</span>
+            <span className="sm:hidden">3 Phones</span>
           </button>
 
           <button
-            onClick={() => setViewMode('overview')}
+            onClick={() => setViewMode('gallery')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              viewMode === 'overview'
+              viewMode === 'gallery'
                 ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            <Layers size={14} />
-            <span className="hidden sm:inline">Concept Overview</span>
-            <span className="sm:hidden">Design</span>
+            <LayoutGrid size={14} />
+            <span className="hidden sm:inline">All 5 Screens Gallery</span>
+            <span className="sm:hidden">All 5</span>
           </button>
         </div>
 
-        {/* Theme and Action Group */}
+        {/* Global Brand Indicator */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold transition-all text-slate-300"
-            title="Toggle Shadow theme"
-          >
-            {isDark ? <Sun size={14} className="text-yellow-400" /> : <Moon size={14} className="text-purple-400" />}
-            <span className="hidden md:inline">{isDark ? 'Dark Mode' : 'Light Mode'}</span>
-          </button>
+          <span className="text-xs font-semibold text-slate-400 hidden sm:inline">
+            Shadow v1.0
+          </span>
         </div>
       </header>
 
       {/* 2. Main Content Area */}
       <main className="flex-1 flex flex-col">
-        {/* VIEW 1: ONE Unified Shadow Application */}
-        {viewMode === 'app' && (
+        {/* VIEW 1: SINGLE INTERACTIVE PHONE */}
+        {viewMode === 'single' && (
           <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
             <div className="max-w-md w-full mb-3 text-center">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/25 text-pink-400 text-xs font-semibold">
                 <Sparkles size={12} />
-                New Concept Visual System + Real Shadow Functionality
+                Live Interactive Shadow Experience
               </span>
               <p className="text-[11px] text-slate-400 mt-1">
-                Interactive feed, post creation, stories, reels, and profile with Shadow Identity.
+                Feed, Stories, Explore, TV, Shop, and Profile. Tap like buttons, carousel dots, follow, and themes.
               </p>
             </div>
 
-            <UnifiedShadowApp
+            <PhoneSimulator
               isDark={isDark}
               onToggleTheme={toggleTheme}
+              activeTab={currentTab}
+              onTabChange={setCurrentTab}
+              onSelectStory={setActiveStory}
             />
           </div>
         )}
 
-        {/* VIEW 2: Monorepo Code Viewer */}
-        {viewMode === 'code' && <ExpoCodeViewer />}
+        {/* VIEW 2: 3 DEVICES SIDE-BY-SIDE (MATCHING SCREENSHOT 1) */}
+        {viewMode === 'side-by-side' && (
+          <div className="flex-1 overflow-x-auto p-4 sm:p-8 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
+            <div className="min-w-fit mx-auto flex items-start justify-center gap-6 sm:gap-10 pb-12">
+              {/* Phone 1: Feed / Home (Light Mode) */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+                  Feed / Home (Light Mode)
+                </span>
+                <PhoneSimulator
+                  isDark={false}
+                  onToggleTheme={toggleTheme}
+                  activeTab="home"
+                  onSelectStory={setActiveStory}
+                />
+              </div>
 
-        {/* VIEW 3: Concept Overview */}
-        {viewMode === 'overview' && (
-          <ConceptOverview
-            onSelectStory={setActiveStory}
-            onFocusDevice={() => {
-              setViewMode('app');
-            }}
-          />
+              {/* Phone 2: Feed / Home (Dark Mode) */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+                  Feed / Home (Dark Mode)
+                </span>
+                <PhoneSimulator
+                  isDark={true}
+                  onToggleTheme={toggleTheme}
+                  activeTab="home"
+                  onSelectStory={setActiveStory}
+                />
+              </div>
+
+              {/* Phone 3: Profile Mauricio Lopez (Light Mode) */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" />
+                  Profile Mauricio Lopez (Light Mode)
+                </span>
+                <PhoneSimulator
+                  isDark={false}
+                  onToggleTheme={toggleTheme}
+                  activeTab="profile"
+                  onSelectStory={setActiveStory}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 3: ALL 5 SCREENS GALLERY (MATCHING SCREENSHOTS 1, 2, 3) */}
+        {viewMode === 'gallery' && (
+          <div className="flex-1 overflow-x-auto p-4 sm:p-8 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
+            <div className="min-w-fit mx-auto flex items-start justify-center gap-6 sm:gap-8 pb-12">
+              {/* Screen 1: Feed Light */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  Feed / Home (Light Mode)
+                </span>
+                <PhoneSimulator
+                  isDark={false}
+                  onToggleTheme={toggleTheme}
+                  activeTab="home"
+                  onSelectStory={setActiveStory}
+                />
+              </div>
+
+              {/* Screen 2: Feed Dark */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  Feed / Home (Dark Mode)
+                </span>
+                <PhoneSimulator
+                  isDark={true}
+                  onToggleTheme={toggleTheme}
+                  activeTab="home"
+                  onSelectStory={setActiveStory}
+                />
+              </div>
+
+              {/* Screen 3: Explore Dark (Screenshot 2) */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  Explore / Discover (Dark Mode)
+                </span>
+                <PhoneSimulator
+                  isDark={true}
+                  onToggleTheme={toggleTheme}
+                  activeTab="explore"
+                  onSelectStory={setActiveStory}
+                />
+              </div>
+
+              {/* Screen 4: TV Videos Light (Screenshot 3) */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-pink-400" />
+                  TV / Videos (Light Mode)
+                </span>
+                <PhoneSimulator
+                  isDark={false}
+                  onToggleTheme={toggleTheme}
+                  activeTab="reels"
+                  onSelectStory={setActiveStory}
+                />
+              </div>
+
+              {/* Screen 5: Profile Mauricio Lopez Light */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-pink-400" />
+                  Profile Mauricio Lopez (Light Mode)
+                </span>
+                <PhoneSimulator
+                  isDark={false}
+                  onToggleTheme={toggleTheme}
+                  activeTab="profile"
+                  onSelectStory={setActiveStory}
+                />
+              </div>
+            </div>
+          </div>
         )}
       </main>
 

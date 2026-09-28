@@ -23,6 +23,10 @@ import {
   MoreVertical,
   Play,
   RotateCw,
+  UserPlus,
+  UserCheck,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import {
   INITIAL_STORIES,
@@ -79,6 +83,141 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
   const [hasUnreadNotifs, setHasUnreadNotifs] = useState(true);
   const [isRefreshingReels, setIsRefreshingReels] = useState(false);
   const [shareModalPost, setShareModalPost] = useState<PostItem | null>(null);
+  const [postSlidePages, setPostSlidePages] = useState<Record<string, number>>({ post_maoo: 1 });
+  const [selectedCategory, setSelectedCategory] = useState<string>('igtv');
+
+  // Floating toast alert state
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastIconType, setToastIconType] = useState<'sparkles' | 'bookmark'>('sparkles');
+  const triggerToast = (msg: string, icon: 'sparkles' | 'bookmark' = 'sparkles') => {
+    setToastMessage(msg);
+    setToastIconType(icon);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
+
+  // Follow states for authors across feeds & reels
+  const [followedAuthors, setFollowedAuthors] = useState<Record<string, boolean>>({
+    'Maoo.lopez': false,
+    'eliott.j': false,
+    'christian.lue': false,
+    'sofia.mtz': false,
+  });
+
+  const handleToggleFollowAuthor = (username: string) => {
+    setFollowedAuthors((prev) => {
+      const nextState = !prev[username];
+      triggerToast(nextState ? `Followed @${username}!` : `Unfollowed @${username}`);
+      return { ...prev, [username]: nextState };
+    });
+  };
+
+  // Double-tap & heart burst states
+  const [lastPostTap, setLastPostTap] = useState<{ id: string; time: number }>({ id: '', time: 0 });
+  const [heartBurstPostId, setHeartBurstPostId] = useState<string | null>(null);
+
+  const [lastReelTap, setLastReelTap] = useState<{ id: string; time: number }>({ id: '', time: 0 });
+  const [heartBurstReelId, setHeartBurstReelId] = useState<string | null>(null);
+  const [poppingBookmarkReelId, setPoppingBookmarkReelId] = useState<string | null>(null);
+
+  const handlePostMediaClick = (post: PostItem) => {
+    const now = Date.now();
+    if (lastPostTap.id === post.id && now - lastPostTap.time < 320) {
+      // Double tap detected!
+      if (!post.isLiked) {
+        handleLikePost(post.id);
+      }
+      setHeartBurstPostId(post.id);
+      setTimeout(() => setHeartBurstPostId(null), 950);
+      setLastPostTap({ id: '', time: 0 });
+      return;
+    }
+    setLastPostTap({ id: post.id, time: now });
+
+    // Single tap advances page
+    const current = postSlidePages[post.id] || 1;
+    const next = current < (post.totalPages || 3) ? current + 1 : 1;
+    setPostSlidePages((prev) => ({ ...prev, [post.id]: next }));
+  };
+
+  const handleReelCardClick = (reel: ReelItem) => {
+    const now = Date.now();
+    if (lastReelTap.id === reel.id && now - lastReelTap.time < 320) {
+      // Double tap detected!
+      if (!reel.isLiked) {
+        handleToggleReelLike(reel.id, true);
+      }
+      setHeartBurstReelId(reel.id);
+      setTimeout(() => setHeartBurstReelId(null), 950);
+      setLastReelTap({ id: '', time: 0 });
+      return;
+    }
+    setLastReelTap({ id: reel.id, time: now });
+  };
+
+  // Horizontal swipe state for Reels navigation (Swipe Left -> Creator Profile, Swipe Right -> Feed)
+  const [reelSwipeStartX, setReelSwipeStartX] = useState<number | null>(null);
+  const [reelSwipeStartY, setReelSwipeStartY] = useState<number | null>(null);
+  const [reelSwipeDeltaX, setReelSwipeDeltaX] = useState<number>(0);
+  const [isSwipingReel, setIsSwipingReel] = useState(false);
+
+  const handleReelTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
+    // Only handle primary left click if mouse event
+    if ('button' in e && e.button !== 0) return;
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    setReelSwipeStartX(clientX);
+    setReelSwipeStartY(clientY);
+    setReelSwipeDeltaX(0);
+    setIsSwipingReel(true);
+  };
+
+  const handleReelTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
+    if (!isSwipingReel || reelSwipeStartX === null || reelSwipeStartY === null) return;
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    const diffX = clientX - reelSwipeStartX;
+    const diffY = clientY - reelSwipeStartY;
+
+    // Only engage horizontal drag if horizontal motion exceeds vertical motion
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 8) {
+      setReelSwipeDeltaX(diffX);
+    }
+  };
+
+  const handleReelTouchEnd = (reel: ReelItem) => {
+    if (!isSwipingReel) return;
+    setIsSwipingReel(false);
+
+    // If swipe threshold passed (> 50px)
+    if (reelSwipeDeltaX < -50) {
+      // SWIPE LEFT: view creator's profile page
+      triggerToast(`Viewing @${reel.author.username}'s profile`);
+      handleTabChange('profile');
+    } else if (reelSwipeDeltaX > 50) {
+      // SWIPE RIGHT: return to feed
+      triggerToast('Returned to Feed');
+      handleTabChange('home');
+    } else {
+      // Tap / double-tap detection if gesture had minimal movement
+      if (Math.abs(reelSwipeDeltaX) < 10) {
+        handleReelCardClick(reel);
+      }
+    }
+
+    setReelSwipeDeltaX(0);
+    setReelSwipeStartX(null);
+    setReelSwipeStartY(null);
+  };
+
+  const getPostGradient = (postId: string, fallback: string) => {
+    if (postId === 'post_maoo') {
+      const page = postSlidePages[postId] || 1;
+      if (page === 1) return 'linear-gradient(180deg, #531B82 0%, #7622B3 35%, #A81EBF 65%, #FF0A78 100%)';
+      if (page === 2) return 'linear-gradient(180deg, #3A0CA3 0%, #7209B7 40%, #F72585 100%)';
+      if (page === 3) return 'linear-gradient(180deg, #180033 0%, #5E118A 50%, #FF007F 100%)';
+    }
+    return fallback;
+  };
 
   // Pull-to-refresh reels handler
   const handleRefreshReels = () => {
@@ -106,11 +245,12 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     }, 1200);
   };
 
-  const handleToggleReelLike = (id: string) => {
+  const handleToggleReelLike = (id: string, forceLike = false) => {
     setReels((prev) =>
       prev.map((r) => {
         if (r.id === id) {
-          const nextLiked = !r.isLiked;
+          const nextLiked = forceLike ? true : !r.isLiked;
+          if (forceLike && r.isLiked) return r;
           return {
             ...r,
             isLiked: nextLiked,
@@ -125,7 +265,20 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
   const handleToggleReelSave = (id: string) => {
     setReels((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, isSaved: !r.isSaved } : r))
+      prev.map((r) => {
+        if (r.id === id) {
+          const nextSaved = !r.isSaved;
+          if (nextSaved) {
+            setPoppingBookmarkReelId(id);
+            setTimeout(() => setPoppingBookmarkReelId(null), 850);
+            triggerToast('Reel saved to your collection ✨', 'bookmark');
+          } else {
+            triggerToast('Reel removed from saved', 'bookmark');
+          }
+          return { ...r, isSaved: nextSaved };
+        }
+        return r;
+      })
     );
   };
 
@@ -134,11 +287,15 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       prev.map((r) => {
         if (r.id === reelId) {
           const nextCount = r.commentsCount + 1;
-          return {
+          const updated = {
             ...r,
             commentsCount: nextCount,
             comments: String(nextCount),
           };
+          if (activeReelComments?.id === reelId) {
+            setActiveReelComments(updated);
+          }
+          return updated;
         }
         return r;
       })
@@ -227,13 +384,33 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
           : 'bg-white text-[#12131D] border-black/10 shadow-slate-300/40'
       }`}
     >
+      {/* Floating Feedback Toast for Follows & Saves */}
+      {toastMessage && (
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-[#121422]/95 backdrop-blur-md text-white text-xs font-semibold shadow-2xl border border-white/15 flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-none whitespace-nowrap">
+          {toastIconType === 'bookmark' ? (
+            <Bookmark size={14} className="fill-[#991BEA] text-[#991BEA]" />
+          ) : (
+            <Sparkles size={14} className="text-[#FF0A78]" />
+          )}
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* 1. Phone Top Notch & Status Bar (9:41, Icons) */}
-      <div className="relative pt-3 pb-1 px-7 flex items-center justify-between z-20 text-xs font-semibold shrink-0">
-        <span className={isDark ? 'text-white' : 'text-slate-900'}>9:41</span>
+      <div
+        className={`pt-3 pb-1 px-7 flex items-center justify-between text-xs font-semibold ${
+          currentTab === 'reels'
+            ? 'absolute top-0 left-0 right-0 z-30 pointer-events-none text-slate-900 drop-shadow-xs'
+            : 'relative z-20 shrink-0'
+        }`}
+      >
+        <span className={currentTab === 'reels' ? 'text-slate-900 font-bold' : isDark ? 'text-white' : 'text-slate-900'}>
+          9:41
+        </span>
         <div className="w-24 h-4 bg-black/80 rounded-full flex items-center justify-center">
           <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
         </div>
-        <div className="flex items-center gap-1.5 opacity-80">
+        <div className={`flex items-center gap-1.5 opacity-80 ${currentTab === 'reels' ? 'text-slate-900' : ''}`}>
           {/* Signal */}
           <div className="flex items-end gap-0.5 h-2.5">
             <span className="w-0.5 h-1 bg-current rounded-xs" />
@@ -249,7 +426,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       </div>
 
       {/* 2. Top Header (Shared between main screens) */}
-      {currentTab !== 'create' && (
+      {currentTab !== 'create' && currentTab !== 'reels' && (
         <header className="h-13 px-5 flex items-center justify-between shrink-0 z-10">
           {/* Left Action: Circle with Plus (+) matching reference exactly */}
           <button
@@ -279,45 +456,57 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             )}
           </div>
 
-          {/* Right Actions: Theme switch + Speech bubble message icon */}
+          {/* Right Actions: Theme switch (ONLY ON PROFILE PAGE) + Profile Button */}
           <div className="flex items-center gap-1.5">
-            <button
-              onClick={onToggleTheme}
-              className={`w-7.5 h-7.5 rounded-full flex items-center justify-center transition-colors ${
-                isDark ? 'bg-white/10 hover:bg-white/20 text-yellow-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-              }`}
-              title={isDark ? 'Modo Claro' : 'Modo Oscuro'}
-            >
-              {isDark ? <Sun size={14} /> : <Moon size={14} />}
-            </button>
-
-            {/* Direct Messages / Chat Speech Bubble with Red '2' Badge */}
-            <button
-              onClick={() => {
-                setHasUnreadNotifs(false);
-                handleTabChange('notifications');
-              }}
-              className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-transform active:scale-95 ${
-                isDark ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-[#12131D]'
-              }`}
-              title="Mensajes & Notificaciones"
-            >
-              {/* Speech bubble SVG matching reference exactly */}
-              <svg
-                viewBox="0 0 24 24"
-                className="w-6 h-6 fill-none stroke-current"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            {currentTab === 'profile' && (
+              <button
+                onClick={onToggleTheme}
+                className={`w-7.5 h-7.5 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                  isDark ? 'bg-white/10 hover:bg-white/20 text-yellow-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                }`}
+                title={isDark ? 'Modo Claro' : 'Modo Oscuro'}
               >
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-              </svg>
+                {isDark ? <Sun size={14} /> : <Moon size={14} />}
+              </button>
+            )}
 
-              {/* Red Badge with '2' on Home screen */}
-              {hasUnreadNotifs && currentTab === 'home' && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-[#FF2E63] text-white text-[10px] font-bold flex items-center justify-center shadow-sm leading-none">
-                  2
-                </span>
+            {/* Switched: Profile Button (Circular avatar with vibrant gradient ring) */}
+            <button
+              onClick={() => handleTabChange('profile')}
+              className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-transform active:scale-95 cursor-pointer ${
+                currentTab === 'profile' ? 'scale-105' : 'hover:scale-105'
+              }`}
+              title="Perfil de Usuario"
+            >
+              <div
+                className={`w-7.5 h-7.5 rounded-full p-[1.5px] transition-all ${
+                  currentTab === 'profile'
+                    ? 'ring-2 ring-pink-500 shadow-md shadow-pink-500/50'
+                    : ''
+                }`}
+                style={{
+                  background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                }}
+              >
+                <div
+                  className={`w-full h-full rounded-full p-[1px] ${
+                    isDark ? 'bg-[#0B0C14]' : 'bg-white'
+                  }`}
+                >
+                  <div
+                    className="w-full h-full rounded-full"
+                    style={{
+                      background: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 100%)',
+                    }}
+                  />
+                </div>
+              </div>
+              {currentTab === 'profile' && (
+                <div
+                  className={`absolute -bottom-1.5 w-2.5 h-[2px] rounded-full ${
+                    isDark ? 'bg-white' : 'bg-[#12131D]'
+                  }`}
+                />
               )}
             </button>
           </div>
@@ -326,10 +515,10 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
       {/* 3. Screen Viewport */}
       <div
-        className={`flex-1 no-scrollbar relative ${
+        className={`no-scrollbar relative ${
           currentTab === 'reels'
-            ? 'overflow-y-auto snap-y snap-mandatory scroll-smooth'
-            : 'overflow-y-auto'
+            ? 'absolute inset-0 z-10 w-full h-full overflow-y-auto snap-y snap-mandatory scroll-smooth'
+            : 'flex-1 overflow-y-auto'
         }`}
       >
         {/* ======================================= */}
@@ -438,14 +627,39 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         </div>
                       </div>
                       <div>
-                        <p
-                          className={`text-xs font-bold leading-tight ${
-                            isDark ? 'text-white' : 'text-[#12131D]'
-                          }`}
-                        >
-                          {post.author.username}
-                        </p>
-                        <p className="text-[10px] text-slate-400 leading-tight">
+                        <div className="flex items-center gap-2">
+                          <p
+                            className={`text-xs font-bold leading-tight ${
+                              isDark ? 'text-white' : 'text-[#12131D]'
+                            }`}
+                          >
+                            {post.author.username}
+                          </p>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleFollowAuthor(post.author.username);
+                            }}
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-all active:scale-90 cursor-pointer ${
+                              followedAuthors[post.author.username]
+                                ? 'border border-emerald-500/30 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20'
+                                : 'bg-gradient-to-r from-[#FF0A78] to-[#991BEA] text-white shadow-xs hover:opacity-95'
+                            }`}
+                          >
+                            {followedAuthors[post.author.username] ? (
+                              <>
+                                <UserCheck size={10} />
+                                <span>Following</span>
+                              </>
+                            ) : (
+                              <>
+                                <UserPlus size={10} />
+                                <span>Follow</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
                           {post.author.location ? `${post.author.location} • ` : ''}
                           {post.timeAgo}
                         </p>
@@ -466,15 +680,26 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                     </div>
                   </div>
 
-                  {/* Rounded Media Card (Cinematic Gradient Artwork) */}
+                  {/* Rounded Media Card (Cinematic Gradient Artwork with Double-Tap to Like) */}
                   <div
-                    className="relative w-full h-[360px] rounded-[28px] overflow-hidden shadow-xl p-4 flex flex-col justify-between"
-                    style={{ background: post.gradient }}
+                    onClick={() => handlePostMediaClick(post)}
+                    className="relative w-full h-[360px] rounded-[32px] overflow-hidden shadow-2xl p-4 flex flex-col justify-between cursor-pointer transition-all duration-300 select-none"
+                    style={{ background: getPostGradient(post.id, post.gradient) }}
                   >
-                    {/* Top right "1/2" page indicator */}
-                    {post.totalPages && post.totalPages > 1 && (
-                      <div className="self-end bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-[11px] font-semibold">
-                        {post.currentPage || 1}/{post.totalPages}
+                    {/* Big Blooming Heart Burst on Double Tap */}
+                    {heartBurstPostId === post.id && (
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+                        <Heart
+                          size={96}
+                          className="fill-[#FF2A55] text-white animate-heart-burst drop-shadow-[0_0_24px_rgba(255,42,85,0.85)]"
+                        />
+                      </div>
+                    )}
+
+                    {/* Top right "1/3" page indicator */}
+                    {(post.totalPages || 3) > 1 && (
+                      <div className="self-end bg-black/45 backdrop-blur-md px-2.5 py-1 rounded-full text-white text-[11px] font-bold border border-white/10 select-none">
+                        {postSlidePages[post.id] || post.currentPage || 1}/{post.totalPages || 3}
                       </div>
                     )}
 
@@ -482,26 +707,68 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                     <div className="mt-auto flex items-center justify-between pt-2">
                       {/* Red Heart Like Pill */}
                       <button
-                        onClick={() => handleLikePost(post.id)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FF2A55] text-white text-xs font-bold shadow-lg shadow-pink-600/40 active:scale-95 transition-transform"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLikePost(post.id);
+                        }}
+                        className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-white text-xs font-bold shadow-lg shadow-pink-600/40 active:scale-95 transition-transform cursor-pointer ${
+                          post.isLiked ? 'bg-[#FF2A55]' : 'bg-[#FF2A55]'
+                        }`}
                       >
                         <Heart
                           size={14}
-                          className={post.isLiked ? 'fill-white' : ''}
+                          className={post.isLiked ? 'fill-white text-white scale-110' : 'fill-white text-white'}
                         />
                         <span>{post.likesCount.toLocaleString()}</span>
                       </button>
 
-                      {/* Pagination Dots */}
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-3.5 h-1.5 rounded-full bg-white" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
+                      {/* Pagination Dots (Interactive) */}
+                      <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full border border-white/10">
+                        {[1, 2, 3].map((dot) => {
+                          const activePage = postSlidePages[post.id] || post.currentPage || 1;
+                          const isActive = activePage === dot;
+                          return (
+                            <button
+                              key={dot}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPostSlidePages((prev) => ({ ...prev, [post.id]: dot }));
+                              }}
+                              className={`transition-all duration-300 ${
+                                isActive
+                                  ? 'w-3.5 h-1.5 rounded-full bg-white shadow-sm'
+                                  : 'w-1.5 h-1.5 rounded-full bg-white/40 hover:bg-white/70'
+                              }`}
+                            />
+                          );
+                        })}
                       </div>
 
-                      {/* Floating Circle Button (White circle with chat/heart) */}
-                      <button className="w-9 h-9 rounded-full bg-white text-slate-900 flex items-center justify-center shadow-md active:scale-95 transition-transform">
-                        <MessageCircle size={17} />
+                      {/* Floating Circle Button (White circle with chat bubble icon) */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveReelComments({
+                            id: post.id,
+                            author: {
+                              name: post.author.name,
+                              username: post.author.username,
+                              location: post.author.location || 'Shadow Studio',
+                              avatarGradient: post.author.avatarGradient,
+                            },
+                            gradient: getPostGradient(post.id, post.gradient),
+                            likes: `${post.likesCount}`,
+                            likesCount: post.likesCount,
+                            comments: `${post.commentsCount}`,
+                            commentsCount: post.commentsCount,
+                            isLiked: post.isLiked,
+                            isSaved: post.isSaved,
+                          });
+                        }}
+                        className="w-9 h-9 rounded-full bg-white text-slate-900 flex items-center justify-center shadow-lg active:scale-95 hover:scale-105 transition-all cursor-pointer"
+                        title="Ver comentarios"
+                      >
+                        <MessageCircle size={17} className="text-slate-900" />
                       </button>
                     </div>
                   </div>
@@ -570,11 +837,16 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               {CATEGORIES.map((cat) => (
                 <div
                   key={cat.id}
+                  onClick={() => {
+                    setSelectedCategory(cat.id);
+                    if (cat.id === 'igtv') handleTabChange('reels');
+                    else if (cat.id === 'tienda') handleTabChange('shop');
+                  }}
                   className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group"
                 >
                   <div
-                    className={`w-18 h-18 rounded-[20px] shadow-md flex flex-col items-center justify-center p-2 gap-1.5 group-hover:scale-105 transition-all ${
-                      cat.id === 'igtv' ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0B0C14]' : ''
+                    className={`w-18 h-18 rounded-[20px] shadow-md flex flex-col items-center justify-center p-2 gap-1.5 group-hover:scale-105 active:scale-95 transition-all ${
+                      selectedCategory === cat.id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0B0C14]' : ''
                     }`}
                     style={{ background: cat.gradient }}
                   >
@@ -663,89 +935,169 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         )}
 
         {/* ======================================= */}
-        {/* SCREEN: REELS (Cinematic Snapping Feed) */}
+        {/* SCREEN: REELS (Full-Screen Immersive Snapping Feed) */}
         {/* ======================================= */}
         {currentTab === 'reels' && (
-          <div className="p-3 pb-8 space-y-4">
-            {/* Pull-to-Refresh Interactive Control & Refreshing Indicator */}
-            <div className="flex items-center justify-between px-2 pt-0.5">
-              <span className="text-[11px] font-semibold tracking-wider uppercase opacity-60">
-                Reels · Vertical Snap
-              </span>
-              <button
-                onClick={handleRefreshReels}
-                disabled={isRefreshingReels}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                  isDark
-                    ? 'bg-white/10 hover:bg-white/15 text-white active:bg-white/20'
-                    : 'bg-black/5 hover:bg-black/10 text-slate-800 active:bg-black/15'
-                }`}
-                title="Swipe or click to refresh reels"
-              >
-                <RotateCw
-                  size={12}
-                  className={`${isRefreshingReels ? 'animate-spin text-[#FF0A78]' : 'text-current'}`}
-                />
-                <span className={isRefreshingReels ? 'text-[#FF0A78] font-bold' : ''}>
-                  {isRefreshingReels ? 'Refreshing...' : 'Refresh'}
-                </span>
-              </button>
-            </div>
-
-            {/* Refreshing Loading Banner */}
-            {isRefreshingReels && (
-              <div className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-[#FF0A78]/20 via-[#7928CA]/20 to-[#06B6D4]/20 border border-[#FF0A78]/30 flex items-center justify-center gap-2 text-xs font-semibold animate-pulse shadow-sm">
-                <RotateCw size={13} className="animate-spin text-[#FF0A78]" />
-                <span className={isDark ? 'text-white' : 'text-slate-900'}>
-                  Fetching new cinematic reels...
-                </span>
-              </div>
-            )}
-
+          <div className="w-full h-full">
             {reels.map((reel) => (
               <div
                 key={reel.id}
-                className="snap-start shrink-0 relative w-full h-[540px] rounded-[36px] overflow-hidden shadow-2xl p-5 flex flex-col justify-between border border-white/10"
-                style={{ background: reel.gradient }}
+                onTouchStart={handleReelTouchStart}
+                onTouchMove={handleReelTouchMove}
+                onTouchEnd={() => handleReelTouchEnd(reel)}
+                onMouseDown={handleReelTouchStart}
+                onMouseMove={handleReelTouchMove}
+                onMouseUp={() => handleReelTouchEnd(reel)}
+                onMouseLeave={() => {
+                  if (isSwipingReel) {
+                    setIsSwipingReel(false);
+                    setReelSwipeDeltaX(0);
+                    setReelSwipeStartX(null);
+                    setReelSwipeStartY(null);
+                  }
+                }}
+                className="snap-start snap-always shrink-0 relative w-full h-[780px] overflow-hidden select-none cursor-pointer"
+                style={{
+                  background: reel.gradient,
+                  transform: isSwipingReel && Math.abs(reelSwipeDeltaX) > 8 ? `translateX(${reelSwipeDeltaX * 0.35}px)` : undefined,
+                  transition: isSwipingReel ? 'none' : 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                }}
               >
-                {/* Top Author Row */}
-                <div className="flex items-center justify-between z-10">
+                {/* Swipe Right Visual Cue: Return to Feed */}
+                {isSwipingReel && reelSwipeDeltaX > 20 && (
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
+                    <ChevronLeft size={16} className="text-[#FF0A78]" />
+                    <span>Return to Feed</span>
+                  </div>
+                )}
+
+                {/* Swipe Left Visual Cue: View Creator Profile */}
+                {isSwipingReel && reelSwipeDeltaX < -20 && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
+                    <span>@{reel.author.username}</span>
+                    <ChevronRight size={16} className="text-[#991BEA]" />
+                  </div>
+                )}
+
+                {/* Big Blooming Heart Burst on Double Tap */}
+                {heartBurstReelId === reel.id && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+                    <Heart
+                      size={110}
+                      className="fill-[#FF2A55] text-white animate-heart-burst drop-shadow-[0_0_28px_rgba(255,42,85,0.85)]"
+                    />
+                  </div>
+                )}
+
+                {/* TOP OVERLAY: Creator/Profile Information & Controls */}
+                <div className="absolute top-0 left-0 right-0 pt-10 px-6 flex items-center justify-between z-20 bg-gradient-to-b from-black/75 via-black/35 to-transparent pb-8 pointer-events-auto">
                   <div
                     className="flex items-center gap-3 cursor-pointer"
-                    onClick={() => handleTabChange('profile')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTabChange('profile');
+                    }}
                   >
                     <div
-                      className="w-11 h-11 rounded-full p-0.5 shadow-md flex items-center justify-center"
+                      className="w-10 h-10 rounded-full p-[2px] shadow-lg shrink-0"
                       style={{ background: reel.author.avatarGradient }}
                     >
-                      <div className="w-full h-full rounded-full bg-black/30" />
+                      <div className="w-full h-full rounded-full bg-slate-900/90 flex items-center justify-center">
+                        <div
+                          className="w-full h-full rounded-full"
+                          style={{ background: reel.author.avatarGradient }}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-white text-base font-bold tracking-tight drop-shadow-sm leading-tight">
-                        {reel.author.name}
-                      </h3>
-                      <p className="text-white/80 text-xs font-medium leading-tight">
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-white text-sm font-extrabold tracking-tight drop-shadow-md leading-tight">
+                          {reel.author.name}
+                        </h3>
+                        {/* Inline Follow / Following Capsule Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleFollowAuthor(reel.author.username);
+                          }}
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all active:scale-90 cursor-pointer ${
+                            followedAuthors[reel.author.username]
+                              ? 'bg-black/50 text-emerald-400 border border-emerald-400/40 backdrop-blur-md'
+                              : 'bg-gradient-to-r from-[#FF0A78] to-[#991BEA] text-white shadow-md hover:opacity-95'
+                          }`}
+                        >
+                          {followedAuthors[reel.author.username] ? (
+                            <>
+                              <UserCheck size={10} />
+                              <span>Following</span>
+                            </>
+                          ) : (
+                            <>
+                              <UserPlus size={10} />
+                              <span>Follow</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <p className="text-white/80 text-[11px] font-medium leading-tight mt-0.5 drop-shadow-sm">
                         {reel.author.location}
                       </p>
                     </div>
                   </div>
 
-                  <button className="w-8 h-8 rounded-full flex items-center justify-center text-white/90 hover:text-white hover:bg-black/20 transition-colors">
-                    <MoreVertical size={19} />
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShareModalPost({
+                        id: reel.id,
+                        author: {
+                          name: reel.author.name,
+                          username: reel.author.username,
+                          location: reel.author.location,
+                          avatarGradient: reel.author.avatarGradient,
+                        },
+                        timeAgo: 'Justo ahora',
+                        gradient: reel.gradient,
+                        likesCount: reel.likesCount,
+                        commentsCount: reel.commentsCount,
+                        likedByText: `${reel.likes} likes`,
+                        captionTitle: reel.author.name,
+                        captionBody: reel.author.location,
+                        totalPages: 1,
+                        currentPage: 1,
+                        isLiked: reel.isLiked,
+                        isSaved: reel.isSaved,
+                      });
+                    }}
+                    className="w-8 h-8 rounded-full bg-black/30 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/90 hover:text-white hover:bg-black/50 transition-colors cursor-pointer"
+                    title="Opciones"
+                  >
+                    <MoreVertical size={18} />
                   </button>
                 </div>
 
                 {/* Center Touch / Play Indicator */}
-                <div className="self-center w-16 h-16 rounded-full bg-black/20 backdrop-blur-xs flex items-center justify-center text-white/60 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
-                  <Play size={24} className="fill-white/60 ml-1" />
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleReelLike(reel.id);
+                  }}
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                >
+                  <div className="w-16 h-16 rounded-full bg-black/10 backdrop-blur-xs flex items-center justify-center text-white/50 opacity-0 hover:opacity-100 transition-opacity">
+                    <Play size={24} className="fill-white/50 ml-1" />
+                  </div>
                 </div>
 
-                {/* Floating Bottom Engagement Pill (Exact Replica from Attachment) */}
-                <div className="self-center z-10 mb-2">
-                  <div className="bg-white rounded-full px-5 py-2.5 shadow-2xl flex items-center gap-3.5 border border-black/5">
+                {/* Floating Engagement Capsule Pill: Centered white pill directly above bottom navigation bar */}
+                <div className="absolute bottom-22 left-0 right-0 flex justify-center z-20 pointer-events-auto select-none">
+                  <div className="bg-white rounded-full px-5 py-2.5 shadow-2xl flex items-center gap-3.5 border border-black/5 select-none">
                     {/* Heart + Count */}
                     <button
-                      onClick={() => handleToggleReelLike(reel.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleReelLike(reel.id);
+                      }}
                       className="flex items-center gap-2 group cursor-pointer active:scale-90 transition-transform"
                     >
                       <Heart
@@ -766,7 +1118,10 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
                     {/* Comment + Count */}
                     <button
-                      onClick={() => setActiveReelComments(reel)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveReelComments(reel);
+                      }}
                       className="flex items-center gap-2 group cursor-pointer active:scale-90 transition-transform"
                     >
                       <MessageCircle
@@ -781,20 +1136,35 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                     {/* Divider 2 */}
                     <span className="w-[1px] h-4 bg-slate-200" />
 
-                    {/* Bookmark */}
-                    <button
-                      onClick={() => handleToggleReelSave(reel.id)}
-                      className="cursor-pointer active:scale-90 transition-transform"
-                    >
-                      <Bookmark
-                        size={17}
-                        className={
-                          reel.isSaved
-                            ? 'fill-purple-600 text-purple-600'
-                            : 'text-[#12131D] hover:text-purple-600'
-                        }
-                      />
-                    </button>
+                    {/* Bookmark with Pop Animation and Saved State */}
+                    <div className="relative flex items-center justify-center">
+                      {poppingBookmarkReelId === reel.id && (
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 pointer-events-none z-30">
+                          <Bookmark
+                            size={22}
+                            className="fill-[#991BEA] text-white animate-bookmark-pop drop-shadow-[0_4px_12px_rgba(153,27,234,0.7)]"
+                          />
+                        </div>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleReelSave(reel.id);
+                        }}
+                        aria-label={reel.isSaved ? 'Reel saved • Click to remove' : 'Save Reel'}
+                        title={reel.isSaved ? 'Reel saved • Click to remove' : 'Save Reel'}
+                        className="cursor-pointer active:scale-85 transition-all p-1"
+                      >
+                        <Bookmark
+                          size={18}
+                          className={`transition-all duration-200 ${
+                            reel.isSaved
+                              ? 'fill-[#991BEA] text-[#991BEA] scale-110 drop-shadow-[0_2px_8px_rgba(153,27,234,0.4)]'
+                              : 'text-[#12131D] hover:text-[#991BEA]'
+                          }`}
+                        />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1181,7 +1551,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                       isDark ? 'text-white' : 'text-slate-900'
                     }`}
                   >
-                    876
+                    {isFollowingMauricio ? 877 : 876}
                   </span>
                   <span className="text-[11px] text-slate-400 font-medium">Followers</span>
                 </div>
@@ -1201,10 +1571,12 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               {/* Follow Button */}
               <button
                 onClick={() => setIsFollowingMauricio(!isFollowingMauricio)}
-                className={`w-full max-w-[260px] h-10 rounded-full font-bold text-sm shadow-lg shadow-pink-500/30 flex items-center justify-center transition-transform active:scale-95 mb-5 ${
+                className={`w-full max-w-[260px] h-10 rounded-full font-bold text-sm shadow-lg flex items-center justify-center transition-all active:scale-95 mb-5 cursor-pointer ${
                   isFollowingMauricio
-                    ? 'bg-slate-700 text-white'
-                    : 'text-white'
+                    ? isDark
+                      ? 'bg-white/10 text-white border border-white/20'
+                      : 'bg-slate-100 text-slate-800 border border-slate-200'
+                    : 'text-white shadow-pink-500/40 hover:opacity-95'
                 }`}
                 style={
                   isFollowingMauricio
@@ -1331,12 +1703,18 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       </div>
 
       {/* 4. Compact Floating Bottom Navigation Bar (Matching Attachment Exactly) */}
-      <div className="px-4 pb-2 pt-1 z-20 shrink-0">
+      <div
+        className={`px-4 pb-2 pt-1 z-30 transition-all ${
+          currentTab === 'reels'
+            ? 'absolute bottom-2 left-0 right-0'
+            : 'relative shrink-0'
+        }`}
+      >
         <nav
-          className={`h-14 px-5 rounded-full flex items-center justify-between shadow-xl border transition-all ${
+          className={`h-14 px-5 rounded-full flex items-center justify-between shadow-2xl border transition-all ${
             isDark
-              ? 'bg-[#151726] border-white/10 text-slate-400'
-              : 'bg-white border-black/5 text-slate-700 shadow-slate-300/40'
+              ? 'bg-[#151726]/90 backdrop-blur-xl border-white/10 text-slate-400'
+              : 'bg-white/95 backdrop-blur-xl border-black/5 text-slate-700 shadow-slate-300/40'
           }`}
         >
           {/* Tab 1: Home */}
@@ -1456,34 +1834,40 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             )}
           </button>
 
-          {/* Tab 5: Profile (Circular avatar with vibrant gradient ring) */}
+          {/* Tab 5: Direct Messages / Chat Speech Bubble with Red '2' Badge (Switched from top right) */}
           <button
-            onClick={() => handleTabChange('profile')}
-            className="flex flex-col items-center justify-center relative cursor-pointer"
-            title="Perfil"
+            onClick={() => {
+              setHasUnreadNotifs(false);
+              handleTabChange('notifications');
+            }}
+            className={`flex flex-col items-center justify-center relative cursor-pointer transition-colors ${
+              currentTab === 'notifications'
+                ? isDark
+                  ? 'text-white'
+                  : 'text-[#12131D]'
+                : 'hover:text-slate-300'
+            }`}
+            title="Mensajes & Notificaciones"
           >
-            <div
-              className={`w-7 h-7 rounded-full p-[1.5px] transition-transform ${
-                currentTab === 'profile' ? 'scale-110 shadow-sm shadow-purple-500/50' : ''
-              }`}
-              style={{
-                background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
-              }}
-            >
-              <div
-                className={`w-full h-full rounded-full p-[1px] ${
-                  isDark ? 'bg-[#151726]' : 'bg-white'
-                }`}
+            <div className="relative flex items-center justify-center">
+              <svg
+                viewBox="0 0 24 24"
+                className="w-5.5 h-5.5 fill-none stroke-current"
+                strokeWidth={currentTab === 'notifications' ? '2.4' : '2'}
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <div
-                  className="w-full h-full rounded-full"
-                  style={{
-                    background: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 100%)',
-                  }}
-                />
-              </div>
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              </svg>
+
+              {/* Red Badge with '2' */}
+              {hasUnreadNotifs && (
+                <span className="absolute -top-1 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-[#FF2E63] text-white text-[9px] font-bold flex items-center justify-center shadow-sm leading-none border-2 border-white">
+                  2
+                </span>
+              )}
             </div>
-            {currentTab === 'profile' && (
+            {currentTab === 'notifications' && (
               <div
                 className={`absolute -bottom-2 w-3.5 h-[2.5px] rounded-full ${
                   isDark ? 'bg-white' : 'bg-[#12131D]'
