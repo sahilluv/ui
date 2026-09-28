@@ -93,14 +93,34 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 </Text>
               </View>
             )}
-            <View style={styles.badgeSubRow}>
-              {shadowRank && (
-                <View style={[styles.rankTag, { backgroundColor: colors.accent + '20', borderColor: colors.accent + '50' }]}>
-                  <Text style={[styles.rankTagText, { color: colors.accent }]}>
-                    ♙ {shadowRank} · RANK I
+            {shadowRank && (
+              <LinearGradient
+                colors={['rgba(255, 10, 120, 0.22)', 'rgba(153, 27, 234, 0.16)', 'rgba(79, 70, 229, 0.12)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={[styles.premiumPawnBadge, { borderColor: 'rgba(255, 10, 120, 0.45)' }]}
+              >
+                <View style={styles.pawnEmblemCircle}>
+                  <Text style={styles.pawnEmblemSymbol}>♙</Text>
+                </View>
+                <View style={styles.pawnTextColumn}>
+                  <View style={styles.pawnRankTitleRow}>
+                    <Text style={[styles.pawnRankTitle, { color: colors.text }]}>PAWN</Text>
+                    <View style={styles.pawnTierPill}>
+                      <Text style={styles.pawnTierPillText}>RANK I</Text>
+                    </View>
+                  </View>
+                  <Text style={[styles.pawnSubtitle, { color: colors.secondaryText }]}>
+                    Foundation Status · Tier 01
                   </Text>
                 </View>
-              )}
+              </LinearGradient>
+            )}
+            <View style={styles.badgeSubRow}>
+              <View style={styles.authorityRow}>
+                <Text style={[styles.authorityLabel, { color: colors.secondaryText }]}>Authority: </Text>
+                <Text style={{ color: colors.accent, fontWeight: '700', fontSize: 10 }}>Backend</Text>
+              </View>
               {verificationStatus && (
                 <View
                   style={[
@@ -349,7 +369,74 @@ const styles = StyleSheet.create({
   badgeSubRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 4,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(255,255,255,0.06)',
+  },
+  premiumPawnBadge: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    gap: 12,
+  },
+  pawnEmblemCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255, 10, 120, 0.25)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 10, 120, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pawnEmblemSymbol: {
+    fontSize: 22,
+    color: '#FF0A78',
+  },
+  pawnTextColumn: {
+    flex: 1,
+  },
+  pawnRankTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
+  },
+  pawnRankTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+  },
+  pawnTierPill: {
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 10, 120, 0.3)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 10, 120, 0.45)',
+  },
+  pawnTierPillText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#FF77B8',
+    letterSpacing: 0.5,
+  },
+  pawnSubtitle: {
+    fontSize: 10,
+    fontWeight: '500',
+    marginTop: 2,
+  },
+  authorityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  authorityLabel: {
+    fontSize: 10,
+    fontWeight: '500',
   },
   rankTag: {
     flex: 1,

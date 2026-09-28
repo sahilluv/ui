@@ -4,7 +4,6 @@ import {
   Heart,
   Search,
   Send,
-  Grid,
   Bookmark,
   MessageCircle,
   Tv,
@@ -33,6 +32,7 @@ import {
   Info,
   Copy,
 } from 'lucide-react';
+import { PawnRankBadge, PremiumPawnInsignia } from './PawnRankBadge';
 
 export const PawnGlyph = ({
   size = 14,
@@ -41,17 +41,7 @@ export const PawnGlyph = ({
   size?: number;
   className?: string;
 }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className={className}
-  >
-    <circle cx="12" cy="5.5" r="2.75" />
-    <path d="M9.5 9.5C9.5 8.95 9.95 8.5 10.5 8.5h3c.55 0 1 .45 1 1 0 1.5-.6 2.3-1.4 3.2-.2.2-.4.4-.6.6.3.3.6.7.7 1.2h1.3c.55 0 1 .45 1 1v1.5H7.5V16c0-.55.45-1 1-1H10c.1-.5.4-.9.7-1.2-.2-.2-.4-.4-.6-.6-.8-.9-1.4-1.7-1.4-3.2 0-.55.45-1 1-1z" />
-    <path d="M5.5 19.5h13a1 1 0 0 1 1 1v.5H4.5v-.5a1 1 0 0 1 1-1z" />
-  </svg>
+  <PremiumPawnInsignia size={size} className={className} glow={false} />
 );
 import {
   INITIAL_STORIES,
@@ -67,6 +57,7 @@ import {
 } from '../data/mockData';
 import { ShareSheetModal } from './ShareSheetModal';
 import { ReelCommentsDrawer } from './ReelCommentsDrawer';
+import { PullUpRefresh } from './PullUpRefresh';
 
 export type TabType = 'home' | 'explore' | 'reels' | 'shop' | 'create' | 'notifications' | 'profile';
 
@@ -161,6 +152,144 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
   const [isMauricioVerified, setIsMauricioVerified] = useState(true);
   const [showRankHierarchyModal, setShowRankHierarchyModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+
+  // Pull Up Refresh states
+  const [isPullUpRefreshing, setIsPullUpRefreshing] = useState(false);
+  const [pullUpDistance, setPullUpDistance] = useState(0);
+  const touchStartYRef = useRef(0);
+  const isPullingUpRef = useRef(false);
+
+  // Pool of fresh content to inject on pull-up refresh
+  const FRESH_POSTS_POOL: PostItem[] = [
+    {
+      id: 'post_cyber_noir',
+      author: {
+        name: 'Elena Rostova',
+        username: 'Elena.art',
+        avatarGradient: 'linear-gradient(135deg, #EC4899 0%, #F43F5E 50%, #FB7185 100%)',
+        location: 'Berlin, Germany',
+      },
+      timeAgo: 'Just now',
+      gradient: 'linear-gradient(180deg, #090B14 0%, #1E1B4B 45%, #4C1D95 75%, #FF0A78 100%)',
+      likesCount: 3120,
+      commentsCount: 245,
+      likedByText: 'maoo.lopez and 3,119 others',
+      captionTitle: 'CYBERNETIC CHROMA',
+      captionBody: 'Night street reflections after summer neon rain in Mitte.',
+      totalPages: 1,
+      currentPage: 1,
+      isLiked: false,
+      isSaved: false,
+    },
+    {
+      id: 'post_aurora_drift',
+      author: {
+        name: 'Sofia Martinez',
+        username: 'sofia.mtz',
+        avatarGradient: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)',
+        location: 'Reykjavik, Iceland',
+      },
+      timeAgo: '1m ago',
+      gradient: 'linear-gradient(145deg, #022C22 0%, #065F46 40%, #0D9488 75%, #2DD4BF 100%)',
+      likesCount: 5210,
+      commentsCount: 412,
+      likedByText: 'eliott.j and 5,209 others',
+      captionTitle: 'TEAL AURORA DREAMS',
+      captionBody: 'Chasing geomagnetic solar ribbons above volcanic basalt.',
+      totalPages: 2,
+      currentPage: 1,
+      isLiked: true,
+      isSaved: false,
+    },
+    {
+      id: 'post_monolith',
+      author: {
+        name: 'Marco Rossi',
+        username: 'marco.visuals',
+        avatarGradient: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
+        location: 'Milan, Italy',
+      },
+      timeAgo: '3m ago',
+      gradient: 'linear-gradient(145deg, #18181B 0%, #3F3F46 45%, #71717A 80%, #E4E4E7 100%)',
+      likesCount: 1980,
+      commentsCount: 88,
+      likedByText: 'Alice_002 and 1,979 others',
+      captionTitle: 'PRISMATIC VOID',
+      captionBody: 'High-contrast monochrome brutalist structure in morning fog.',
+      totalPages: 1,
+      currentPage: 1,
+      isLiked: false,
+      isSaved: true,
+    },
+  ];
+
+  const handlePullUpRefresh = async () => {
+    if (isPullUpRefreshing) return;
+    setIsPullUpRefreshing(true);
+
+    // Simulate network query latency
+    await new Promise((resolve) => setTimeout(resolve, 950));
+
+    // Append fresh posts to feed
+    setPosts((prevPosts) => {
+      const existingIds = new Set(prevPosts.map((p) => p.id));
+      const unadded = FRESH_POSTS_POOL.filter((p) => !existingIds.has(p.id));
+
+      if (unadded.length > 0) {
+        return [...prevPosts, ...unadded];
+      } else {
+        // Cycle fresh batch with new timestamp
+        const nextBatch = FRESH_POSTS_POOL.map((p, idx) => ({
+          ...p,
+          id: `post_synced_${Date.now()}_${idx}`,
+          timeAgo: 'Just now',
+        }));
+        return [...prevPosts, ...nextBatch];
+      }
+    });
+
+    setIsPullUpRefreshing(false);
+    setPullUpDistance(0);
+    triggerToast('Shadow feed refreshed! Fresh stories & posts synced.', 'sparkles');
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!viewportRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = viewportRef.current;
+    // Activate drag tracker when user is within 35px of bottom
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 35;
+    if (isAtBottom) {
+      touchStartYRef.current = e.touches[0].clientY;
+      isPullingUpRef.current = true;
+    } else {
+      isPullingUpRef.current = false;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isPullingUpRef.current || isPullUpRefreshing || !viewportRef.current) return;
+    const currentY = e.touches[0].clientY;
+    const deltaY = touchStartYRef.current - currentY; // positive when dragging upwards
+
+    if (deltaY > 0) {
+      // Elastic resistance curve
+      const resistedDistance = Math.min(Math.pow(deltaY, 0.82) * 1.6, 115);
+      setPullUpDistance(resistedDistance);
+    } else {
+      setPullUpDistance(0);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isPullingUpRef.current) {
+      isPullingUpRef.current = false;
+      if (pullUpDistance >= 50 && !isPullUpRefreshing) {
+        void handlePullUpRefresh();
+      } else {
+        setPullUpDistance(0);
+      }
+    }
+  };
 
   // Floating toast alert state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -610,6 +739,9 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       <div
         ref={viewportRef}
         onScroll={handleViewportScroll}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         className={`no-scrollbar relative ${
           currentTab === 'reels'
             ? 'absolute inset-0 z-10 w-full h-full overflow-y-auto snap-y snap-mandatory scroll-smooth'
@@ -730,13 +862,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                           >
                             {post.author.username}
                           </p>
-                          <span
-                            className="inline-flex items-center gap-0.5 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-pink-500/10 text-pink-400 border border-pink-500/25"
-                            title="Shadow Rank: PAWN (Starting Reputation Tier)"
-                          >
-                            <PawnGlyph size={9} />
-                            <span>PAWN</span>
-                          </span>
+                          <PawnRankBadge
+                            variant="compact"
+                            onClick={(e) => {
+                              e?.stopPropagation?.();
+                              triggerToast('Shadow Rank: PAWN (Rank I)', 'sparkles');
+                            }}
+                          />
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -768,16 +900,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 opacity-80">
+                    <div className="flex items-center opacity-80 hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => setShareModalPost(post)}
-                        className="p-1 hover:opacity-100 hover:scale-110 active:scale-95 transition-all text-current cursor-pointer"
+                        className="p-1.5 hover:scale-110 active:scale-95 transition-all text-current cursor-pointer rounded-full hover:bg-white/10"
                         title="Compartir publicación"
                       >
                         <Send size={18} />
-                      </button>
-                      <button className="p-1 hover:opacity-100 transition-opacity">
-                        <Grid size={16} />
                       </button>
                     </div>
                   </div>
@@ -926,6 +1055,18 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 </div>
               ))}
             </div>
+
+            {/* Pull Up Refresh Component at Bottom of Home Feed */}
+            <div className="pt-2 pb-6 flex justify-center">
+              <PullUpRefresh
+                onRefresh={handlePullUpRefresh}
+                isRefreshing={isPullUpRefreshing}
+                pullDistance={pullUpDistance}
+                threshold={50}
+                isDark={isDark}
+                label="Pull up to refresh feed"
+              />
+            </div>
           </div>
         )}
 
@@ -1033,6 +1174,18 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 />
               </div>
             </div>
+
+            {/* Pull Up Refresh Component at Bottom of Explore */}
+            <div className="pt-3 pb-4 flex justify-center">
+              <PullUpRefresh
+                onRefresh={async () => {
+                  await new Promise((r) => setTimeout(r, 700));
+                  triggerToast('Explorar synced with trending creative posts!', 'sparkles');
+                }}
+                isDark={isDark}
+                label="Pull up to refresh explore"
+              />
+            </div>
           </div>
         )}
 
@@ -1116,13 +1269,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         <h3 className="text-white text-sm font-extrabold tracking-tight drop-shadow-md leading-tight">
                           {reel.author.name}
                         </h3>
-                        <span
-                          className="inline-flex items-center gap-0.5 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-black/50 text-pink-300 border border-pink-500/30 backdrop-blur-md"
-                          title="Shadow Rank: PAWN"
-                        >
-                          <PawnGlyph size={9} />
-                          <span>PAWN</span>
-                        </span>
+                        <PawnRankBadge
+                          variant="compact"
+                          onClick={(e) => {
+                            e?.stopPropagation?.();
+                            triggerToast('Shadow Rank: PAWN (Rank I)', 'sparkles');
+                          }}
+                        />
                         {/* Inline Follow / Following Capsule Button */}
                         <button
                           onClick={(e) => {
@@ -1638,22 +1791,22 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
               {/* Shadow Identity & Pawn Rank Card */}
               <div
-                className={`w-full max-w-[310px] rounded-2xl p-2.5 mb-3 border transition-all ${
+                className={`w-full max-w-[325px] rounded-[24px] p-3 mb-3.5 border transition-all duration-300 ${
                   isDark
-                    ? 'bg-[#151726]/90 border-white/10 shadow-lg'
-                    : 'bg-white/95 border-slate-200 shadow-md'
+                    ? 'bg-[#151726]/95 border-white/10 shadow-xl shadow-black/40'
+                    : 'bg-white/95 border-slate-200/90 shadow-lg shadow-slate-200/50'
                 }`}
               >
                 {/* Header row: Shadow Identity label + Shadow ID */}
-                <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-white/5">
+                <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-white/5">
                   <div className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
-                    <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
+                    <span className="text-[10px] font-extrabold tracking-wider uppercase text-slate-400">
                       Shadow Identity
                     </span>
                   </div>
                   <button
-                    onClick={() => triggerToast('Shadow ID: shdw_mlopez89')}
+                    onClick={() => triggerToast('Shadow ID copied: shdw_mlopez89')}
                     className="flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors cursor-pointer"
                     title="Click to copy Shadow ID"
                   >
@@ -1663,41 +1816,26 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   </button>
                 </div>
 
-                {/* Badges: Pawn Rank & Verification Status */}
-                <div className="flex items-center justify-between gap-2">
-                  {/* Pawn Rank Badge */}
-                  <div
+                {/* Primary Premium Status Indicator: Distinct Proportional PAWN Rank Badge */}
+                <div className="mb-2.5">
+                  <PawnRankBadge
+                    variant="profile"
+                    isDark={isDark}
                     onClick={() => setShowRankHierarchyModal(true)}
-                    className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-xl cursor-pointer transition-all hover:scale-[1.02] border"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(255, 10, 120, 0.12) 0%, rgba(153, 27, 234, 0.10) 100%)',
-                      borderColor: 'rgba(255, 10, 120, 0.35)',
-                    }}
-                    title="View Shadow Rank Hierarchy"
-                  >
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-gradient-to-br from-pink-500/25 to-purple-600/35 border border-pink-500/40 text-pink-400 shadow-sm">
-                      <PawnGlyph size={15} />
-                    </div>
+                  />
+                </div>
 
-                    <div className="flex flex-col min-w-0">
-                      <div className="flex items-center gap-1">
-                        <span className="text-[11px] font-extrabold tracking-wider text-pink-400">
-                          PAWN
-                        </span>
-                        <span className="text-[8px] px-1 py-0.2 rounded bg-pink-500/20 text-pink-300 font-bold uppercase">
-                          Rank I
-                        </span>
-                      </div>
-                      <span className="text-[9px] text-slate-400 truncate">
-                        Reputation Status
-                      </span>
-                    </div>
+                {/* Secondary Row: Independent Verification Status + System Information Affordance */}
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/5">
+                  <div className="flex items-center gap-1 text-[9px] text-slate-400 font-medium">
+                    <span>Rank Authority:</span>
+                    <span className="text-pink-400 font-bold">Backend</span>
                   </div>
 
                   {/* Verification Status (Independent from Rank) */}
-                  <div
+                  <button
                     onClick={() => setShowVerificationModal(true)}
-                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl cursor-pointer border transition-all hover:scale-[1.02] ${
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all hover:scale-105 active:scale-95 cursor-pointer ${
                       isMauricioVerified
                         ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
                         : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
@@ -1705,19 +1843,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                     title="Independent Verification Status - Tap to toggle & inspect"
                   >
                     {isMauricioVerified ? (
-                      <ShieldCheck size={16} className="shrink-0" />
+                      <ShieldCheck size={12} className="shrink-0" />
                     ) : (
-                      <ShieldAlert size={16} className="shrink-0" />
+                      <ShieldAlert size={12} className="shrink-0" />
                     )}
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-extrabold tracking-wider">
-                        {isMauricioVerified ? 'VERIFIED' : 'UNVERIFIED'}
-                      </span>
-                      <span className="text-[8px] opacity-75">
-                        Identity Check
-                      </span>
-                    </div>
-                  </div>
+                    <span className="text-[9.5px] font-extrabold tracking-wider">
+                      {isMauricioVerified ? 'VERIFIED' : 'UNVERIFIED'}
+                    </span>
+                  </button>
                 </div>
               </div>
 

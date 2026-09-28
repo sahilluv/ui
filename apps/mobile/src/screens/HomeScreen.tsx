@@ -6,6 +6,7 @@ import {
   ScrollView,
   RefreshControl,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import { ShadowHeader } from '../components/ShadowHeader';
 import { StoryRow } from '../components/StoryRow';
@@ -176,6 +177,28 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
             />
           ))
         )}
+
+        {/* Pull Up to Refresh Feed */}
+        {posts.length > 0 && (
+          <View style={styles.pullUpContainer}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => loadFeed(true)}
+              style={[
+                styles.pullUpButton,
+                { backgroundColor: colors.elevatedSurface, borderColor: colors.border },
+              ]}
+            >
+              {isRefreshing ? (
+                <ActivityIndicator size="small" color={colors.accent} />
+              ) : (
+                <Text style={[styles.pullUpText, { color: colors.secondaryText }]}>
+                  ↑ Desliza hacia arriba para actualizar feed
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
 
       {/* Share Sheet Modal */}
@@ -212,5 +235,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'center',
     lineHeight: 20,
+  },
+  pullUpContainer: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  pullUpButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pullUpText: {
+    fontSize: 11,
+    fontWeight: '700',
   },
 });

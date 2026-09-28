@@ -32,8 +32,9 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { PawnGlyph } from './PhoneSimulator';
+import { PawnRankBadge } from './PawnRankBadge';
 import { ReelCommentsDrawer } from './ReelCommentsDrawer';
+import { PullUpRefresh } from './PullUpRefresh';
 import { darkColors, lightColors, shadowGradients, ThemeColors } from '../../expo-code/src/theme';
 
 export type UnifiedTab = 'home' | 'explore' | 'reels' | 'create' | 'notifications' | 'profile';
@@ -1092,6 +1093,18 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     </div>
                   ))}
                 </div>
+
+                {/* Pull Up to Refresh Feed */}
+                <div className="pt-2 pb-4 flex justify-center">
+                  <PullUpRefresh
+                    onRefresh={async () => {
+                      await new Promise((r) => setTimeout(r, 850));
+                      showToast('Shadow feed synced with fresh updates!');
+                    }}
+                    isDark={isDark}
+                    label="Pull up to refresh feed"
+                  />
+                </div>
               </div>
             )}
 
@@ -1414,13 +1427,13 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
                   {/* Real Shadow Identity Card */}
                   <div
-                    className="w-full mt-3 p-3 rounded-2xl border"
+                    className="w-full mt-3.5 p-3 rounded-[24px] border"
                     style={{ backgroundColor: colors.surface, borderColor: colors.border }}
                   >
-                    <div className="flex items-center justify-between pb-2 mb-2 border-b" style={{ borderColor: colors.border }}>
+                    <div className="flex items-center justify-between pb-2 mb-2.5 border-b" style={{ borderColor: colors.border }}>
                       <div className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
-                        <span className="text-[10px] font-bold tracking-wider uppercase" style={{ color: colors.secondaryText }}>
+                        <span className="text-[10px] font-extrabold tracking-wider uppercase" style={{ color: colors.secondaryText }}>
                           Shadow Identity
                         </span>
                       </div>
@@ -1430,30 +1443,20 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-2">
-                      <div
-                        className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-xl border"
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(255, 10, 120, 0.12) 0%, rgba(153, 27, 234, 0.10) 100%)',
-                          borderColor: 'rgba(255, 10, 120, 0.35)',
-                        }}
-                      >
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-pink-500/20 text-pink-400">
-                          <PawnGlyph size={15} />
-                        </div>
-                        <div className="flex flex-col text-left">
-                          <div className="flex items-center gap-1">
-                            <span className="text-[11px] font-extrabold tracking-wider text-pink-400">
-                              {currentUser.shadowRank}
-                            </span>
-                            <span className="text-[8px] px-1 py-0.2 rounded bg-pink-500/20 text-pink-300 font-bold uppercase">
-                              Rank I
-                            </span>
-                          </div>
-                          <span className="text-[9px]" style={{ color: colors.secondaryText }}>
-                            Reputation Status
-                          </span>
-                        </div>
+                    {/* Primary Premium Status Indicator: Distinct Proportional PAWN Rank Badge */}
+                    <div className="mb-2.5">
+                      <PawnRankBadge
+                        variant="profile"
+                        isDark={isDark}
+                        onClick={() => showToast('Shadow Identity Rank: PAWN (Rank I · Starting Reputation)')}
+                      />
+                    </div>
+
+                    {/* Secondary Row: Verification & Authority */}
+                    <div className="flex items-center justify-between gap-2 pt-1 border-t" style={{ borderColor: colors.border }}>
+                      <div className="flex items-center gap-1 text-[9px] font-medium" style={{ color: colors.secondaryText }}>
+                        <span>Authority:</span>
+                        <span className="text-pink-400 font-bold">Backend Controlled</span>
                       </div>
 
                       <button
@@ -1462,7 +1465,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           setCurrentUser((prev) => ({ ...prev, verification: nextStatus }));
                           showToast(`Verification: ${nextStatus} (Rank stays PAWN)`);
                         }}
-                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all hover:scale-105 active:scale-95 cursor-pointer ${
                           currentUser.verification === 'VERIFIED'
                             ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
                             : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
@@ -1470,18 +1473,13 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         title="Independent Verification Status - Click to toggle"
                       >
                         {currentUser.verification === 'VERIFIED' ? (
-                          <ShieldCheck size={16} />
+                          <ShieldCheck size={12} />
                         ) : (
-                          <ShieldAlert size={16} />
+                          <ShieldAlert size={12} />
                         )}
-                        <div className="flex flex-col text-left">
-                          <span className="text-[10px] font-extrabold tracking-wider">
-                            {currentUser.verification}
-                          </span>
-                          <span className="text-[8px] opacity-75">
-                            Identity Check
-                          </span>
-                        </div>
+                        <span className="text-[9.5px] font-extrabold tracking-wider">
+                          {currentUser.verification}
+                        </span>
                       </button>
                     </div>
                   </div>
