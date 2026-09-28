@@ -485,6 +485,11 @@ datasource db {
 
 enum ShadowRankType {
   PAWN
+  KNIGHT
+  BISHOP
+  ROOK
+  QUEEN
+  KING
 }
 
 enum VerificationStatus {

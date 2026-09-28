@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Plus,
   Heart,
@@ -27,7 +27,32 @@ import {
   UserCheck,
   ChevronLeft,
   ChevronRight,
+  Shield,
+  ShieldCheck,
+  ShieldAlert,
+  Info,
+  Copy,
 } from 'lucide-react';
+
+export const PawnGlyph = ({
+  size = 14,
+  className = 'fill-current',
+}: {
+  size?: number;
+  className?: string;
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <circle cx="12" cy="5.5" r="2.75" />
+    <path d="M9.5 9.5C9.5 8.95 9.95 8.5 10.5 8.5h3c.55 0 1 .45 1 1 0 1.5-.6 2.3-1.4 3.2-.2.2-.4.4-.6.6.3.3.6.7.7 1.2h1.3c.55 0 1 .45 1 1v1.5H7.5V16c0-.55.45-1 1-1H10c.1-.5.4-.9.7-1.2-.2-.2-.4-.4-.6-.6-.8-.9-1.4-1.7-1.4-3.2 0-.55.45-1 1-1z" />
+    <path d="M5.5 19.5h13a1 1 0 0 1 1 1v.5H4.5v-.5a1 1 0 0 1 1-1z" />
+  </svg>
+);
 import {
   INITIAL_STORIES,
   INITIAL_POSTS,
@@ -65,12 +90,58 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
   const [internalTab, setInternalTab] = useState<TabType>('home');
   const currentTab = externalTab ?? internalTab;
 
+  // Scroll-responsive compact/shrink state for BottomNavigation
+  const [isNavShrunk, setIsNavShrunk] = useState(false);
+  const prevScrollTopRef = useRef(0);
+  const scrollStopTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+
   const handleTabChange = (tab: TabType) => {
+    setIsNavShrunk(false);
     if (externalOnTabChange) {
       externalOnTabChange(tab);
     } else {
       setInternalTab(tab);
     }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (scrollStopTimeoutRef.current) {
+        clearTimeout(scrollStopTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleViewportScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const currentScrollTop = e.currentTarget.scrollTop;
+    const diff = currentScrollTop - prevScrollTopRef.current;
+
+    // Apply scroll-responsive shrinking for Feed ('home') and Reels ('reels')
+    if (currentTab === 'home' || currentTab === 'reels') {
+      if (currentScrollTop <= 15) {
+        // At or near top -> expand back to normal full size
+        setIsNavShrunk(false);
+      } else if (diff > 4) {
+        // Scrolling down -> shrink into compact/minimized navigation
+        setIsNavShrunk(true);
+      } else if (diff < -4) {
+        // Scrolling upward -> smoothly animate back to normal full-size state
+        setIsNavShrunk(false);
+      }
+
+      // When user stops scrolling, smoothly animate back to normal full-size state after brief pause
+      if (scrollStopTimeoutRef.current) {
+        clearTimeout(scrollStopTimeoutRef.current);
+      }
+      scrollStopTimeoutRef.current = setTimeout(() => {
+        setIsNavShrunk(false);
+      }, 1000);
+    } else {
+      if (isNavShrunk) setIsNavShrunk(false);
+    }
+
+    prevScrollTopRef.current = currentScrollTop;
   };
 
   // State for posts, likes, followers
@@ -85,6 +156,11 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
   const [shareModalPost, setShareModalPost] = useState<PostItem | null>(null);
   const [postSlidePages, setPostSlidePages] = useState<Record<string, number>>({ post_maoo: 1 });
   const [selectedCategory, setSelectedCategory] = useState<string>('igtv');
+
+  // Shadow Identity & Pawn Rank system states
+  const [isMauricioVerified, setIsMauricioVerified] = useState(true);
+  const [showRankHierarchyModal, setShowRankHierarchyModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   // Floating toast alert state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -181,12 +257,29 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     // Only engage horizontal drag if horizontal motion exceeds vertical motion
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 8) {
       setReelSwipeDeltaX(diffX);
+    } else if (Math.abs(diffY) > 8) {
+      // Vertical scrolling gesture in Reels:
+      if (diffY < -8) {
+        // Dragging up / scrolling down to next reel -> shrink navigation
+        setIsNavShrunk(true);
+      } else if (diffY > 8) {
+        // Dragging down / scrolling up -> restore full navigation
+        setIsNavShrunk(false);
+      }
     }
   };
 
   const handleReelTouchEnd = (reel: ReelItem) => {
     if (!isSwipingReel) return;
     setIsSwipingReel(false);
+
+    // If scrolling stops, restore full navigation smoothly after 1 second
+    if (scrollStopTimeoutRef.current) {
+      clearTimeout(scrollStopTimeoutRef.current);
+    }
+    scrollStopTimeoutRef.current = setTimeout(() => {
+      setIsNavShrunk(false);
+    }, 1000);
 
     // If swipe threshold passed (> 50px)
     if (reelSwipeDeltaX < -50) {
@@ -515,6 +608,8 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
       {/* 3. Screen Viewport */}
       <div
+        ref={viewportRef}
+        onScroll={handleViewportScroll}
         className={`no-scrollbar relative ${
           currentTab === 'reels'
             ? 'absolute inset-0 z-10 w-full h-full overflow-y-auto snap-y snap-mandatory scroll-smooth'
@@ -627,7 +722,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         </div>
                       </div>
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           <p
                             className={`text-xs font-bold leading-tight ${
                               isDark ? 'text-white' : 'text-[#12131D]'
@@ -635,6 +730,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                           >
                             {post.author.username}
                           </p>
+                          <span
+                            className="inline-flex items-center gap-0.5 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-pink-500/10 text-pink-400 border border-pink-500/25"
+                            title="Shadow Rank: PAWN (Starting Reputation Tier)"
+                          >
+                            <PawnGlyph size={9} />
+                            <span>PAWN</span>
+                          </span>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1014,6 +1116,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         <h3 className="text-white text-sm font-extrabold tracking-tight drop-shadow-md leading-tight">
                           {reel.author.name}
                         </h3>
+                        <span
+                          className="inline-flex items-center gap-0.5 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-black/50 text-pink-300 border border-pink-500/30 backdrop-blur-md"
+                          title="Shadow Rank: PAWN"
+                        >
+                          <PawnGlyph size={9} />
+                          <span>PAWN</span>
+                        </span>
                         {/* Inline Follow / Following Capsule Button */}
                         <button
                           onClick={(e) => {
@@ -1090,7 +1199,11 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 </div>
 
                 {/* Floating Engagement Capsule Pill: Centered white pill directly above bottom navigation bar */}
-                <div className="absolute bottom-22 left-0 right-0 flex justify-center z-20 pointer-events-auto select-none">
+                <div
+                  className={`absolute ${
+                    isNavShrunk ? 'bottom-16' : 'bottom-22'
+                  } left-0 right-0 flex justify-center z-20 pointer-events-auto select-none transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]`}
+                >
                   <div className="bg-white rounded-full px-5 py-2.5 shadow-2xl flex items-center gap-3.5 border border-black/5 select-none">
                     {/* Heart + Count */}
                     <button
@@ -1511,14 +1624,102 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 </div>
               </div>
 
-              {/* Mauricio Lopez Title */}
+              {/* Mauricio Lopez Title & Username */}
               <h2
-                className={`text-xl font-bold tracking-tight mb-0.5 ${
+                className={`text-xl font-bold tracking-tight ${
                   isDark ? 'text-white' : 'text-[#12131D]'
                 }`}
               >
                 Mauricio Lopez
               </h2>
+              <span className="text-[11px] font-semibold text-slate-400 mb-2">
+                @maoo.lopez
+              </span>
+
+              {/* Shadow Identity & Pawn Rank Card */}
+              <div
+                className={`w-full max-w-[310px] rounded-2xl p-2.5 mb-3 border transition-all ${
+                  isDark
+                    ? 'bg-[#151726]/90 border-white/10 shadow-lg'
+                    : 'bg-white/95 border-slate-200 shadow-md'
+                }`}
+              >
+                {/* Header row: Shadow Identity label + Shadow ID */}
+                <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-white/5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
+                    <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
+                      Shadow Identity
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => triggerToast('Shadow ID: shdw_mlopez89')}
+                    className="flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors cursor-pointer"
+                    title="Click to copy Shadow ID"
+                  >
+                    <span className="text-pink-400 font-bold">ID:</span>
+                    <span>shdw_mlopez89</span>
+                    <Copy size={10} className="text-slate-400 ml-0.5" />
+                  </button>
+                </div>
+
+                {/* Badges: Pawn Rank & Verification Status */}
+                <div className="flex items-center justify-between gap-2">
+                  {/* Pawn Rank Badge */}
+                  <div
+                    onClick={() => setShowRankHierarchyModal(true)}
+                    className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-xl cursor-pointer transition-all hover:scale-[1.02] border"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255, 10, 120, 0.12) 0%, rgba(153, 27, 234, 0.10) 100%)',
+                      borderColor: 'rgba(255, 10, 120, 0.35)',
+                    }}
+                    title="View Shadow Rank Hierarchy"
+                  >
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-gradient-to-br from-pink-500/25 to-purple-600/35 border border-pink-500/40 text-pink-400 shadow-sm">
+                      <PawnGlyph size={15} />
+                    </div>
+
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-1">
+                        <span className="text-[11px] font-extrabold tracking-wider text-pink-400">
+                          PAWN
+                        </span>
+                        <span className="text-[8px] px-1 py-0.2 rounded bg-pink-500/20 text-pink-300 font-bold uppercase">
+                          Rank I
+                        </span>
+                      </div>
+                      <span className="text-[9px] text-slate-400 truncate">
+                        Reputation Status
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Verification Status (Independent from Rank) */}
+                  <div
+                    onClick={() => setShowVerificationModal(true)}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl cursor-pointer border transition-all hover:scale-[1.02] ${
+                      isMauricioVerified
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                        : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                    }`}
+                    title="Independent Verification Status - Tap to toggle & inspect"
+                  >
+                    {isMauricioVerified ? (
+                      <ShieldCheck size={16} className="shrink-0" />
+                    ) : (
+                      <ShieldAlert size={16} className="shrink-0" />
+                    )}
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-extrabold tracking-wider">
+                        {isMauricioVerified ? 'VERIFIED' : 'UNVERIFIED'}
+                      </span>
+                      <span className="text-[8px] opacity-75">
+                        Identity Check
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <p
                 className={`text-xs text-center max-w-[290px] mb-1 ${
@@ -1702,16 +1903,24 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         )}
       </div>
 
-      {/* 4. Compact Floating Bottom Navigation Bar (Matching Attachment Exactly) */}
+      {/* 4. Compact Floating Bottom Navigation Bar (Smoothly shrinks on Feed/Reels scroll) */}
       <div
-        className={`px-4 pb-2 pt-1 z-30 transition-all ${
+        className={`z-30 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] ${
           currentTab === 'reels'
-            ? 'absolute bottom-2 left-0 right-0'
-            : 'relative shrink-0'
+            ? isNavShrunk
+              ? 'absolute bottom-1.5 left-0 right-0 px-6 pb-1 pt-0'
+              : 'absolute bottom-2 left-0 right-0 px-4 pb-2 pt-1'
+            : isNavShrunk
+              ? 'relative shrink-0 px-6 pb-1.5 pt-0.5'
+              : 'relative shrink-0 px-4 pb-2 pt-1'
         }`}
       >
         <nav
-          className={`h-14 px-5 rounded-full flex items-center justify-between shadow-2xl border transition-all ${
+          className={`rounded-full flex items-center justify-between border transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] ${
+            isNavShrunk
+              ? 'h-10 px-4 max-w-[295px] mx-auto shadow-lg'
+              : 'h-14 px-5 w-full shadow-2xl'
+          } ${
             isDark
               ? 'bg-[#151726]/90 backdrop-blur-xl border-white/10 text-slate-400'
               : 'bg-white/95 backdrop-blur-xl border-black/5 text-slate-700 shadow-slate-300/40'
@@ -1720,7 +1929,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
           {/* Tab 1: Home */}
           <button
             onClick={() => handleTabChange('home')}
-            className={`flex flex-col items-center justify-center relative cursor-pointer group transition-colors ${
+            className={`flex flex-col items-center justify-center relative cursor-pointer group transition-all duration-300 ${
               currentTab === 'home'
                 ? isDark
                   ? 'text-white'
@@ -1729,14 +1938,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             }`}
             title="Feed"
           >
-            <div className="w-5 h-5 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
+            <div className={`${isNavShrunk ? 'w-4 h-4' : 'w-5 h-5'} flex items-center justify-center transition-all duration-300`}>
+              <svg viewBox="0 0 24 24" className={`${isNavShrunk ? 'w-4 h-4' : 'w-5 h-5'} fill-current transition-all duration-300`}>
                 <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z" />
               </svg>
             </div>
             {currentTab === 'home' && (
               <div
-                className={`absolute -bottom-2 w-3.5 h-[2.5px] rounded-full ${
+                className={`absolute ${isNavShrunk ? '-bottom-1.5 w-2.5 h-[2px]' : '-bottom-2 w-3.5 h-[2.5px]'} rounded-full transition-all duration-300 ${
                   isDark ? 'bg-white' : 'bg-[#12131D]'
                 }`}
               />
@@ -1746,7 +1955,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
           {/* Tab 2: Discover / Search */}
           <button
             onClick={() => handleTabChange('explore')}
-            className={`flex flex-col items-center justify-center relative cursor-pointer transition-colors ${
+            className={`flex flex-col items-center justify-center relative cursor-pointer transition-all duration-300 ${
               currentTab === 'explore'
                 ? isDark
                   ? 'text-white'
@@ -1755,10 +1964,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             }`}
             title="Explore"
           >
-            <Search size={21} strokeWidth={currentTab === 'explore' ? 2.5 : 2} />
+            <Search
+              size={isNavShrunk ? 17 : 21}
+              strokeWidth={currentTab === 'explore' ? 2.5 : 2}
+              className="transition-all duration-300"
+            />
             {currentTab === 'explore' && (
               <div
-                className={`absolute -bottom-2 w-3.5 h-[2.5px] rounded-full ${
+                className={`absolute ${isNavShrunk ? '-bottom-1.5 w-2.5 h-[2px]' : '-bottom-2 w-3.5 h-[2.5px]'} rounded-full transition-all duration-300 ${
                   isDark ? 'bg-white' : 'bg-[#12131D]'
                 }`}
               />
@@ -1768,7 +1981,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
           {/* Tab 3: Reels Section (TV Monitor with Play Triangle) */}
           <button
             onClick={() => handleTabChange('reels')}
-            className={`flex flex-col items-center justify-center relative cursor-pointer transition-colors ${
+            className={`flex flex-col items-center justify-center relative cursor-pointer transition-all duration-300 ${
               currentTab === 'reels'
                 ? isDark
                   ? 'text-white'
@@ -1780,20 +1993,18 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             <div className="relative flex items-center justify-center">
               {/* TV monitor outline with play button */}
               <div
-                className={`w-6 h-5 rounded-[5px] border-2 flex items-center justify-center ${
-                  currentTab === 'reels' ? 'border-current' : 'border-current'
-                }`}
+                className={`${isNavShrunk ? 'w-5 h-4 rounded-[4px]' : 'w-6 h-5 rounded-[5px]'} border-2 flex items-center justify-center border-current transition-all duration-300`}
               >
                 <div
-                  className="w-0 h-0 border-y-[3px] border-y-transparent border-l-[5px] border-l-current ml-0.5"
+                  className={`w-0 h-0 ${isNavShrunk ? 'border-y-[2.5px] border-l-[4px]' : 'border-y-[3px] border-l-[5px]'} border-y-transparent border-l-current ml-0.5 transition-all duration-300`}
                 />
               </div>
               {/* TV base stand */}
-              <div className="absolute -bottom-1 w-2.5 h-[1.5px] bg-current rounded-full" />
+              <div className={`absolute ${isNavShrunk ? '-bottom-0.5 w-2 h-[1px]' : '-bottom-1 w-2.5 h-[1.5px]'} bg-current rounded-full transition-all duration-300`} />
             </div>
             {currentTab === 'reels' && (
               <div
-                className={`absolute -bottom-2 w-3.5 h-[2.5px] rounded-full ${
+                className={`absolute ${isNavShrunk ? '-bottom-1.5 w-2.5 h-[2px]' : '-bottom-2 w-3.5 h-[2.5px]'} rounded-full transition-all duration-300 ${
                   isDark ? 'bg-white' : 'bg-[#12131D]'
                 }`}
               />
@@ -1803,7 +2014,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
           {/* Tab 4: Shop / Basket (Basket matching reference image) */}
           <button
             onClick={() => handleTabChange('shop')}
-            className={`flex flex-col items-center justify-center relative cursor-pointer transition-colors ${
+            className={`flex flex-col items-center justify-center relative cursor-pointer transition-all duration-300 ${
               currentTab === 'shop'
                 ? isDark
                   ? 'text-white'
@@ -1812,10 +2023,10 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             }`}
             title="Tienda"
           >
-            <div className="w-6 h-6 flex items-center justify-center">
+            <div className={`${isNavShrunk ? 'w-4.5 h-4.5' : 'w-6 h-6'} flex items-center justify-center transition-all duration-300`}>
               <svg
                 viewBox="0 0 24 24"
-                className="w-5 h-5 fill-none stroke-current"
+                className={`${isNavShrunk ? 'w-4 h-4' : 'w-5 h-5'} fill-none stroke-current transition-all duration-300`}
                 strokeWidth={currentTab === 'shop' ? '2.3' : '1.8'}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -1827,7 +2038,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             </div>
             {currentTab === 'shop' && (
               <div
-                className={`absolute -bottom-2 w-3.5 h-[2.5px] rounded-full ${
+                className={`absolute ${isNavShrunk ? '-bottom-1.5 w-2.5 h-[2px]' : '-bottom-2 w-3.5 h-[2.5px]'} rounded-full transition-all duration-300 ${
                   isDark ? 'bg-white' : 'bg-[#12131D]'
                 }`}
               />
@@ -1840,7 +2051,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               setHasUnreadNotifs(false);
               handleTabChange('notifications');
             }}
-            className={`flex flex-col items-center justify-center relative cursor-pointer transition-colors ${
+            className={`flex flex-col items-center justify-center relative cursor-pointer transition-all duration-300 ${
               currentTab === 'notifications'
                 ? isDark
                   ? 'text-white'
@@ -1852,7 +2063,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             <div className="relative flex items-center justify-center">
               <svg
                 viewBox="0 0 24 24"
-                className="w-5.5 h-5.5 fill-none stroke-current"
+                className={`${isNavShrunk ? 'w-4.5 h-4.5' : 'w-5.5 h-5.5'} fill-none stroke-current transition-all duration-300`}
                 strokeWidth={currentTab === 'notifications' ? '2.4' : '2'}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -1862,14 +2073,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
               {/* Red Badge with '2' */}
               {hasUnreadNotifs && (
-                <span className="absolute -top-1 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-[#FF2E63] text-white text-[9px] font-bold flex items-center justify-center shadow-sm leading-none border-2 border-white">
+                <span className={`absolute ${isNavShrunk ? '-top-1 -right-1 min-w-3.5 h-3.5 px-0.5 text-[8px]' : '-top-1 -right-1.5 min-w-4 h-4 px-1 text-[9px]'} rounded-full bg-[#FF2E63] text-white font-bold flex items-center justify-center shadow-sm leading-none border-2 border-white transition-all duration-300`}>
                   2
                 </span>
               )}
             </div>
             {currentTab === 'notifications' && (
               <div
-                className={`absolute -bottom-2 w-3.5 h-[2.5px] rounded-full ${
+                className={`absolute ${isNavShrunk ? '-bottom-1.5 w-2.5 h-[2px]' : '-bottom-2 w-3.5 h-[2.5px]'} rounded-full transition-all duration-300 ${
                   isDark ? 'bg-white' : 'bg-[#12131D]'
                 }`}
               />
@@ -1894,6 +2105,204 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         post={shareModalPost}
         isDark={isDark}
       />
+
+      {/* Shadow Rank Hierarchy Modal (Explains Pawn rank as reputation hierarchy) */}
+      {showRankHierarchyModal && (
+        <div
+          className="absolute inset-0 z-50 bg-black/70 backdrop-blur-md flex flex-col justify-end p-3 animate-in fade-in duration-200"
+          onClick={() => setShowRankHierarchyModal(false)}
+        >
+          <div
+            className={`w-full rounded-[28px] p-5 shadow-2xl border transition-all ${
+              isDark
+                ? 'bg-[#151726] border-white/10 text-white'
+                : 'bg-white border-slate-200 text-slate-900'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-pink-500/20 border border-pink-500/40 text-pink-400 flex items-center justify-center">
+                  <PawnGlyph size={18} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold tracking-tight">
+                    Shadow Reputation Rank
+                  </h3>
+                  <p className="text-[10px] text-pink-400 font-semibold">
+                    Current Identity: PAWN (Rank I)
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowRankHierarchyModal(false)}
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center cursor-pointer transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
+
+            {/* Core Rules Callout */}
+            <div className="mt-3 p-3 rounded-2xl bg-white/5 border border-white/5 space-y-1.5 text-left">
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-pink-400">
+                <Sparkles size={12} />
+                <span>Identity Status · Not A Chess Game</span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-relaxed">
+                Shadow uses chess-piece ranks as social reputation status levels.
+                Every newly registered Shadow identity atomically starts as <strong className="text-white">PAWN</strong>.
+                Rank is strictly backend-controlled and independent from identity verification.
+              </p>
+            </div>
+
+            {/* Rank Hierarchy List */}
+            <div className="mt-3 space-y-1.5">
+              {[
+                { name: 'PAWN', level: 'Rank I', status: 'Active Starting Rank', isCurrent: true },
+                { name: 'KNIGHT', level: 'Rank II', status: 'Future Reputation Tier', isCurrent: false },
+                { name: 'BISHOP', level: 'Rank III', status: 'Future Reputation Tier', isCurrent: false },
+                { name: 'ROOK', level: 'Rank IV', status: 'Future Reputation Tier', isCurrent: false },
+                { name: 'QUEEN', level: 'Rank V', status: 'Future Reputation Tier', isCurrent: false },
+                { name: 'KING', level: 'Rank VI', status: 'Apex Reputation Tier', isCurrent: false },
+              ].map((tier) => (
+                <div
+                  key={tier.name}
+                  className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all ${
+                    tier.isCurrent
+                      ? 'bg-gradient-to-r from-pink-500/20 to-purple-600/20 border border-pink-500/40 text-pink-300 font-bold'
+                      : 'bg-white/[0.03] text-slate-400 border border-white/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 text-center font-mono text-[10px]">
+                      {tier.isCurrent ? '♙' : '○'}
+                    </span>
+                    <span className={tier.isCurrent ? 'text-white font-extrabold' : ''}>
+                      {tier.name}
+                    </span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-white/10 text-slate-300 font-mono">
+                      {tier.level}
+                    </span>
+                  </div>
+                  <span className={`text-[10px] ${tier.isCurrent ? 'text-pink-400 font-bold' : 'text-slate-500'}`}>
+                    {tier.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setShowRankHierarchyModal(false)}
+              className="w-full mt-4 h-10 rounded-full font-bold text-xs bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/30 cursor-pointer active:scale-95 transition-all"
+            >
+              Understood
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Shadow Verification Independence Modal */}
+      {showVerificationModal && (
+        <div
+          className="absolute inset-0 z-50 bg-black/70 backdrop-blur-md flex flex-col justify-end p-3 animate-in fade-in duration-200"
+          onClick={() => setShowVerificationModal(false)}
+        >
+          <div
+            className={`w-full rounded-[28px] p-5 shadow-2xl border transition-all ${
+              isDark
+                ? 'bg-[#151726] border-white/10 text-white'
+                : 'bg-white border-slate-200 text-slate-900'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                    isMauricioVerified
+                      ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
+                      : 'bg-amber-500/20 border border-amber-500/40 text-amber-400'
+                  }`}
+                >
+                  {isMauricioVerified ? <ShieldCheck size={18} /> : <ShieldAlert size={18} />}
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold tracking-tight">
+                    Shadow Verification System
+                  </h3>
+                  <p className="text-[10px] text-slate-400">
+                    Independent from Shadow Rank
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowVerificationModal(false)}
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center cursor-pointer transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
+
+            {/* Explanation */}
+            <div className="mt-3 p-3.5 rounded-2xl bg-white/5 border border-white/5 space-y-2 text-left">
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-amber-400">
+                <Info size={13} />
+                <span>Rank and Verification are Separate</span>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                A user can be <strong className="text-white">Rank: PAWN</strong> and either <strong className="text-emerald-400">VERIFIED</strong> or <strong className="text-amber-400">UNVERIFIED</strong>. Verification does not alter rank, and rank does not imply verification.
+              </p>
+            </div>
+
+            {/* Live Interactive State Inspector */}
+            <div className="mt-3 p-3 rounded-2xl border border-white/10 flex items-center justify-between">
+              <div>
+                <span className="block text-[10px] font-mono uppercase text-slate-400">
+                  Current Identity State
+                </span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs font-bold text-pink-400">Rank: PAWN</span>
+                  <span className="text-slate-500">•</span>
+                  <span
+                    className={`text-xs font-bold ${
+                      isMauricioVerified ? 'text-emerald-400' : 'text-amber-400'
+                    }`}
+                  >
+                    Verification: {isMauricioVerified ? 'VERIFIED' : 'UNVERIFIED'}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setIsMauricioVerified(!isMauricioVerified);
+                  triggerToast(
+                    !isMauricioVerified
+                      ? 'Status: VERIFIED (Rank remains PAWN)'
+                      : 'Status: UNVERIFIED (Rank remains PAWN)',
+                  );
+                }}
+                className={`px-3 py-1.5 rounded-xl text-[10px] font-extrabold transition-all cursor-pointer ${
+                  isMauricioVerified
+                    ? 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40'
+                    : 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/40'
+                }`}
+              >
+                Switch to {isMauricioVerified ? 'UNVERIFIED' : 'VERIFIED'}
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowVerificationModal(false)}
+              className="w-full mt-4 h-10 rounded-full font-bold text-xs bg-white/10 hover:bg-white/20 text-white cursor-pointer active:scale-95 transition-all"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 5. Bottom Home Indicator Bar */}
       <div className="pb-1.5 pt-0.5 flex justify-center shrink-0">

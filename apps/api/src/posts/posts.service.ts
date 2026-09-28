@@ -88,6 +88,16 @@ export class PostsService {
       select: {
         id: true,
         name: true,
+        shadowRank: {
+          select: {
+            rankType: true,
+          },
+        },
+        verification: {
+          select: {
+            status: true,
+          },
+        },
       },
     },
   } as const;

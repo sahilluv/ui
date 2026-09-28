@@ -60,7 +60,7 @@ export const ExpoCodeViewer: React.FC = () => {
             <div className="flex items-center gap-2 mb-3">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
                 <GitBranch size={13} />
-                Imported: sahilluv/shadow0.1
+                Imported: sahilluv/ui
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 text-xs font-bold">
                 <Code size={13} />
@@ -69,10 +69,10 @@ export const ExpoCodeViewer: React.FC = () => {
             </div>
 
             <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Shadow 0.1 Monorepo & Mobile Codebase
+              Shadow Monorepo & Mobile Codebase
             </h2>
             <p className="text-slate-400 text-sm mt-2 max-w-2xl leading-relaxed">
-              Explore the full monorepo imported from <code className="text-pink-400 font-mono text-xs">sahilluv/shadow0.1</code> containing <strong className="text-white">apps/mobile</strong> (React Native Expo), <strong className="text-white">apps/api</strong> (NestJS + Prisma), <strong className="text-white">prisma/schema.prisma</strong>, and infrastructure.
+              Explore the full monorepo imported from <code className="text-pink-400 font-mono text-xs">sahilluv/ui</code> containing <strong className="text-white">apps/mobile</strong> (React Native Expo), <strong className="text-white">apps/api</strong> (NestJS + Prisma), <strong className="text-white">prisma/schema.prisma</strong>, and infrastructure.
             </p>
           </div>
 

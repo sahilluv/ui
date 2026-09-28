@@ -82,24 +82,46 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
         {/* Real Shadow Identity Badges if available */}
         {(shadowRank || shadowId) && (
-          <View style={[styles.identityBadgeRow, { backgroundColor: colors.elevatedSurface, borderColor: colors.border }]}>
+          <View style={[styles.identityCard, { backgroundColor: colors.elevatedSurface, borderColor: colors.border }]}>
             {shadowId && (
-              <Text style={[styles.identityBadgeText, { color: colors.secondaryText }]}>
-                ID: <Text style={{ color: colors.text, fontWeight: '700' }}>{shadowId.slice(0, 10)}</Text>
-              </Text>
-            )}
-            {shadowRank && (
-              <View style={[styles.rankTag, { backgroundColor: colors.accent + '20' }]}>
-                <Text style={[styles.rankTagText, { color: colors.accent }]}>{shadowRank}</Text>
-              </View>
-            )}
-            {verificationStatus && (
-              <View style={[styles.rankTag, { backgroundColor: verificationStatus === 'VERIFIED' ? '#10B98120' : '#F59E0B20' }]}>
-                <Text style={[styles.rankTagText, { color: verificationStatus === 'VERIFIED' ? '#10B981' : '#F59E0B' }]}>
-                  {verificationStatus}
+              <View style={styles.identityIdRow}>
+                <Text style={[styles.identityBadgeLabel, { color: colors.secondaryText }]}>
+                  SHADOW ID:
+                </Text>
+                <Text style={[styles.identityBadgeValue, { color: colors.text }]}>
+                  {shadowId.slice(0, 14)}
                 </Text>
               </View>
             )}
+            <View style={styles.badgeSubRow}>
+              {shadowRank && (
+                <View style={[styles.rankTag, { backgroundColor: colors.accent + '20', borderColor: colors.accent + '50' }]}>
+                  <Text style={[styles.rankTagText, { color: colors.accent }]}>
+                    ♙ {shadowRank} · RANK I
+                  </Text>
+                </View>
+              )}
+              {verificationStatus && (
+                <View
+                  style={[
+                    styles.verificationTag,
+                    {
+                      backgroundColor: verificationStatus === 'VERIFIED' ? '#10B98120' : '#F59E0B20',
+                      borderColor: verificationStatus === 'VERIFIED' ? '#10B98150' : '#F59E0B50',
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.verificationTagText,
+                      { color: verificationStatus === 'VERIFIED' ? '#10B981' : '#F59E0B' },
+                    ]}
+                  >
+                    {verificationStatus === 'VERIFIED' ? '✓ VERIFIED' : '⚠ UNVERIFIED'}
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
         )}
       </View>
@@ -297,26 +319,62 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     paddingHorizontal: 16,
   },
-  identityBadgeRow: {
+  identityCard: {
+    width: '100%',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginTop: 8,
+    gap: 8,
+  },
+  identityIdRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(255,255,255,0.08)',
+  },
+  identityBadgeLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  identityBadgeValue: {
+    fontSize: 11,
+    fontWeight: '800',
+    fontFamily: 'monospace',
+  },
+  badgeSubRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 14,
-    borderWidth: 1,
-    marginTop: 4,
-  },
-  identityBadgeText: {
-    fontSize: 11,
   },
   rankTag: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   rankTagText: {
-    fontSize: 9,
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  verificationTag: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  verificationTagText: {
+    fontSize: 10,
     fontWeight: '800',
     letterSpacing: 0.5,
   },

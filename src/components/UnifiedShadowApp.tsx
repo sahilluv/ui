@@ -18,6 +18,9 @@ import {
   Check,
   LogOut,
   Shield,
+  ShieldCheck,
+  ShieldAlert,
+  Copy,
   Layers,
   Sparkles,
   Volume2,
@@ -29,6 +32,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { PawnGlyph } from './PhoneSimulator';
 import { ReelCommentsDrawer } from './ReelCommentsDrawer';
 import { darkColors, lightColors, shadowGradients, ThemeColors } from '../../expo-code/src/theme';
 
@@ -319,31 +323,48 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
   const feedScrollRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevFeedScrollTop = useRef(0);
+  const prevReelsScrollTop = useRef(0);
 
   const handleFeedScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollTop = e.currentTarget.scrollTop;
-    const isScrollingDown = scrollTop > prevFeedScrollTop.current && scrollTop > 20;
-    prevFeedScrollTop.current = scrollTop;
+    const diff = scrollTop - prevFeedScrollTop.current;
 
-    if (isScrollingDown) {
+    if (scrollTop <= 15) {
+      setIsCompactNav(false);
+    } else if (diff > 4) {
       setIsCompactNav(true);
-    } else if (scrollTop <= 10) {
+    } else if (diff < -4) {
+      // Smoothly restore full size when scrolling up
       setIsCompactNav(false);
     }
 
+    prevFeedScrollTop.current = scrollTop;
+
     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     scrollTimeoutRef.current = setTimeout(() => {
       setIsCompactNav(false);
-    }, 900);
+    }, 1000);
   };
 
   const handleReelsScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    setIsCompactNav(true);
+    const scrollTop = e.currentTarget.scrollTop;
+    const diff = scrollTop - prevReelsScrollTop.current;
+
+    if (scrollTop <= 15) {
+      setIsCompactNav(false);
+    } else if (diff > 4) {
+      setIsCompactNav(true);
+    } else if (diff < -4) {
+      // Smoothly restore full size when scrolling up
+      setIsCompactNav(false);
+    }
+
+    prevReelsScrollTop.current = scrollTop;
 
     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     scrollTimeoutRef.current = setTimeout(() => {
       setIsCompactNav(false);
-    }, 900);
+    }, 1000);
   };
 
   // Horizontal swipe-to-navigate in Reels view (Swipe Left -> Profile, Swipe Right -> Feed)
@@ -1393,21 +1414,76 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
                   {/* Real Shadow Identity Card */}
                   <div
-                    className="w-full mt-4 p-3 rounded-2xl border flex items-center justify-around"
+                    className="w-full mt-3 p-3 rounded-2xl border"
                     style={{ backgroundColor: colors.surface, borderColor: colors.border }}
                   >
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400">
-                      <Shield size={13} />
-                      <span>{currentUser.shadowRank}</span>
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b" style={{ borderColor: colors.border }}>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
+                        <span className="text-[10px] font-bold tracking-wider uppercase" style={{ color: colors.secondaryText }}>
+                          Shadow Identity
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-md bg-white/5 border border-white/10" style={{ color: colors.text }}>
+                        <span className="text-pink-400 font-bold">ID:</span>
+                        <span>{currentUser.shadowId}</span>
+                      </div>
                     </div>
-                    <div className="h-4 w-[1px]" style={{ backgroundColor: colors.border }} />
-                    <div className="text-[11px] font-mono" style={{ color: colors.secondaryText }}>
-                      ID: <span style={{ color: colors.text }}>{currentUser.shadowId}</span>
+
+                    <div className="flex items-center justify-between gap-2">
+                      <div
+                        className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-xl border"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(255, 10, 120, 0.12) 0%, rgba(153, 27, 234, 0.10) 100%)',
+                          borderColor: 'rgba(255, 10, 120, 0.35)',
+                        }}
+                      >
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-pink-500/20 text-pink-400">
+                          <PawnGlyph size={15} />
+                        </div>
+                        <div className="flex flex-col text-left">
+                          <div className="flex items-center gap-1">
+                            <span className="text-[11px] font-extrabold tracking-wider text-pink-400">
+                              {currentUser.shadowRank}
+                            </span>
+                            <span className="text-[8px] px-1 py-0.2 rounded bg-pink-500/20 text-pink-300 font-bold uppercase">
+                              Rank I
+                            </span>
+                          </div>
+                          <span className="text-[9px]" style={{ color: colors.secondaryText }}>
+                            Reputation Status
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          const nextStatus = currentUser.verification === 'VERIFIED' ? 'UNVERIFIED' : 'VERIFIED';
+                          setCurrentUser((prev) => ({ ...prev, verification: nextStatus }));
+                          showToast(`Verification: ${nextStatus} (Rank stays PAWN)`);
+                        }}
+                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                          currentUser.verification === 'VERIFIED'
+                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                            : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                        }`}
+                        title="Independent Verification Status - Click to toggle"
+                      >
+                        {currentUser.verification === 'VERIFIED' ? (
+                          <ShieldCheck size={16} />
+                        ) : (
+                          <ShieldAlert size={16} />
+                        )}
+                        <div className="flex flex-col text-left">
+                          <span className="text-[10px] font-extrabold tracking-wider">
+                            {currentUser.verification}
+                          </span>
+                          <span className="text-[8px] opacity-75">
+                            Identity Check
+                          </span>
+                        </div>
+                      </button>
                     </div>
-                    <div className="h-4 w-[1px]" style={{ backgroundColor: colors.border }} />
-                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
-                      {currentUser.verification}
-                    </span>
                   </div>
 
                   {/* Stats Row */}

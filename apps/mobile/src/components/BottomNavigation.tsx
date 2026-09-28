@@ -11,6 +11,7 @@ interface BottomNavigationProps {
   colors: ThemeColors;
   userAvatarGradient?: [string, string, ...string[]];
   unreadNotifications?: boolean;
+  isCompact?: boolean;
 }
 
 export const BottomNavigation: React.FC<BottomNavigationProps> = ({
@@ -19,12 +20,14 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   colors,
   userAvatarGradient = ['#FF0A78', '#991BEA', '#6366F1'],
   unreadNotifications = false,
+  isCompact = false,
 }) => {
   return (
-    <View style={styles.floatingWrapper}>
+    <View style={[styles.floatingWrapper, isCompact && styles.floatingWrapperCompact]}>
       <View
         style={[
           styles.container,
+          isCompact && styles.containerCompact,
           {
             backgroundColor: colors.surface,
             borderColor: colors.border,
@@ -40,11 +43,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <View style={styles.homeIconWrapper}>
             <Ionicons
               name={currentTab === 'home' ? 'home' : 'home-outline'}
-              size={22}
+              size={isCompact ? 18 : 22}
               color={currentTab === 'home' ? colors.tabActive : colors.tabInactive}
             />
             {currentTab === 'home' && (
-              <View style={[styles.activeUnderline, { backgroundColor: colors.text }]} />
+              <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
             )}
           </View>
         </TouchableOpacity>
@@ -57,11 +60,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         >
           <Feather
             name="search"
-            size={22}
+            size={isCompact ? 18 : 22}
             color={currentTab === 'explore' ? colors.tabActive : colors.tabInactive}
           />
           {currentTab === 'explore' && (
-            <View style={[styles.activeUnderline, { backgroundColor: colors.text }]} />
+            <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
           )}
         </TouchableOpacity>
 
@@ -74,11 +77,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <View style={styles.reelIconWrapper}>
             <MaterialCommunityIcons
               name={currentTab === 'reels' ? 'television-play' : 'television-play'}
-              size={24}
+              size={isCompact ? 20 : 24}
               color={currentTab === 'reels' ? colors.tabActive : colors.tabInactive}
             />
             {currentTab === 'reels' && (
-              <View style={[styles.activeUnderline, { backgroundColor: colors.text }]} />
+              <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
             )}
           </View>
         </TouchableOpacity>
@@ -92,11 +95,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <View style={styles.iconWrapper}>
             <Feather
               name="shopping-bag"
-              size={21}
+              size={isCompact ? 17 : 21}
               color={currentTab === 'shop' ? colors.tabActive : colors.tabInactive}
             />
             {currentTab === 'shop' && (
-              <View style={[styles.activeUnderline, { backgroundColor: colors.text }]} />
+              <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
             )}
           </View>
         </TouchableOpacity>
@@ -111,6 +114,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             colors={userAvatarGradient}
             style={[
               styles.profileRing,
+              isCompact && styles.profileRingCompact,
               currentTab === 'profile' && {
                 shadowColor: colors.accent,
                 shadowOpacity: 0.6,
@@ -132,7 +136,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             </View>
           </LinearGradient>
           {currentTab === 'profile' && (
-            <View style={[styles.activeUnderline, { backgroundColor: colors.text }]} />
+            <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
           )}
         </TouchableOpacity>
       </View>
@@ -145,6 +149,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 8,
     paddingTop: 4,
+  },
+  floatingWrapperCompact: {
+    paddingHorizontal: 32,
+    paddingBottom: 4,
+    paddingTop: 2,
   },
   container: {
     height: 56,
@@ -159,6 +168,11 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 8,
     borderWidth: 1,
+  },
+  containerCompact: {
+    height: 40,
+    borderRadius: 22,
+    paddingHorizontal: 6,
   },
   tabButton: {
     flex: 1,
@@ -183,6 +197,12 @@ const styles = StyleSheet.create({
     height: 2.5,
     borderRadius: 1.5,
   },
+  activeUnderlineCompact: {
+    bottom: -4,
+    width: 10,
+    height: 2,
+    borderRadius: 1,
+  },
   profileRing: {
     width: 28,
     height: 28,
@@ -190,6 +210,12 @@ const styles = StyleSheet.create({
     padding: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  profileRingCompact: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    padding: 1,
   },
   profileInner: {
     width: '100%',

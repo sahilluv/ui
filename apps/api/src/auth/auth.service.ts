@@ -82,7 +82,12 @@ export class AuthService {
     const email = dto.email.trim().toLowerCase();
     const user = await this.prisma.user.findUnique({
       where: { email },
-      include: { profile: true },
+      include: {
+        profile: true,
+        shadow: true,
+        shadowRank: true,
+        verification: true,
+      },
     });
 
     if (!user) {
@@ -104,6 +109,9 @@ export class AuthService {
         email: user.email,
         name: user.name,
         profile: user.profile,
+        shadow: user.shadow,
+        shadowRank: user.shadowRank,
+        verification: user.verification,
       },
     };
   }

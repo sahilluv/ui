@@ -45,6 +45,34 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <Text style={[styles.displayName, { color: colors.text }]}>
           Mauricio Lopez
         </Text>
+        <Text style={[styles.usernameText, { color: colors.secondaryText }]}>
+          @maoo.lopez
+        </Text>
+
+        {/* Real Shadow Identity Card */}
+        <View style={[styles.identityCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <View style={styles.identityIdRow}>
+            <Text style={[styles.identityBadgeLabel, { color: colors.secondaryText }]}>
+              SHADOW ID:
+            </Text>
+            <Text style={[styles.identityBadgeValue, { color: colors.text }]}>
+              shdw_mlopez89
+            </Text>
+          </View>
+          <View style={styles.badgeSubRow}>
+            <View style={[styles.rankTag, { backgroundColor: colors.accent + '20', borderColor: colors.accent + '50' }]}>
+              <Text style={[styles.rankTagText, { color: colors.accent }]}>
+                ♙ PAWN · RANK I
+              </Text>
+            </View>
+            <View style={[styles.verificationTag, { backgroundColor: '#10B98120', borderColor: '#10B98150' }]}>
+              <Text style={[styles.verificationTagText, { color: '#10B981' }]}>
+                ✓ VERIFIED
+              </Text>
+            </View>
+          </View>
+        </View>
+
         <Text style={[styles.bioText, { color: colors.secondaryText }]}>
           Diseñador visual y Fotografía - Villahermosa, México
         </Text>
@@ -228,7 +256,71 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     letterSpacing: -0.3,
-    marginBottom: 4,
+    marginBottom: 2,
+  },
+  usernameText: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  identityCard: {
+    width: '100%',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 10,
+    gap: 8,
+  },
+  identityIdRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(255,255,255,0.08)',
+  },
+  identityBadgeLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  identityBadgeValue: {
+    fontSize: 11,
+    fontWeight: '800',
+    fontFamily: 'monospace',
+  },
+  badgeSubRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  rankTag: {
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rankTagText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  verificationTag: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  verificationTagText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   bioText: {
     fontSize: 12,

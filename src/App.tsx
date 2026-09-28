@@ -8,15 +8,17 @@ import {
   Smartphone,
   Columns3,
   LayoutGrid,
+  Code,
   Moon,
   Sun,
   Sparkles,
 } from 'lucide-react';
 import { PhoneSimulator, TabType } from './components/PhoneSimulator';
 import { StoryViewerModal } from './components/StoryViewerModal';
+import { ExpoCodeViewer } from './components/ExpoCodeViewer';
 import { StoryItem, INITIAL_STORIES } from './data/mockData';
 
-type AppViewMode = 'single' | 'side-by-side' | 'gallery';
+type AppViewMode = 'single' | 'side-by-side' | 'gallery' | 'code';
 
 export default function App() {
   const [viewMode, setViewMode] = useState<AppViewMode>('single');
@@ -116,6 +118,19 @@ export default function App() {
             <LayoutGrid size={14} />
             <span className="hidden sm:inline">All 5 Screens Gallery</span>
             <span className="sm:hidden">All 5</span>
+          </button>
+
+          <button
+            onClick={() => setViewMode('code')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+              viewMode === 'code'
+                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Code size={14} />
+            <span className="hidden sm:inline">Monorepo & Expo Code</span>
+            <span className="sm:hidden">Code</span>
           </button>
         </div>
 
@@ -275,6 +290,13 @@ export default function App() {
                 />
               </div>
             </div>
+          </div>
+        )}
+
+        {/* VIEW 4: MONOREPO & EXPO CODE EXPLORER */}
+        {viewMode === 'code' && (
+          <div className="flex-1 p-4 sm:p-8 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
+            <ExpoCodeViewer />
           </div>
         )}
       </main>

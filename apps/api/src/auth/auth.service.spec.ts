@@ -114,6 +114,36 @@ describe('AuthService', () => {
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 
+  it('returns access_token and user identity with shadowRank and verification on successful login', async () => {
+    const userWithIdentity = {
+      id: 'user-1',
+      email: 'alice@example.com',
+      passwordHash: await bcrypt.hash('Password123', 4),
+      name: 'Alice',
+      profile: { id: 'profile-1' },
+      shadow: { id: 'shadow-1' },
+      shadowRank: { id: 'rank-1', rankType: 'PAWN' },
+      verification: { id: 'verify-1', status: 'UNVERIFIED' },
+    };
+
+    prisma.user.findUnique.mockResolvedValue(userWithIdentity);
+
+    const result = await authService.login({
+      email: 'alice@example.com',
+      password: 'Password123',
+    });
+
+    expect(result.access_token).toBe('mocked-token');
+    expect(result.user.shadowRank).toBeDefined();
+    if (result.user.shadowRank) {
+      expect(result.user.shadowRank.rankType).toBe('PAWN');
+    }
+    expect(result.user.verification).toBeDefined();
+    if (result.user.verification) {
+      expect(result.user.verification.status).toBe('UNVERIFIED');
+    }
+  });
+
   describe('getCurrentUserIdentity', () => {
     it('returns the current user identity with Shadow data', async () => {
       const userWithIdentity = {

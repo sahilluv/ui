@@ -14,10 +14,18 @@ export interface ShadowIdentity {
   updatedAt?: string;
 }
 
+export type ShadowRankType =
+  | 'PAWN'
+  | 'KNIGHT'
+  | 'BISHOP'
+  | 'ROOK'
+  | 'QUEEN'
+  | 'KING';
+
 export interface ShadowRank {
   id: string;
   userId?: string;
-  rankType: 'PAWN';
+  rankType: ShadowRankType;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -72,6 +80,12 @@ export interface RegisterRequest {
 export interface PostAuthor {
   id: string;
   name: string | null;
+  shadowRank?: {
+    rankType: ShadowRankType;
+  } | null;
+  verification?: {
+    status: 'UNVERIFIED' | 'VERIFIED';
+  } | null;
 }
 
 export interface Post {
