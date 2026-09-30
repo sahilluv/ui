@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TabType } from '../types';
@@ -36,77 +36,105 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       >
         {/* 1. Home */}
         <TouchableOpacity
-          style={styles.tabButton}
+          style={[
+            styles.tabButton,
+            currentTab === 'home' && styles.tabButtonActive,
+            currentTab === 'home' && {
+              backgroundColor: colors.isDark ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.85)',
+              borderColor: colors.isDark ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.6)',
+            },
+          ]}
           onPress={() => onTabChange('home')}
           activeOpacity={0.7}
         >
-          <View style={styles.homeIconWrapper}>
+          <View style={styles.iconWrapper}>
             <Ionicons
               name={currentTab === 'home' ? 'home' : 'home-outline'}
               size={isCompact ? 18 : 22}
               color={currentTab === 'home' ? colors.tabActive : colors.tabInactive}
             />
-            {currentTab === 'home' && (
-              <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
-            )}
           </View>
         </TouchableOpacity>
 
         {/* 2. Discover / Search */}
         <TouchableOpacity
-          style={styles.tabButton}
+          style={[
+            styles.tabButton,
+            currentTab === 'explore' && styles.tabButtonActive,
+            currentTab === 'explore' && {
+              backgroundColor: colors.isDark ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.85)',
+              borderColor: colors.isDark ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.6)',
+            },
+          ]}
           onPress={() => onTabChange('explore')}
-          activeOpacity={0.7}
-        >
-          <Feather
-            name="search"
-            size={isCompact ? 18 : 22}
-            color={currentTab === 'explore' ? colors.tabActive : colors.tabInactive}
-          />
-          {currentTab === 'explore' && (
-            <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
-          )}
-        </TouchableOpacity>
-
-        {/* 3. Reels Section (TV Monitor with Play Icon from Reference) */}
-        <TouchableOpacity
-          style={styles.tabButton}
-          onPress={() => onTabChange('reels')}
-          activeOpacity={0.7}
-        >
-          <View style={styles.reelIconWrapper}>
-            <MaterialCommunityIcons
-              name={currentTab === 'reels' ? 'television-play' : 'television-play'}
-              size={isCompact ? 20 : 24}
-              color={currentTab === 'reels' ? colors.tabActive : colors.tabInactive}
-            />
-            {currentTab === 'reels' && (
-              <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
-            )}
-          </View>
-        </TouchableOpacity>
-
-        {/* 4. Shop / Basket */}
-        <TouchableOpacity
-          style={styles.tabButton}
-          onPress={() => onTabChange('shop')}
           activeOpacity={0.7}
         >
           <View style={styles.iconWrapper}>
             <Feather
-              name="shopping-bag"
-              size={isCompact ? 17 : 21}
-              color={currentTab === 'shop' ? colors.tabActive : colors.tabInactive}
+              name="search"
+              size={isCompact ? 18 : 22}
+              color={currentTab === 'explore' ? colors.tabActive : colors.tabInactive}
             />
-            {currentTab === 'shop' && (
-              <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
+          </View>
+        </TouchableOpacity>
+
+        {/* 3. Reels Section (TV Monitor with Play Icon) */}
+        <TouchableOpacity
+          style={[
+            styles.tabButton,
+            currentTab === 'reels' && styles.tabButtonActive,
+            currentTab === 'reels' && {
+              backgroundColor: colors.isDark ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.85)',
+              borderColor: colors.isDark ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.6)',
+            },
+          ]}
+          onPress={() => onTabChange('reels')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.iconWrapper}>
+            <MaterialCommunityIcons
+              name="television-play"
+              size={isCompact ? 20 : 24}
+              color={currentTab === 'reels' ? colors.tabActive : colors.tabInactive}
+            />
+          </View>
+        </TouchableOpacity>
+
+        {/* 4. Chat / Direct Messages */}
+        <TouchableOpacity
+          style={[
+            styles.tabButton,
+            (currentTab === 'chat' || currentTab === 'shop') && styles.tabButtonActive,
+            (currentTab === 'chat' || currentTab === 'shop') && {
+              backgroundColor: colors.isDark ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.85)',
+              borderColor: colors.isDark ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.6)',
+            },
+          ]}
+          onPress={() => onTabChange('chat')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.iconWrapper}>
+            <Feather
+              name="message-circle"
+              size={isCompact ? 18 : 22}
+              color={currentTab === 'chat' || currentTab === 'shop' ? colors.tabActive : colors.tabInactive}
+            />
+            {unreadNotifications && (
+              <View style={[styles.chatBadge, { backgroundColor: colors.accent || '#FF0A78' }]} />
             )}
           </View>
         </TouchableOpacity>
 
-        {/* 5. Profile (Circular Avatar with Vibrant Gradient Ring) */}
+        {/* 5. Profile */}
         <TouchableOpacity
-          style={styles.tabButton}
+          style={[
+            styles.tabButton,
+            currentTab === 'profile' && styles.tabButtonActive,
+            currentTab === 'profile' && {
+              backgroundColor: colors.isDark ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.85)',
+              borderColor: colors.isDark ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.6)',
+            },
+          ]}
           onPress={() => onTabChange('profile')}
           activeOpacity={0.7}
         >
@@ -135,9 +163,6 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               />
             </View>
           </LinearGradient>
-          {currentTab === 'profile' && (
-            <View style={[styles.activeUnderline, isCompact && styles.activeUnderlineCompact, { backgroundColor: colors.text }]} />
-          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -161,47 +186,49 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    paddingHorizontal: 10,
+    paddingHorizontal: 0,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.1,
     shadowRadius: 16,
     elevation: 8,
     borderWidth: 1,
+    position: 'relative',
+    overflow: 'hidden',
   },
   containerCompact: {
     height: 40,
     borderRadius: 22,
-    paddingHorizontal: 6,
   },
   tabButton: {
     flex: 1,
-    height: '100%',
+    height: '84%',
+    marginHorizontal: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    zIndex: 2,
+  },
+  tabButtonActive: {
+    borderWidth: 1,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  iconWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
-  homeIconWrapper: {
-    alignItems: 'center',
-  },
-  reelIconWrapper: {
-    alignItems: 'center',
-  },
-  iconWrapper: {
-    alignItems: 'center',
-  },
-  activeUnderline: {
+  chatBadge: {
     position: 'absolute',
-    bottom: -6,
-    width: 14,
-    height: 2.5,
-    borderRadius: 1.5,
-  },
-  activeUnderlineCompact: {
-    bottom: -4,
-    width: 10,
-    height: 2,
-    borderRadius: 1,
+    top: -2,
+    right: -4,
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
   },
   profileRing: {
     width: 28,
@@ -228,4 +255,3 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-

@@ -1,5 +1,6 @@
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { StoryAvatar } from './StoryAvatar';
 import { StoryItem } from '../types';
 import { ThemeColors } from '../theme';
@@ -8,12 +9,14 @@ interface StoryRowProps {
   stories: StoryItem[];
   colors: ThemeColors;
   onStoryPress?: (story: StoryItem) => void;
+  onCameraPress?: () => void;
 }
 
 export const StoryRow: React.FC<StoryRowProps> = ({
   stories,
   colors,
   onStoryPress,
+  onCameraPress,
 }) => {
   return (
     <View style={styles.container}>
@@ -22,6 +25,26 @@ export const StoryRow: React.FC<StoryRowProps> = ({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
+        {/* Quick Camera Story Button */}
+        <TouchableOpacity
+          style={styles.cameraBtnWrap}
+          activeOpacity={0.8}
+          onPress={onCameraPress}
+        >
+          <View
+            style={[
+              styles.cameraCircle,
+              {
+                borderColor: colors.accent,
+                backgroundColor: colors.inputBackground,
+              },
+            ]}
+          >
+            <Feather name="camera" size={20} color={colors.accent} />
+          </View>
+          <Text style={[styles.cameraLabel, { color: colors.accent }]}>Cámara</Text>
+        </TouchableOpacity>
+
         {stories.map((story) => (
           <StoryAvatar
             key={story.id}
@@ -42,5 +65,25 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 18,
     alignItems: 'center',
+    gap: 8,
+  },
+  cameraBtnWrap: {
+    alignItems: 'center',
+    marginRight: 6,
+    gap: 5,
+  },
+  cameraCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cameraLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.2,
   },
 });

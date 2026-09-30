@@ -32,7 +32,24 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedSharePostId, setSelectedSharePostId] = useState<string | null>(null);
+  const [isOfflineCached, setIsOfflineCached] = useState(false);
   const isLoadingMoreRef = useRef(false);
+
+  // Load from cache immediately on startup
+  useEffect(() => {
+    try {
+      if (typeof globalThis !== 'undefined' && globalThis.localStorage) {
+        const raw = globalThis.localStorage.getItem('shadow_mobile_feed_cache');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.items) && parsed.items.length > 0) {
+            setPosts(parsed.items);
+            setIsLoading(false);
+          }
+        }
+      }
+    } catch (_) {}
+  }, []);
 
   // Isolated demo stories for the visual concept header
   const stories: StoryItem[] = [
@@ -64,7 +81,7 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
     },
   ];
 
-  // Fetch real feed from API
+  // Fetch real feed from API with offline fallback
   const loadFeed = useCallback(async (refresh = false) => {
     if (refresh) {
       setIsRefreshing(true);
@@ -78,8 +95,33 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
       setPosts(response.items);
       setNextCursor(response.nextCursor);
       setError(null);
+      setIsOfflineCached(false);
+
+      if (typeof globalThis !== 'undefined' && globalThis.localStorage) {
+        globalThis.localStorage.setItem(
+          'shadow_mobile_feed_cache',
+          JSON.stringify({ items: response.items, timestamp: Date.now() })
+        );
+      }
     } catch (err: any) {
-      setError(err?.message || 'Unable to load your feed.');
+      let hasCached = false;
+      if (typeof globalThis !== 'undefined' && globalThis.localStorage) {
+        const raw = globalThis.localStorage.getItem('shadow_mobile_feed_cache');
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed.items) && parsed.items.length > 0) {
+              setPosts(parsed.items);
+              setIsOfflineCached(true);
+              hasCached = true;
+              setError(null);
+            }
+          } catch (_) {}
+        }
+      }
+      if (!hasCached) {
+        setError(err?.message || 'Unable to load your feed.');
+      }
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -144,6 +186,20 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
           />
         }
       >
+        {/* Offline Cache Indicator Banner */}
+        {isOfflineCached && (
+          <View
+            style={[
+              styles.offlineBanner,
+              { backgroundColor: colors.inputBackground, borderColor: colors.border },
+            ]}
+          >
+            <Text style={[styles.offlineText, { color: colors.accent }]}>
+              ⚡ Modo sin conexión • Mostrando publicaciones en caché
+            </Text>
+          </View>
+        )}
+
         {/* 2. Concept Story Row */}
         <StoryRow
           stories={stories}
@@ -252,5 +308,20 @@ const styles = StyleSheet.create({
   pullUpText: {
     fontSize: 11,
     fontWeight: '700',
+  },
+  offlineBanner: {
+    marginHorizontal: 16,
+    marginVertical: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  offlineText: {
+    fontSize: 11,
+    fontWeight: '700',
+    textAlign: 'center',
   },
 });

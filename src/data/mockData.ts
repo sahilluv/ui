@@ -7,6 +7,9 @@ export interface StoryItem {
   hasUnseen?: boolean;
   imageUrl?: string;
   storyImageUrl?: string;
+  storyCaption?: string;
+  storySticker?: string;
+  storyTimestamp?: string;
 }
 
 export interface ReelItem {
