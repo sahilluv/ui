@@ -19,8 +19,14 @@ export interface ReelItem {
     username: string;
     location: string;
     avatarGradient: string;
+    avatarUrl?: string;
   };
   gradient: string;
+  videoUrl?: string;
+  posterUrl?: string;
+  audioTrack?: string;
+  caption?: string;
+  tags?: string[];
   likes: string;
   likesCount: number;
   comments: string;
@@ -362,6 +368,10 @@ export const INITIAL_REELS: ReelItem[] = [
       avatarGradient: 'linear-gradient(135deg, #3A3B4D 0%, #252636 100%)',
     },
     gradient: 'linear-gradient(180deg, #7E729F 0%, #B896B8 30%, #E3B2C6 65%, #F5D3DC 100%)',
+    posterUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    audioTrack: 'Eliott Johnson • Harmonic Void (432Hz Original)',
+    caption: 'Sculpting fluid light and shadow in 3D canvas space ♟️',
+    tags: ['#ShadowConcept', '#FluidArt', '#Generative'],
     likes: '2,4k',
     likesCount: 2400,
     comments: '175',
@@ -378,6 +388,10 @@ export const INITIAL_REELS: ReelItem[] = [
       avatarGradient: 'linear-gradient(135deg, #443B36 0%, #2A2320 100%)',
     },
     gradient: 'linear-gradient(180deg, #463B36 0%, #68584F 35%, #927C6F 70%, #BBA496 100%)',
+    posterUrl: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600&auto=format&fit=crop&q=80',
+    audioTrack: 'Christian Lue • Brutalist Echoes ft. Synthwave',
+    caption: 'Brutalist typography meets dynamic glass refractions.',
+    tags: ['#Brutalism', '#Typography', '#Visuals'],
     likes: '1,8k',
     likesCount: 1800,
     comments: '92',
@@ -394,6 +408,10 @@ export const INITIAL_REELS: ReelItem[] = [
       avatarGradient: 'linear-gradient(135deg, #1B2A4A 0%, #0F1829 100%)',
     },
     gradient: 'linear-gradient(180deg, #1E3A8A 0%, #3B82F6 40%, #60A5FA 70%, #93C5FD 100%)',
+    posterUrl: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600&auto=format&fit=crop&q=80',
+    audioTrack: 'Sofia Martinez • Cyber Neon Resonance (Tokyo Drift)',
+    caption: 'Night atmospheric shader test. Liquid physics at 60fps.',
+    tags: ['#TokyoVibes', '#Cyberpunk', '#WebGL'],
     likes: '3,9k',
     likesCount: 3900,
     comments: '340',

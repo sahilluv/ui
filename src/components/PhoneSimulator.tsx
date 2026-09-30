@@ -4,6 +4,7 @@ import {
   Heart,
   Search,
   Send,
+  Share2,
   Bookmark,
   MessageCircle,
   Tv,
@@ -24,6 +25,8 @@ import {
   RotateCw,
   UserPlus,
   UserCheck,
+  CheckCheck,
+  Bell,
   ChevronLeft,
   ChevronRight,
   Shield,
@@ -41,18 +44,19 @@ import {
   Clock,
   ArrowUpRight,
   Camera,
-  Wifi,
-  WifiOff,
 } from 'lucide-react';
-import { PawnRankBadge, PremiumPawnInsignia } from './PawnRankBadge';
+import { PawnRankBadge, PremiumPawnInsignia, PremiumKnightInsignia, ShadowRankType } from './PawnRankBadge';
 import { BottomNavigation } from './BottomNavigation';
 import { StoryCameraOverlay } from './StoryCameraOverlay';
 import {
-  loadCachedFeed,
-  saveFeedToCache,
+  useOfflineFeed,
+  useOfflineReels,
+  persistFeedCache,
+  persistReelsCache,
+} from '../utils/offlineDataClient';
+import {
   loadCachedFollowedAuthors,
   saveFollowedAuthorsToCache,
-  formatCacheTimestamp,
 } from '../utils/feedCache';
 
 export const PawnGlyph = ({
@@ -79,6 +83,8 @@ import {
 import { ShareSheetModal } from './ShareSheetModal';
 import { ReelCommentsDrawer } from './ReelCommentsDrawer';
 import { PullUpRefresh } from './PullUpRefresh';
+import { ReelCard } from './ReelCard';
+import { useReelIntersectionObserver } from '../hooks/useReelIntersectionObserver';
 
 export type TabType = 'home' | 'explore' | 'reels' | 'shop' | 'chat' | 'create' | 'notifications' | 'profile';
 
@@ -280,52 +286,51 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     prevScrollTopRef.current = currentScrollTop;
   };
 
-  // Persistent Cache & Offline State
-  const [cachedPayload] = useState(() => loadCachedFeed());
-  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
-  const [simulateOffline, setSimulateOffline] = useState(false);
-  const [cacheLastSaved, setCacheLastSaved] = useState<number>(() => cachedPayload?.savedAt ?? Date.now());
+  // Transparent Offline-First Data Strategy (Service Worker + Cache Storage API + LocalStorage)
+  const {
+    posts,
+    setPosts,
+    refreshFeed,
+    toggleLikePost,
+    toggleSavePost,
+    addNewPost,
+  } = useOfflineFeed();
 
-  // State for stories, posts, likes, followers (hydrated from localStorage cache if available)
-  const [stories, setStories] = useState<StoryItem[]>(() => cachedPayload?.stories ?? INITIAL_STORIES);
+  const {
+    reels,
+    setReels,
+    refreshReels,
+    toggleLikeReel,
+    toggleSaveReel,
+    incrementReelComments,
+  } = useOfflineReels();
+
+  // State for stories, likes, followers
+  const [stories, setStories] = useState<StoryItem[]>(INITIAL_STORIES);
   const [isCameraOverlayOpen, setIsCameraOverlayOpen] = useState(false);
-  const [posts, setPosts] = useState<PostItem[]>(() => cachedPayload?.posts ?? INITIAL_POSTS);
-  const [reels, setReels] = useState<ReelItem[]>(INITIAL_REELS);
   const [activeReelComments, setActiveReelComments] = useState<ReelItem | null>(null);
   const [isFollowingMauricio, setIsFollowingMauricio] = useState(false);
   const [activeProfileTab, setActiveProfileTab] = useState<'posts' | 'tags' | 'igtv'>('posts');
-  const [notifFilter, setNotifFilter] = useState<'all' | 'likes' | 'comments'>('all');
+  const [notifFilter, setNotifFilter] = useState<'all' | 'likes' | 'comments' | 'follows'>('all');
   const [hasUnreadNotifs, setHasUnreadNotifs] = useState(true);
+  const [notificationsList, setNotificationsList] = useState(NOTIFICATIONS_DATA);
   const [isRefreshingReels, setIsRefreshingReels] = useState(false);
   const [shareModalPost, setShareModalPost] = useState<PostItem | null>(null);
   const [postSlidePages, setPostSlidePages] = useState<Record<string, number>>({ post_maoo: 1 });
   const [selectedCategory, setSelectedCategory] = useState<string>('igtv');
 
-  // Auto-persist posts & stories to localStorage whenever they are modified
-  useEffect(() => {
-    saveFeedToCache(posts, stories);
-    setCacheLastSaved(Date.now());
-  }, [posts, stories]);
-
-  // Window network online / offline listeners
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      triggerToast('Network restored! Syncing live feed.', 'sparkles');
-    };
-    const handleOffline = () => {
-      setIsOnline(false);
-      triggerToast('Network disconnected. Viewing cached feed ⚡', 'sparkles');
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+  // Performance-Optimized Reel Preloader & Intersection Observer:
+  // Monitors currently viewed reel in viewport and pre-loads next reel media in background
+  const {
+    activeIndex: activeReelIndex,
+    isNextPreloaded,
+    preloadedStatusMap,
+    registerReelRef,
+  } = useReelIntersectionObserver({
+    containerRef: viewportRef,
+    reels,
+    threshold: 0.6,
+  });
 
   const handlePublishNewStory = (newStoryData: {
     gradient: string;
@@ -493,10 +498,25 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     }, 1100);
   };
 
-  // Shadow Identity & Pawn Rank system states
+  // Shadow Identity & Rank system states
+  const [mauricioRank, setMauricioRank] = useState<ShadowRankType>('PAWN');
+  const [isRankTransitioning, setIsRankTransitioning] = useState(false);
   const [isMauricioVerified, setIsMauricioVerified] = useState(true);
   const [showRankHierarchyModal, setShowRankHierarchyModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+
+  const handlePromoteRank = () => {
+    setIsRankTransitioning(true);
+    const nextRank = mauricioRank === 'PAWN' ? 'KNIGHT' : 'PAWN';
+    setMauricioRank(nextRank);
+    triggerToast(
+      nextRank === 'KNIGHT'
+        ? '✦ Shadow Identity Elevated: KNIGHT (Rank II)'
+        : '✦ Shadow Identity Reverted: PAWN (Rank I)',
+      'sparkles'
+    );
+    setTimeout(() => setIsRankTransitioning(false), 1400);
+  };
 
   // Pull Up Refresh states
   const [isPullUpRefreshing, setIsPullUpRefreshing] = useState(false);
@@ -572,46 +592,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     if (isPullUpRefreshing) return;
     setIsPullUpRefreshing(true);
 
-    if (!isOnline || simulateOffline) {
-      // Offline mode: load from localStorage cache
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      const cached = loadCachedFeed();
-      if (cached) {
-        setPosts(cached.posts);
-        if (cached.stories) setStories(cached.stories);
-        triggerToast(`Offline Mode: Loaded from cache (${formatCacheTimestamp(cached.savedAt)})`, 'sparkles');
-      } else {
-        triggerToast('Offline Mode: Showing cached feed ⚡', 'sparkles');
-      }
-      setIsPullUpRefreshing(false);
-      setPullUpDistance(0);
-      return;
+    try {
+      await refreshFeed();
+    } catch (_err) {
+      // Handled transparently by offline cache
     }
-
-    // Simulate network query latency
-    await new Promise((resolve) => setTimeout(resolve, 950));
-
-    // Append fresh posts to feed
-    setPosts((prevPosts) => {
-      const existingIds = new Set(prevPosts.map((p) => p.id));
-      const unadded = FRESH_POSTS_POOL.filter((p) => !existingIds.has(p.id));
-
-      if (unadded.length > 0) {
-        return [...prevPosts, ...unadded];
-      } else {
-        // Cycle fresh batch with new timestamp
-        const nextBatch = FRESH_POSTS_POOL.map((p, idx) => ({
-          ...p,
-          id: `post_synced_${Date.now()}_${idx}`,
-          timeAgo: 'Just now',
-        }));
-        return [...prevPosts, ...nextBatch];
-      }
-    });
 
     setIsPullUpRefreshing(false);
     setPullUpDistance(0);
-    triggerToast('Shadow feed refreshed! Fresh stories & posts synced.', 'sparkles');
   };
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
@@ -811,86 +799,35 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
   };
 
   // Pull-to-refresh reels handler
-  const handleRefreshReels = () => {
+  const handleRefreshReels = async () => {
     if (isRefreshingReels) return;
     setIsRefreshingReels(true);
-    setTimeout(() => {
-      const newReel: ReelItem = {
-        id: `reel_${Date.now()}`,
-        author: {
-          name: 'Elena Rostova',
-          username: 'elena.lens',
-          location: 'Reykjavik, Iceland',
-          avatarGradient: 'linear-gradient(135deg, #065F46 0%, #10B981 100%)',
-        },
-        gradient: 'linear-gradient(180deg, #042F2E 0%, #0D9488 40%, #2DD4BF 80%, #99F6E4 100%)',
-        likes: '5,2k',
-        likesCount: 5200,
-        comments: '412',
-        commentsCount: 412,
-        isLiked: false,
-        isSaved: false,
-      };
-      setReels((prev) => [newReel, ...prev.filter((r) => r.id !== newReel.id)]);
-      setIsRefreshingReels(false);
-    }, 1200);
+    try {
+      await refreshReels();
+    } catch (_e) {
+      // Handled transparently
+    }
+    setIsRefreshingReels(false);
   };
 
-  const handleToggleReelLike = (id: string, forceLike = false) => {
-    setReels((prev) =>
-      prev.map((r) => {
-        if (r.id === id) {
-          const nextLiked = forceLike ? true : !r.isLiked;
-          if (forceLike && r.isLiked) return r;
-          return {
-            ...r,
-            isLiked: nextLiked,
-            likes: nextLiked ? '2,4k' : '2,3k',
-            likesCount: nextLiked ? r.likesCount + 1 : r.likesCount - 1,
-          };
-        }
-        return r;
-      })
-    );
+  const handleToggleReelLike = (id: string, _forceLike = false) => {
+    toggleLikeReel(id);
   };
 
   const handleToggleReelSave = (id: string) => {
-    setReels((prev) =>
-      prev.map((r) => {
-        if (r.id === id) {
-          const nextSaved = !r.isSaved;
-          if (nextSaved) {
-            setPoppingBookmarkReelId(id);
-            setTimeout(() => setPoppingBookmarkReelId(null), 850);
-            triggerToast('Reel saved to your collection ✨', 'bookmark');
-          } else {
-            triggerToast('Reel removed from saved', 'bookmark');
-          }
-          return { ...r, isSaved: nextSaved };
-        }
-        return r;
-      })
-    );
+    toggleSaveReel(id);
+    const target = reels.find((r) => r.id === id);
+    if (target && !target.isSaved) {
+      setPoppingBookmarkReelId(id);
+      setTimeout(() => setPoppingBookmarkReelId(null), 850);
+      triggerToast('Reel saved to collection', 'bookmark');
+    } else {
+      triggerToast('Reel removed from saved', 'bookmark');
+    }
   };
 
-  const handleReelCommentAdded = (reelId: string, text: string) => {
-    setReels((prev) =>
-      prev.map((r) => {
-        if (r.id === reelId) {
-          const nextCount = r.commentsCount + 1;
-          const updated = {
-            ...r,
-            commentsCount: nextCount,
-            comments: String(nextCount),
-          };
-          if (activeReelComments?.id === reelId) {
-            setActiveReelComments(updated);
-          }
-          return updated;
-        }
-        return r;
-      })
-    );
+  const handleReelCommentAdded = (reelId: string, _text: string) => {
+    incrementReelComments(reelId);
   };
 
   // Create Screen State
@@ -908,19 +845,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
   ];
 
   const handleLikePost = (postId: string) => {
-    setPosts((prev) =>
-      prev.map((p) => {
-        if (p.id === postId) {
-          const nextLiked = !p.isLiked;
-          return {
-            ...p,
-            isLiked: nextLiked,
-            likesCount: nextLiked ? p.likesCount + 1 : p.likesCount - 1,
-          };
-        }
-        return p;
-      })
-    );
+    toggleLikePost(postId);
   };
 
   const handlePublishPost = () => {
@@ -945,7 +870,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       isLiked: true,
     };
 
-    setPosts([createdPost, ...posts]);
+    addNewPost(createdPost);
     setNewTitle('');
     setNewCaption('');
     handleTabChange('home');
@@ -1122,60 +1047,6 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         {/* ======================================= */}
         {currentTab === 'home' && (
           <div className="pb-8">
-            {/* Offline Cache & Network Status Bar */}
-            <div className="px-4 pt-1 pb-1.5">
-              <div
-                className={`px-3 py-1.5 rounded-2xl flex items-center justify-between text-[11px] font-medium border transition-all ${
-                  !isOnline || simulateOffline
-                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-300'
-                    : isDark
-                    ? 'bg-[#151726]/80 border-white/5 text-slate-300'
-                    : 'bg-slate-100/90 border-black/5 text-slate-700'
-                }`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  {!isOnline || simulateOffline ? (
-                    <>
-                      <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
-                      <WifiOff size={13} className="text-amber-400 shrink-0" />
-                      <span className="truncate font-semibold text-[10px]">
-                        Offline • Viewing cached feed ({formatCacheTimestamp(cacheLastSaved)})
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                      <Wifi size={13} className="text-emerald-400 shrink-0" />
-                      <span className="truncate text-slate-400 text-[10px]">
-                        Feed cached offline • {posts.length} posts saved
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                <button
-                  onClick={() => {
-                    const next = !simulateOffline;
-                    setSimulateOffline(next);
-                    triggerToast(
-                      next ? 'Offline Mode active: Serving from local cache' : 'Online Mode active: Feed live',
-                      'sparkles'
-                    );
-                  }}
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all cursor-pointer shrink-0 ml-2 ${
-                    !isOnline || simulateOffline
-                      ? 'bg-amber-500/20 border-amber-500/40 text-amber-200 hover:bg-amber-500/30'
-                      : isDark
-                      ? 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
-                      : 'bg-white border-black/10 text-slate-600 hover:text-slate-900'
-                  }`}
-                  title="Toggle offline test mode"
-                >
-                  {!isOnline || simulateOffline ? 'Go Online' : 'Simulate Offline'}
-                </button>
-              </div>
-            </div>
-
             {/* Stories Row */}
             <div className="pt-2 pb-3 px-4 flex items-center gap-3 overflow-x-auto no-scrollbar">
               {/* Dedicated Camera / 24h Story Creator Quick Action */}
@@ -1377,9 +1248,9 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                       <button
                         onClick={() => setShareModalPost(post)}
                         className="p-1.5 hover:scale-110 active:scale-95 transition-all text-current cursor-pointer rounded-full hover:bg-white/10"
-                        title="Compartir publicación"
+                        title="Share post"
                       >
-                        <Send size={18} />
+                        <Share2 size={18} />
                       </button>
                     </div>
                   </div>
@@ -1470,7 +1341,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                           });
                         }}
                         className="w-9 h-9 rounded-full bg-white text-slate-900 flex items-center justify-center shadow-lg active:scale-95 hover:scale-105 transition-all cursor-pointer"
-                        title="Ver comentarios"
+                        title="View comments"
                       >
                         <MessageCircle size={17} className="text-slate-900" />
                       </button>
@@ -2039,20 +1910,29 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         )}
 
         {/* ======================================= */}
-        {/* SCREEN: REELS (Full-Screen Immersive Snapping Feed) */}
+        {/* SCREEN: REELS (Full-Screen Immersive Snapping Feed with Background Preloading) */}
         {/* ======================================= */}
         {currentTab === 'reels' && (
           <div className="w-full h-full">
-            {reels.map((reel) => (
-              <div
+            {reels.map((reel, index) => (
+              <ReelCard
                 key={reel.id}
+                reel={reel}
+                index={index}
+                isActive={activeReelIndex === index}
+                isNext={activeReelIndex + 1 === index}
+                preloadStatus={preloadedStatusMap.get(reel.id)}
+                isNavShrunk={isNavShrunk}
+                isDark={isDark}
+                isFollowing={!!followedAuthors[reel.author.username]}
+                poppingBookmarkId={poppingBookmarkReelId}
+                heartBurstId={heartBurstReelId}
+                isSwipingReel={isSwipingReel}
+                reelSwipeDeltaX={reelSwipeDeltaX}
                 onTouchStart={handleReelTouchStart}
                 onTouchMove={handleReelTouchMove}
                 onTouchEnd={() => handleReelTouchEnd(reel)}
-                onMouseDown={handleReelTouchStart}
-                onMouseMove={handleReelTouchMove}
-                onMouseUp={() => handleReelTouchEnd(reel)}
-                onMouseLeave={() => {
+                onTouchLeave={() => {
                   if (isSwipingReel) {
                     setIsSwipingReel(false);
                     setReelSwipeDeltaX(0);
@@ -2060,229 +1940,36 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                     setReelSwipeStartY(null);
                   }
                 }}
-                className="snap-start snap-always shrink-0 relative w-full h-[780px] overflow-hidden select-none cursor-pointer"
-                style={{
-                  background: reel.gradient,
-                  transform: isSwipingReel && Math.abs(reelSwipeDeltaX) > 8 ? `translateX(${reelSwipeDeltaX * 0.35}px)` : undefined,
-                  transition: isSwipingReel ? 'none' : 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                registerRef={registerReelRef}
+                onToggleLike={handleToggleReelLike}
+                onToggleSave={handleToggleReelSave}
+                onToggleFollow={handleToggleFollowAuthor}
+                onOpenComments={setActiveReelComments}
+                onOpenShare={(r) => {
+                  setShareModalPost({
+                    id: r.id,
+                    author: {
+                      name: r.author.name,
+                      username: r.author.username,
+                      location: r.author.location,
+                      avatarGradient: r.author.avatarGradient,
+                    },
+                    timeAgo: 'Just now',
+                    gradient: r.gradient,
+                    likesCount: r.likesCount,
+                    commentsCount: r.commentsCount,
+                    likedByText: `${r.likes} likes`,
+                    captionTitle: r.caption || r.author.name,
+                    captionBody: r.author.location,
+                    totalPages: 1,
+                    currentPage: 1,
+                    isLiked: r.isLiked,
+                    isSaved: r.isSaved,
+                  });
                 }}
-              >
-                {/* Swipe Right Visual Cue: Return to Feed */}
-                {isSwipingReel && reelSwipeDeltaX > 20 && (
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
-                    <ChevronLeft size={16} className="text-[#FF0A78]" />
-                    <span>Return to Feed</span>
-                  </div>
-                )}
-
-                {/* Swipe Left Visual Cue: View Creator Profile */}
-                {isSwipingReel && reelSwipeDeltaX < -20 && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
-                    <span>@{reel.author.username}</span>
-                    <ChevronRight size={16} className="text-[#991BEA]" />
-                  </div>
-                )}
-
-                {/* Big Blooming Heart Burst on Double Tap */}
-                {heartBurstReelId === reel.id && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
-                    <Heart
-                      size={110}
-                      className="fill-[#FF2A55] text-white animate-heart-burst drop-shadow-[0_0_28px_rgba(255,42,85,0.85)]"
-                    />
-                  </div>
-                )}
-
-                {/* TOP OVERLAY: Creator/Profile Information & Controls */}
-                <div className="absolute top-0 left-0 right-0 pt-10 px-6 flex items-center justify-between z-20 bg-gradient-to-b from-black/75 via-black/35 to-transparent pb-8 pointer-events-auto">
-                  <div
-                    className="flex items-center gap-3 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleTabChange('profile');
-                    }}
-                  >
-                    <div
-                      className="w-10 h-10 rounded-full p-[2px] shadow-lg shrink-0"
-                      style={{ background: reel.author.avatarGradient }}
-                    >
-                      <div className="w-full h-full rounded-full bg-slate-900/90 flex items-center justify-center">
-                        <div
-                          className="w-full h-full rounded-full"
-                          style={{ background: reel.author.avatarGradient }}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-white text-sm font-extrabold tracking-tight drop-shadow-md leading-tight">
-                          {reel.author.name}
-                        </h3>
-                        <PawnRankBadge
-                          variant="compact"
-                          onClick={(e) => {
-                            e?.stopPropagation?.();
-                            triggerToast('Shadow Rank: PAWN (Rank I)', 'sparkles');
-                          }}
-                        />
-                        {/* Inline Follow / Following Capsule Button */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleToggleFollowAuthor(reel.author.username);
-                          }}
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all active:scale-90 cursor-pointer ${
-                            followedAuthors[reel.author.username]
-                              ? 'bg-black/50 text-emerald-400 border border-emerald-400/40 backdrop-blur-md'
-                              : 'bg-gradient-to-r from-[#FF0A78] to-[#991BEA] text-white shadow-md hover:opacity-95'
-                          }`}
-                        >
-                          {followedAuthors[reel.author.username] ? (
-                            <>
-                              <UserCheck size={10} />
-                              <span>Following</span>
-                            </>
-                          ) : (
-                            <>
-                              <UserPlus size={10} />
-                              <span>Follow</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                      <p className="text-white/80 text-[11px] font-medium leading-tight mt-0.5 drop-shadow-sm">
-                        {reel.author.location}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShareModalPost({
-                        id: reel.id,
-                        author: {
-                          name: reel.author.name,
-                          username: reel.author.username,
-                          location: reel.author.location,
-                          avatarGradient: reel.author.avatarGradient,
-                        },
-                        timeAgo: 'Justo ahora',
-                        gradient: reel.gradient,
-                        likesCount: reel.likesCount,
-                        commentsCount: reel.commentsCount,
-                        likedByText: `${reel.likes} likes`,
-                        captionTitle: reel.author.name,
-                        captionBody: reel.author.location,
-                        totalPages: 1,
-                        currentPage: 1,
-                        isLiked: reel.isLiked,
-                        isSaved: reel.isSaved,
-                      });
-                    }}
-                    className="w-8 h-8 rounded-full bg-black/30 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/90 hover:text-white hover:bg-black/50 transition-colors cursor-pointer"
-                    title="Opciones"
-                  >
-                    <MoreVertical size={18} />
-                  </button>
-                </div>
-
-                {/* Center Touch / Play Indicator */}
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleToggleReelLike(reel.id);
-                  }}
-                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                >
-                  <div className="w-16 h-16 rounded-full bg-black/10 backdrop-blur-xs flex items-center justify-center text-white/50 opacity-0 hover:opacity-100 transition-opacity">
-                    <Play size={24} className="fill-white/50 ml-1" />
-                  </div>
-                </div>
-
-                {/* Floating Engagement Capsule Pill: Centered white pill directly above bottom navigation bar */}
-                <div
-                  className={`absolute ${
-                    isNavShrunk ? 'bottom-16' : 'bottom-22'
-                  } left-0 right-0 flex justify-center z-20 pointer-events-auto select-none transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]`}
-                >
-                  <div className="bg-white rounded-full px-5 py-2.5 shadow-2xl flex items-center gap-3.5 border border-black/5 select-none">
-                    {/* Heart + Count */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleToggleReelLike(reel.id);
-                      }}
-                      className="flex items-center gap-2 group cursor-pointer active:scale-90 transition-transform"
-                    >
-                      <Heart
-                        size={18}
-                        className={
-                          reel.isLiked
-                            ? 'fill-[#FF2A55] text-[#FF2A55]'
-                            : 'text-[#12131D] group-hover:text-[#FF2A55]'
-                        }
-                      />
-                      <span className="text-xs font-black text-[#12131D]">
-                        {reel.likes}
-                      </span>
-                    </button>
-
-                    {/* Divider 1 */}
-                    <span className="w-[1px] h-4 bg-slate-200" />
-
-                    {/* Comment + Count */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveReelComments(reel);
-                      }}
-                      className="flex items-center gap-2 group cursor-pointer active:scale-90 transition-transform"
-                    >
-                      <MessageCircle
-                        size={17}
-                        className="text-[#12131D] group-hover:text-purple-600"
-                      />
-                      <span className="text-xs font-black text-[#12131D]">
-                        {reel.comments}
-                      </span>
-                    </button>
-
-                    {/* Divider 2 */}
-                    <span className="w-[1px] h-4 bg-slate-200" />
-
-                    {/* Bookmark with Pop Animation and Saved State */}
-                    <div className="relative flex items-center justify-center">
-                      {poppingBookmarkReelId === reel.id && (
-                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 pointer-events-none z-30">
-                          <Bookmark
-                            size={22}
-                            className="fill-[#991BEA] text-white animate-bookmark-pop drop-shadow-[0_4px_12px_rgba(153,27,234,0.7)]"
-                          />
-                        </div>
-                      )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleReelSave(reel.id);
-                        }}
-                        aria-label={reel.isSaved ? 'Reel saved • Click to remove' : 'Save Reel'}
-                        title={reel.isSaved ? 'Reel saved • Click to remove' : 'Save Reel'}
-                        className="cursor-pointer active:scale-85 transition-all p-1"
-                      >
-                        <Bookmark
-                          size={18}
-                          className={`transition-all duration-200 ${
-                            reel.isSaved
-                              ? 'fill-[#991BEA] text-[#991BEA] scale-110 drop-shadow-[0_2px_8px_rgba(153,27,234,0.4)]'
-                              : 'text-[#12131D] hover:text-[#991BEA]'
-                          }`}
-                        />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                onNavigateProfile={() => handleTabChange('profile')}
+                onToast={triggerToast}
+              />
             ))}
           </div>
         )}
@@ -2498,7 +2185,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         {/* ======================================= */}
         {/* SCREEN 4: CHAT & DIRECT MESSAGES        */}
         {/* ======================================= */}
-        {(currentTab === 'chat' || currentTab === 'notifications' || currentTab === 'shop') && (
+        {(currentTab === 'chat' || currentTab === 'shop') && (
           <div className="flex flex-col h-full pb-4">
             {activeChatUserId ? (
               // ACTIVE CHAT THREAD (Fully Conversable)
@@ -2864,7 +2551,171 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         )}
 
         {/* ======================================= */}
-        {/* SCREEN 5: PROFILE (Mauricio Lopez)      */}
+        {/* SCREEN 5: NOTIFICATIONS & ACTIVITY      */}
+        {/* ======================================= */}
+        {currentTab === 'notifications' && (
+          <div className="flex flex-col h-full overflow-y-auto no-scrollbar pb-8">
+            {/* Notifications Header */}
+            <div className="px-5 pt-2 pb-3 flex items-center justify-between shrink-0">
+              <div>
+                <h2 className={`text-xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  Activity
+                </h2>
+                <p className="text-[11px] text-slate-400">
+                  {notificationsList.filter((n) => !n.isRead).length > 0
+                    ? `${notificationsList.filter((n) => !n.isRead).length} new updates`
+                    : 'All caught up'}
+                </p>
+              </div>
+
+              {notificationsList.some((n) => !n.isRead) && (
+                <button
+                  onClick={() => {
+                    setNotificationsList((prev) => prev.map((n) => ({ ...n, isRead: true })));
+                    setHasUnreadNotifs(false);
+                    triggerToast('Marked all notifications as read', 'sparkles');
+                  }}
+                  className="flex items-center gap-1 text-[11px] font-bold text-pink-400 hover:text-pink-300 px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 transition-all cursor-pointer"
+                >
+                  <CheckCheck size={13} />
+                  <span>Mark all read</span>
+                </button>
+              )}
+            </div>
+
+            {/* Filter Pills */}
+            <div className="px-5 pb-3 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
+              {(['all', 'likes', 'comments', 'follows'] as const).map((filter) => {
+                const isActive = notifFilter === filter;
+                return (
+                  <button
+                    key={filter}
+                    onClick={() => setNotifFilter(filter)}
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer capitalize shrink-0 ${
+                      isActive
+                        ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md shadow-pink-500/25'
+                        : isDark
+                        ? 'bg-white/5 hover:bg-white/10 text-slate-400'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Notifications List */}
+            <div className="px-3 space-y-1">
+              {notificationsList
+                .filter((item) => {
+                  if (notifFilter === 'likes') return item.actionType === 'like';
+                  if (notifFilter === 'comments') return item.actionType === 'comment';
+                  if (notifFilter === 'follows') return item.actionType === 'follow';
+                  return true;
+                })
+                .map((notif) => {
+                  return (
+                    <div
+                      key={notif.id}
+                      onClick={() => {
+                        setNotificationsList((prev) =>
+                          prev.map((n) => (n.id === notif.id ? { ...n, isRead: true } : n))
+                        );
+                        triggerToast(`Viewed notification from @${notif.user.username}`);
+                      }}
+                      className={`p-2.5 rounded-2xl flex items-center gap-3 transition-colors cursor-pointer border ${
+                        !notif.isRead
+                          ? isDark
+                            ? 'bg-pink-500/[0.08] hover:bg-pink-500/[0.12] border-pink-500/20'
+                            : 'bg-pink-50/70 hover:bg-pink-50 border-pink-200/50'
+                          : isDark
+                          ? 'hover:bg-white/[0.04] border-transparent'
+                          : 'hover:bg-slate-50 border-transparent'
+                      }`}
+                    >
+                      {/* Avatar with Action Icon Badge */}
+                      <div className="relative shrink-0">
+                        <div
+                          className="w-10 h-10 rounded-full p-[2px]"
+                          style={{ background: notif.user.avatarGradient }}
+                        >
+                          <div
+                            className={`w-full h-full rounded-full ${
+                              isDark ? 'bg-[#0B0C14]' : 'bg-white'
+                            }`}
+                          />
+                        </div>
+
+                        {/* Action Icon Badge */}
+                        <div
+                          className={`absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full flex items-center justify-center text-white text-[9px] shadow-sm ${
+                            notif.actionType === 'like'
+                              ? 'bg-gradient-to-tr from-[#FF0A78] to-[#FF2D55]'
+                              : notif.actionType === 'comment'
+                              ? 'bg-gradient-to-tr from-[#06B6D4] to-[#3B82F6]'
+                              : 'bg-gradient-to-tr from-[#991BEA] to-[#6366F1]'
+                          }`}
+                        >
+                          {notif.actionType === 'like' ? (
+                            <Heart size={9} className="fill-white" />
+                          ) : notif.actionType === 'comment' ? (
+                            <MessageCircle size={9} className="fill-white" />
+                          ) : (
+                            <UserPlus size={9} />
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-xs leading-snug ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                          <strong className="font-bold">{notif.user.name}</strong>{' '}
+                          <span className={!notif.isRead ? (isDark ? 'text-white' : 'text-slate-900') : 'text-slate-400'}>
+                            {notif.content}
+                          </span>
+                        </p>
+                        <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">
+                          {notif.timeAgo}
+                        </span>
+                      </div>
+
+                      {/* Right Accessory: Follow Button or Post Thumbnail */}
+                      {notif.actionType === 'follow' ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleFollowAuthor(notif.user.username);
+                          }}
+                          className={`text-[10px] font-bold px-3 py-1 rounded-full transition-all shrink-0 cursor-pointer ${
+                            followedAuthors[notif.user.username]
+                              ? isDark
+                                ? 'bg-white/10 text-white'
+                                : 'bg-slate-200 text-slate-800'
+                              : 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-sm'
+                          }`}
+                        >
+                          {followedAuthors[notif.user.username] ? 'Following' : 'Follow'}
+                        </button>
+                      ) : notif.postThumbnailGradient ? (
+                        <div
+                          className="w-9 h-9 rounded-xl shrink-0 shadow-sm border border-white/10"
+                          style={{ background: notif.postThumbnailGradient }}
+                        />
+                      ) : null}
+
+                      {!notif.isRead && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" />
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+
+        {/* ======================================= */}
+        {/* SCREEN 6: PROFILE (Mauricio Lopez)      */}
         {/* ======================================= */}
         {currentTab === 'profile' && (
           <div className="pb-8">
@@ -2930,21 +2781,32 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   </button>
                 </div>
 
-                {/* Primary Premium Status Indicator: Distinct Proportional PAWN Rank Badge */}
+                {/* Primary Premium Status Indicator: Distinct Proportional Rank Badge with Visual Transition */}
                 <div className="mb-2.5">
                   <PawnRankBadge
+                    rank={mauricioRank}
                     variant="profile"
                     isDark={isDark}
+                    isPromoting={isRankTransitioning}
                     onClick={() => setShowRankHierarchyModal(true)}
                   />
                 </div>
 
-                {/* Secondary Row: Independent Verification Status + System Information Affordance */}
+                {/* Secondary Row: Independent Verification Status + Rank Progression Demo Button */}
                 <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/5">
-                  <div className="flex items-center gap-1 text-[9px] text-slate-400 font-medium">
-                    <span>Rank Authority:</span>
-                    <span className="text-pink-400 font-bold">Backend</span>
-                  </div>
+                  {/* Rank Elevate Trigger Button */}
+                  <button
+                    onClick={handlePromoteRank}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[9.5px] font-extrabold transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 ${
+                      mauricioRank === 'PAWN'
+                        ? 'bg-purple-500/15 border-purple-500/35 text-purple-300 hover:bg-purple-500/25 shadow-xs shadow-purple-500/20'
+                        : 'bg-pink-500/15 border-pink-500/35 text-pink-300 hover:bg-pink-500/25 shadow-xs shadow-pink-500/20'
+                    }`}
+                    title="Simulate Shadow Rank Progression: PAWN ↔ KNIGHT"
+                  >
+                    <Sparkles size={11} className={mauricioRank === 'PAWN' ? 'text-cyan-400 animate-pulse' : 'text-pink-400'} />
+                    <span>{mauricioRank === 'PAWN' ? 'Elevate to KNIGHT' : 'Revert to PAWN'}</span>
+                  </button>
 
                   {/* Verification Status (Independent from Rank) */}
                   <button
@@ -3150,19 +3012,19 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         )}
       </div>
 
-      {/* 4. Modular BottomNavigation with Smooth Spring-Based Active Tab Indicator */}
+      {/* 4. Modular BottomNavigation with Notification button in place of duplicate profile button */}
       <BottomNavigation
-        currentTab={currentTab === 'shop' || currentTab === 'notifications' ? 'chat' : currentTab}
+        currentTab={currentTab === 'shop' ? 'explore' : currentTab}
         onTabChange={(tab) => {
-          if (tab === 'chat') {
+          if (tab === 'notifications') {
             setHasUnreadNotifs(false);
           }
           handleTabChange(tab);
         }}
         isDark={isDark}
         isShrunk={isNavShrunk}
-        unreadCount={hasUnreadNotifs ? 2 : 0}
-        userAvatarGradient="linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)"
+        unreadCount={activeChatUserId ? 0 : 2}
+        unreadNotificationsCount={hasUnreadNotifs ? 3 : 0}
       />
 
       {/* Slide-Up Reel Comments Drawer matching Shadow UI aesthetic */}
@@ -3174,12 +3036,19 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         onCommentAdded={handleReelCommentAdded}
       />
 
-      {/* Custom Share Sheet Modal (Slide up from bottom with Copy Link, Share to Story, Send to Friends) */}
+      {/* Custom Share Sheet Modal (Slide up from bottom with Copy Link, Share to Story, Direct Messages, External Apps) */}
       <ShareSheetModal
         isOpen={!!shareModalPost}
         onClose={() => setShareModalPost(null)}
         post={shareModalPost}
         isDark={isDark}
+        onShareToStory={(p) => {
+          handlePublishNewStory({
+            gradient: p.gradient,
+            caption: p.captionTitle,
+            sticker: '🎨 Artwork',
+          });
+        }}
       />
 
       {/* Shadow Rank Hierarchy Modal (Explains Pawn rank as reputation hierarchy) */}
@@ -3199,15 +3068,19 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-3 border-b border-white/10">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-pink-500/20 border border-pink-500/40 text-pink-400 flex items-center justify-center">
-                  <PawnGlyph size={18} />
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                  mauricioRank === 'KNIGHT'
+                    ? 'bg-purple-500/20 border border-purple-500/40 text-cyan-300'
+                    : 'bg-pink-500/20 border border-pink-500/40 text-pink-400'
+                }`}>
+                  {mauricioRank === 'KNIGHT' ? <PremiumKnightInsignia size={20} glow={false} /> : <PawnGlyph size={18} />}
                 </div>
                 <div>
                   <h3 className="text-sm font-extrabold tracking-tight">
                     Shadow Reputation Rank
                   </h3>
                   <p className="text-[10px] text-pink-400 font-semibold">
-                    Current Identity: PAWN (Rank I)
+                    Current Identity: {mauricioRank} ({mauricioRank === 'KNIGHT' ? 'Rank II' : 'Rank I'})
                   </p>
                 </div>
               </div>
@@ -3235,24 +3108,31 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             {/* Rank Hierarchy List */}
             <div className="mt-3 space-y-1.5">
               {[
-                { name: 'PAWN', level: 'Rank I', status: 'Active Starting Rank', isCurrent: true },
-                { name: 'KNIGHT', level: 'Rank II', status: 'Future Reputation Tier', isCurrent: false },
-                { name: 'BISHOP', level: 'Rank III', status: 'Future Reputation Tier', isCurrent: false },
-                { name: 'ROOK', level: 'Rank IV', status: 'Future Reputation Tier', isCurrent: false },
-                { name: 'QUEEN', level: 'Rank V', status: 'Future Reputation Tier', isCurrent: false },
-                { name: 'KING', level: 'Rank VI', status: 'Apex Reputation Tier', isCurrent: false },
+                { name: 'PAWN', level: 'Rank I', status: 'Starting Rank', isCurrent: mauricioRank === 'PAWN', canToggle: true },
+                { name: 'KNIGHT', level: 'Rank II', status: 'Vanguard Status', isCurrent: mauricioRank === 'KNIGHT', canToggle: true },
+                { name: 'BISHOP', level: 'Rank III', status: 'Future Reputation Tier', isCurrent: false, canToggle: false },
+                { name: 'ROOK', level: 'Rank IV', status: 'Future Reputation Tier', isCurrent: false, canToggle: false },
+                { name: 'QUEEN', level: 'Rank V', status: 'Future Reputation Tier', isCurrent: false, canToggle: false },
+                { name: 'KING', level: 'Rank VI', status: 'Apex Reputation Tier', isCurrent: false, canToggle: false },
               ].map((tier) => (
                 <div
                   key={tier.name}
+                  onClick={() => {
+                    if (tier.canToggle && tier.name !== mauricioRank) {
+                      handlePromoteRank();
+                    }
+                  }}
                   className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all ${
                     tier.isCurrent
-                      ? 'bg-gradient-to-r from-pink-500/20 to-purple-600/20 border border-pink-500/40 text-pink-300 font-bold'
-                      : 'bg-white/[0.03] text-slate-400 border border-white/5'
+                      ? 'bg-gradient-to-r from-purple-500/25 via-pink-500/20 to-cyan-500/20 border border-purple-500/50 text-white font-bold shadow-xs'
+                      : tier.canToggle
+                      ? 'bg-white/[0.05] hover:bg-white/[0.08] text-slate-300 border border-white/10 cursor-pointer'
+                      : 'bg-white/[0.02] text-slate-500 border border-white/5 opacity-60'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="w-5 text-center font-mono text-[10px]">
-                      {tier.isCurrent ? '♙' : '○'}
+                    <span className="w-5 text-center font-mono text-[11px]">
+                      {tier.name === 'KNIGHT' ? '♘' : tier.name === 'PAWN' ? '♙' : '○'}
                     </span>
                     <span className={tier.isCurrent ? 'text-white font-extrabold' : ''}>
                       {tier.name}
@@ -3261,8 +3141,8 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                       {tier.level}
                     </span>
                   </div>
-                  <span className={`text-[10px] ${tier.isCurrent ? 'text-pink-400 font-bold' : 'text-slate-500'}`}>
-                    {tier.status}
+                  <span className={`text-[10px] ${tier.isCurrent ? 'text-cyan-300 font-bold' : 'text-slate-500'}`}>
+                    {tier.isCurrent ? 'ACTIVE' : tier.canToggle ? 'Tap to switch' : tier.status}
                   </span>
                 </div>
               ))}

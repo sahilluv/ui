@@ -186,20 +186,6 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
           />
         }
       >
-        {/* Offline Cache Indicator Banner */}
-        {isOfflineCached && (
-          <View
-            style={[
-              styles.offlineBanner,
-              { backgroundColor: colors.inputBackground, borderColor: colors.border },
-            ]}
-          >
-            <Text style={[styles.offlineText, { color: colors.accent }]}>
-              ⚡ Modo sin conexión • Mostrando publicaciones en caché
-            </Text>
-          </View>
-        )}
-
         {/* 2. Concept Story Row */}
         <StoryRow
           stories={stories}

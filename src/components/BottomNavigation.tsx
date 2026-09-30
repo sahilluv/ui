@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Tv, MessageCircle, Home } from 'lucide-react';
+import { Search, Tv, MessageCircle, Home, Bell } from 'lucide-react';
 import { TabType } from './PhoneSimulator';
 
 interface BottomNavigationProps {
@@ -8,6 +8,7 @@ interface BottomNavigationProps {
   isDark: boolean;
   isShrunk?: boolean;
   unreadCount?: number;
+  unreadNotificationsCount?: number;
   userAvatarGradient?: string;
 }
 
@@ -24,7 +25,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   isDark,
   isShrunk = false,
   unreadCount = 2,
-  userAvatarGradient = 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+  unreadNotificationsCount = 2,
 }) => {
   const tabs: TabItem[] = [
     {
@@ -75,6 +76,22 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       ),
     },
     {
+      id: 'notifications',
+      label: 'Notifications',
+      badge: unreadNotificationsCount,
+      icon: (active, shrunk) => (
+        <div className="relative flex items-center justify-center">
+          <Bell
+            size={shrunk ? 18 : 22}
+            strokeWidth={active ? 2.5 : 2}
+            className={`transition-all duration-300 ${
+              active ? 'fill-current text-[#FF0A78] scale-105 drop-shadow-[0_0_8px_rgba(255,10,120,0.4)]' : ''
+            }`}
+          />
+        </div>
+      ),
+    },
+    {
       id: 'chat',
       label: 'Chat',
       badge: unreadCount,
@@ -85,34 +102,6 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             strokeWidth={active ? 2.5 : 2}
             className="transition-all duration-300"
           />
-        </div>
-      ),
-    },
-    {
-      id: 'profile',
-      label: 'Profile',
-      icon: (active, shrunk) => (
-        <div
-          className={`${
-            shrunk ? 'w-5 h-5 p-[1.5px]' : 'w-6.5 h-6.5 p-[2px]'
-          } rounded-full transition-transform duration-300 ${
-            active ? 'scale-105 ring-1 ring-pink-500/50' : 'opacity-85'
-          }`}
-          style={{ background: userAvatarGradient }}
-        >
-          <div
-            className={`w-full h-full rounded-full p-[1px] ${
-              isDark ? 'bg-[#0B0C14]' : 'bg-white'
-            }`}
-          >
-            <div
-              className="w-full h-full rounded-full"
-              style={{
-                background:
-                  'linear-gradient(135deg, #FF0A78 0%, #7928CA 60%, #4338CA 100%)',
-              }}
-            />
-          </div>
         </div>
       ),
     },

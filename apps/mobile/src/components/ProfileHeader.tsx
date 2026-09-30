@@ -95,23 +95,57 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             )}
             {shadowRank && (
               <LinearGradient
-                colors={['rgba(255, 10, 120, 0.22)', 'rgba(153, 27, 234, 0.16)', 'rgba(79, 70, 229, 0.12)']}
+                colors={
+                  shadowRank === 'KNIGHT'
+                    ? ['rgba(168, 85, 247, 0.28)', 'rgba(79, 70, 229, 0.22)', 'rgba(6, 182, 212, 0.16)']
+                    : ['rgba(255, 10, 120, 0.22)', 'rgba(153, 27, 234, 0.16)', 'rgba(79, 70, 229, 0.12)']
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={[styles.premiumPawnBadge, { borderColor: 'rgba(255, 10, 120, 0.45)' }]}
+                style={[
+                  styles.premiumPawnBadge,
+                  { borderColor: shadowRank === 'KNIGHT' ? 'rgba(168, 85, 247, 0.55)' : 'rgba(255, 10, 120, 0.45)' },
+                ]}
               >
-                <View style={styles.pawnEmblemCircle}>
-                  <Text style={styles.pawnEmblemSymbol}>♙</Text>
+                <View
+                  style={[
+                    styles.pawnEmblemCircle,
+                    shadowRank === 'KNIGHT' && {
+                      backgroundColor: 'rgba(168, 85, 247, 0.25)',
+                      borderColor: 'rgba(6, 182, 212, 0.5)',
+                    },
+                  ]}
+                >
+                  <Text style={[styles.pawnEmblemSymbol, shadowRank === 'KNIGHT' && { color: '#06B6D4' }]}>
+                    {shadowRank === 'KNIGHT' ? '♘' : '♙'}
+                  </Text>
                 </View>
                 <View style={styles.pawnTextColumn}>
                   <View style={styles.pawnRankTitleRow}>
-                    <Text style={[styles.pawnRankTitle, { color: colors.text }]}>PAWN</Text>
-                    <View style={styles.pawnTierPill}>
-                      <Text style={styles.pawnTierPillText}>RANK I</Text>
+                    <Text style={[styles.pawnRankTitle, { color: colors.text }]}>
+                      {shadowRank === 'KNIGHT' ? 'KNIGHT' : 'PAWN'}
+                    </Text>
+                    <View
+                      style={[
+                        styles.pawnTierPill,
+                        shadowRank === 'KNIGHT' && {
+                          backgroundColor: 'rgba(168, 85, 247, 0.3)',
+                          borderColor: 'rgba(6, 182, 212, 0.45)',
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.pawnTierPillText,
+                          shadowRank === 'KNIGHT' && { color: '#38BDF8' },
+                        ]}
+                      >
+                        {shadowRank === 'KNIGHT' ? 'RANK II' : 'RANK I'}
+                      </Text>
                     </View>
                   </View>
                   <Text style={[styles.pawnSubtitle, { color: colors.secondaryText }]}>
-                    Foundation Status · Tier 01
+                    {shadowRank === 'KNIGHT' ? 'Vanguard Status · Tier 02' : 'Foundation Status · Tier 01'}
                   </Text>
                 </View>
               </LinearGradient>

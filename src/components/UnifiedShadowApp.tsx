@@ -31,6 +31,7 @@ import {
   MapPin,
   ChevronLeft,
   ChevronRight,
+  Bell,
 } from 'lucide-react';
 import { PawnRankBadge } from './PawnRankBadge';
 import { ReelCommentsDrawer } from './ReelCommentsDrawer';
@@ -265,9 +266,75 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
   // Active screen tab
   const [currentTab, setCurrentTab] = useState<UnifiedTab>('home');
-  const [feedPosts, setFeedPosts] = useState<FeedPost[]>(INITIAL_FEED_POSTS);
+
+  // Transparent Offline-First Cache for Unified Feed & Reels
+  const [feedPosts, setFeedPosts] = useState<FeedPost[]>(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const raw = window.localStorage.getItem('unified_shadow_feed_v1');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      }
+    } catch (_e) {
+      // Ignore
+    }
+    return INITIAL_FEED_POSTS;
+  });
+
   const [notifications, setNotifications] = useState(NOTIFICATIONS_DATA);
-  const [reels, setReels] = useState(REELS_DATA);
+
+  const [reels, setReels] = useState(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const raw = window.localStorage.getItem('unified_shadow_reels_v1');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      }
+    } catch (_e) {
+      // Ignore
+    }
+    return REELS_DATA;
+  });
+
+  // Background persistence
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('unified_shadow_feed_v1', JSON.stringify(feedPosts));
+      }
+    } catch (_e) {
+      // Ignore
+    }
+  }, [feedPosts]);
+
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem('unified_shadow_reels_v1', JSON.stringify(reels));
+      }
+    } catch (_e) {
+      // Ignore
+    }
+  }, [reels]);
+
+  // Transparent background revalidation
+  useEffect(() => {
+    const revalidate = async () => {
+      try {
+        await fetch('/api/feed');
+        await fetch('/api/reels');
+      } catch (_e) {
+        // Silently handled: offline-first cache continues serving
+      }
+    };
+    void revalidate();
+    window.addEventListener('online', revalidate);
+    return () => window.removeEventListener('online', revalidate);
+  }, []);
 
   // Authenticated User State (Real Shadow Identity)
   const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -727,7 +794,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           {reel.caption}
                         </p>
                         <div className="flex flex-wrap gap-1.5">
-                          {reel.tags.map((tag) => (
+                          {reel.tags.map((tag: string) => (
                             <span
                               key={tag}
                               onClick={(e) => {
@@ -1443,21 +1510,38 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       </div>
                     </div>
 
-                    {/* Primary Premium Status Indicator: Distinct Proportional PAWN Rank Badge */}
+                    {/* Primary Premium Status Indicator: Distinct Proportional Rank Badge with Visual Transition */}
                     <div className="mb-2.5">
                       <PawnRankBadge
+                        rank={currentUser.shadowRank as any}
                         variant="profile"
                         isDark={isDark}
-                        onClick={() => showToast('Shadow Identity Rank: PAWN (Rank I · Starting Reputation)')}
+                        onClick={() => {
+                          const nextRank = currentUser.shadowRank === 'PAWN' ? 'KNIGHT' : 'PAWN';
+                          setCurrentUser((prev) => ({ ...prev, shadowRank: nextRank }));
+                          showToast(nextRank === 'KNIGHT' ? '✦ Rank Elevated: KNIGHT (Rank II)' : '✦ Rank Reverted: PAWN (Rank I)');
+                        }}
                       />
                     </div>
 
-                    {/* Secondary Row: Verification & Authority */}
+                    {/* Secondary Row: Verification & Authority + Rank Elevation Toggle */}
                     <div className="flex items-center justify-between gap-2 pt-1 border-t" style={{ borderColor: colors.border }}>
-                      <div className="flex items-center gap-1 text-[9px] font-medium" style={{ color: colors.secondaryText }}>
-                        <span>Authority:</span>
-                        <span className="text-pink-400 font-bold">Backend Controlled</span>
-                      </div>
+                      <button
+                        onClick={() => {
+                          const nextRank = currentUser.shadowRank === 'PAWN' ? 'KNIGHT' : 'PAWN';
+                          setCurrentUser((prev) => ({ ...prev, shadowRank: nextRank }));
+                          showToast(nextRank === 'KNIGHT' ? '✦ Rank Elevated: KNIGHT (Rank II)' : '✦ Rank Reverted: PAWN (Rank I)');
+                        }}
+                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border text-[9.5px] font-extrabold transition-all cursor-pointer ${
+                          currentUser.shadowRank === 'PAWN'
+                            ? 'bg-purple-500/15 border-purple-500/35 text-purple-300'
+                            : 'bg-pink-500/15 border-pink-500/35 text-pink-300'
+                        }`}
+                        title="Simulate Shadow Rank Progression: PAWN ↔ KNIGHT"
+                      >
+                        <Sparkles size={11} className={currentUser.shadowRank === 'PAWN' ? 'text-cyan-400' : 'text-pink-400'} />
+                        <span>{currentUser.shadowRank === 'PAWN' ? 'Elevate to KNIGHT' : 'Revert to PAWN'}</span>
+                      </button>
 
                       <button
                         onClick={() => {
@@ -1679,31 +1763,24 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 )}
               </button>
 
-              {/* Profile Avatar */}
+              {/* Notifications / Activity */}
               <button
-                onClick={() => setCurrentTab('profile')}
-                className="flex flex-col items-center justify-center p-1 relative hover:opacity-80 transition-opacity"
+                onClick={() => setCurrentTab('notifications')}
+                className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
+                title="Notifications"
               >
-                <div
-                  className={`rounded-full p-0.5 flex items-center justify-center transition-all duration-300 ${
-                    isCompactNav ? 'w-5.5 h-5.5' : 'w-7 h-7'
-                  }`}
+                <Bell
+                  size={isCompactNav ? 16 : 19}
+                  className="transition-all duration-300"
                   style={{
-                    background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                    color: currentTab === 'notifications'
+                      ? colors.tabActive
+                      : (currentTab === 'reels' ? '#94A3B8' : colors.tabInactive),
                   }}
-                >
+                />
+                {currentTab === 'notifications' && (
                   <div
-                    className={`w-full h-full rounded-full flex items-center justify-center text-white font-extrabold transition-all duration-300 ${
-                      isCompactNav ? 'text-[8px]' : 'text-[10px]'
-                    }`}
-                    style={{ backgroundColor: colors.surface }}
-                  >
-                    {currentUser.name[0]}
-                  </div>
-                </div>
-                {currentTab === 'profile' && (
-                  <div
-                    className={`rounded-full absolute bottom-0 transition-all duration-300 ${
+                    className={`rounded-full absolute bottom-0.5 transition-all duration-300 ${
                       isCompactNav ? 'w-2 h-0.5' : 'w-3 h-0.5'
                     }`}
                     style={{ backgroundColor: colors.text }}
