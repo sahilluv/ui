@@ -246,12 +246,12 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
           {/* Top Header: Author Avatar, Username, Status, Pause pill, Audio & Close button */}
           <div className="flex items-center justify-between pointer-events-auto">
             <div className="flex items-center gap-2.5 min-w-0">
-              {/* Avatar */}
+              {/* Avatar (Curved Square) */}
               <div
-                className="w-9 h-9 rounded-full border-2 border-white/90 p-0.5 flex items-center justify-center shadow-md shrink-0"
+                className="w-9 h-9 rounded-[11px] border-2 border-white/90 p-0.5 flex items-center justify-center shadow-md shrink-0"
                 style={{ background: story.avatarGradient }}
               >
-                <div className="w-full h-full rounded-full bg-black/20" />
+                <div className="w-full h-full rounded-[9px] bg-black/20" />
               </div>
 
               {/* Author Title & Timestamp */}

@@ -87,7 +87,7 @@ import { ReelCard } from './ReelCard';
 import { useReelIntersectionObserver } from '../hooks/useReelIntersectionObserver';
 import { MyShadowScreen } from './MyShadowScreen';
 
-export type TabType = 'home' | 'explore' | 'reels' | 'shop' | 'chat' | 'create' | 'notifications' | 'profile';
+export type TabType = 'home' | 'explore' | 'shop' | 'chat' | 'create' | 'notifications' | 'profile';
 
 export interface MockExploreProfile {
   id: string;
@@ -242,9 +242,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
   const handleTabChange = (tab: TabType) => {
     setIsNavShrunk(false);
-    if (tab !== 'profile') {
-      setIsViewingMyShadow(false);
-    }
+    setIsViewingMyShadow(false);
     if (externalOnTabChange) {
       externalOnTabChange(tab);
     } else {
@@ -264,8 +262,8 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     const currentScrollTop = e.currentTarget.scrollTop;
     const diff = currentScrollTop - prevScrollTopRef.current;
 
-    // Apply scroll-responsive shrinking for Feed ('home') and Reels ('reels')
-    if (currentTab === 'home' || currentTab === 'reels') {
+    // Apply scroll-responsive shrinking for Feed ('home')
+    if (currentTab === 'home') {
       if (currentScrollTop <= 15) {
         // At or near top -> expand back to normal full size
         setIsNavShrunk(false);
@@ -919,19 +917,15 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
       {/* 1. Phone Top Notch & Status Bar (9:41, Icons) */}
       <div
-        className={`pt-3 pb-1 px-7 flex items-center justify-between text-xs font-semibold ${
-          currentTab === 'reels'
-            ? 'absolute top-0 left-0 right-0 z-30 pointer-events-none text-slate-900 drop-shadow-xs'
-            : 'relative z-20 shrink-0'
-        }`}
+        className="pt-3 pb-1 px-7 flex items-center justify-between text-xs font-semibold relative z-20 shrink-0"
       >
-        <span className={currentTab === 'reels' ? 'text-slate-900 font-bold' : isDark ? 'text-white' : 'text-slate-900'}>
+        <span className={isDark ? 'text-white' : 'text-slate-900'}>
           9:41
         </span>
         <div className="w-24 h-4 bg-black/80 rounded-full flex items-center justify-center">
           <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
         </div>
-        <div className={`flex items-center gap-1.5 opacity-80 ${currentTab === 'reels' ? 'text-slate-900' : ''}`}>
+        <div className="flex items-center gap-1.5 opacity-80">
           {/* Signal */}
           <div className="flex items-end gap-0.5 h-2.5">
             <span className="w-0.5 h-1 bg-current rounded-xs" />
@@ -947,7 +941,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       </div>
 
       {/* 2. Top Header (Shared between main screens) */}
-      {currentTab !== 'create' && currentTab !== 'reels' && !isViewingMyShadow && (
+      {currentTab !== 'create' && !isViewingMyShadow && (
         <header className="h-13 px-5 flex items-center justify-between shrink-0 z-10">
           {/* Left Action: Dedicated Shadow navigation tab on Home feed, Plus (+) ONLY on Profile */}
           {currentTab === 'home' ? (
@@ -983,11 +977,11 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               className={`w-9 h-9 rounded-full flex items-center justify-center transition-transform active:scale-95 cursor-pointer ${
                 isDark ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-[#12131D]'
               }`}
-              title="Create Post (+)"
+              title="Create Post (+) • Share artwork & stories"
               aria-label="Create Post"
             >
-              <div className="w-6.5 h-6.5 rounded-full border-2 border-current flex items-center justify-center">
-                <Plus size={14} strokeWidth={2.8} />
+              <div className="w-7 h-7 rounded-full border border-pink-500/50 bg-pink-500/15 flex items-center justify-center text-pink-400 shadow-xs shadow-pink-500/30">
+                <Plus size={16} strokeWidth={2.8} />
               </div>
             </button>
           ) : (
@@ -1023,16 +1017,16 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               </button>
             )}
 
-            {/* Switched: Profile Button (Circular avatar with vibrant gradient ring) */}
+            {/* Switched: Profile Button (Curved square avatar with vibrant gradient ring) */}
             <button
               onClick={() => handleTabChange('profile')}
-              className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-transform active:scale-95 cursor-pointer ${
+              className={`relative w-8 h-8 rounded-[11px] flex items-center justify-center transition-transform active:scale-95 cursor-pointer ${
                 currentTab === 'profile' ? 'scale-105' : 'hover:scale-105'
               }`}
               title="Perfil de Usuario"
             >
               <div
-                className={`w-7.5 h-7.5 rounded-full p-[1.5px] transition-all ${
+                className={`w-7.5 h-7.5 rounded-[10px] p-[1.5px] transition-all ${
                   currentTab === 'profile'
                     ? 'ring-2 ring-pink-500 shadow-md shadow-pink-500/50'
                     : ''
@@ -1042,12 +1036,12 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 }}
               >
                 <div
-                  className={`w-full h-full rounded-full p-[1px] ${
+                  className={`w-full h-full rounded-[8px] p-[1px] ${
                     isDark ? 'bg-[#0B0C14]' : 'bg-white'
                   }`}
                 >
                   <div
-                    className="w-full h-full rounded-full"
+                    className="w-full h-full rounded-[7px]"
                     style={{
                       background: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 100%)',
                     }}
@@ -1073,11 +1067,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className={`no-scrollbar relative ${
-          currentTab === 'reels'
-            ? 'absolute inset-0 z-10 w-full h-full overflow-y-auto snap-y snap-mandatory scroll-smooth'
-            : 'flex-1 overflow-y-auto'
-        }`}
+        className="no-scrollbar relative flex-1 overflow-y-auto"
       >
         {isViewingMyShadow ? (
           <MyShadowScreen
@@ -1125,9 +1115,9 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                     }
                   >
                     <div className="relative">
-                      {/* Multi-stop gradient story ring */}
+                      {/* Multi-stop gradient curved-square story ring */}
                       <div
-                        className={`w-16 h-16 rounded-full p-[2.5px] transition-transform group-hover:scale-105 ${
+                        className={`w-16 h-16 rounded-[20px] p-[2.5px] transition-transform group-hover:scale-105 ${
                           story.hasUnseen || (story.isCurrentUser && hasActiveStory)
                             ? 'shadow-md shadow-pink-500/40 ring-1 ring-pink-500/60'
                             : ''
@@ -1142,12 +1132,12 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         }}
                       >
                         <div
-                          className={`w-full h-full rounded-full p-[2px] ${
+                          className={`w-full h-full rounded-[17px] p-[2px] ${
                             isDark ? 'bg-[#0B0C14]' : 'bg-white'
                           }`}
                         >
                           <div
-                            className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative"
+                            className="w-full h-full rounded-[15px] overflow-hidden flex items-center justify-center relative"
                             style={{ background: story.avatarGradient }}
                           >
                             {story.storyImageUrl ? (
@@ -1163,14 +1153,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         </div>
                       </div>
 
-                      {/* Integrated Camera / Plus Creation Badge for Current User */}
+                      {/* Integrated Camera / Plus Creation Badge for Current User (Curved Square) */}
                       {story.isCurrentUser && (
                         <div
                           onClick={(e) => {
                             e.stopPropagation();
                             setIsCameraOverlayOpen(true);
                           }}
-                          className="absolute bottom-0 right-0 w-5.5 h-5.5 rounded-full flex items-center justify-center text-white border-2 text-[10px] font-bold shadow-md hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                          className="absolute -bottom-0.5 -right-0.5 w-5.5 h-5.5 rounded-[7px] flex items-center justify-center text-white border-2 text-[10px] font-bold shadow-md hover:scale-110 active:scale-95 transition-transform cursor-pointer"
                           style={{
                             background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 100%)',
                             borderColor: isDark ? '#0B0C14' : '#FFFFFF',
@@ -1234,16 +1224,16 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                       onClick={() => handleTabChange('profile')}
                     >
                       <div
-                        className="w-9 h-9 rounded-full p-[2px]"
+                        className="w-9 h-9 rounded-[11px] p-[2px]"
                         style={{ background: post.author.avatarGradient }}
                       >
                         <div
-                          className={`w-full h-full rounded-full p-[1.5px] ${
+                          className={`w-full h-full rounded-[9px] p-[1.5px] ${
                             isDark ? 'bg-[#0B0C14]' : 'bg-white'
                           }`}
                         >
                           <div
-                            className="w-full h-full rounded-full"
+                            className="w-full h-full rounded-[7px]"
                             style={{ background: post.author.avatarGradient }}
                           />
                         </div>
@@ -1477,8 +1467,8 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   key={cat.id}
                   onClick={() => {
                     setSelectedCategory(cat.id);
-                    if (cat.id === 'igtv') handleTabChange('reels');
-                    else if (cat.id === 'tienda') handleTabChange('shop');
+                    if (cat.id === 'tienda') handleTabChange('shop');
+                    else triggerToast(`Filtering ${cat.title}`, 'sparkles');
                   }}
                   className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group"
                 >
@@ -1960,70 +1950,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
           </div>
         )}
 
-        {/* ======================================= */}
-        {/* SCREEN: REELS (Full-Screen Immersive Snapping Feed with Background Preloading) */}
-        {/* ======================================= */}
-        {currentTab === 'reels' && (
-          <div className="w-full h-full">
-            {reels.map((reel, index) => (
-              <ReelCard
-                key={reel.id}
-                reel={reel}
-                index={index}
-                isActive={activeReelIndex === index}
-                isNext={activeReelIndex + 1 === index}
-                preloadStatus={preloadedStatusMap.get(reel.id)}
-                isNavShrunk={isNavShrunk}
-                isDark={isDark}
-                isFollowing={!!followedAuthors[reel.author.username]}
-                poppingBookmarkId={poppingBookmarkReelId}
-                heartBurstId={heartBurstReelId}
-                isSwipingReel={isSwipingReel}
-                reelSwipeDeltaX={reelSwipeDeltaX}
-                onTouchStart={handleReelTouchStart}
-                onTouchMove={handleReelTouchMove}
-                onTouchEnd={() => handleReelTouchEnd(reel)}
-                onTouchLeave={() => {
-                  if (isSwipingReel) {
-                    setIsSwipingReel(false);
-                    setReelSwipeDeltaX(0);
-                    setReelSwipeStartX(null);
-                    setReelSwipeStartY(null);
-                  }
-                }}
-                registerRef={registerReelRef}
-                onToggleLike={handleToggleReelLike}
-                onToggleSave={handleToggleReelSave}
-                onToggleFollow={handleToggleFollowAuthor}
-                onOpenComments={setActiveReelComments}
-                onOpenShare={(r) => {
-                  setShareModalPost({
-                    id: r.id,
-                    author: {
-                      name: r.author.name,
-                      username: r.author.username,
-                      location: r.author.location,
-                      avatarGradient: r.author.avatarGradient,
-                    },
-                    timeAgo: 'Just now',
-                    gradient: r.gradient,
-                    likesCount: r.likesCount,
-                    commentsCount: r.commentsCount,
-                    likedByText: `${r.likes} likes`,
-                    captionTitle: r.caption || r.author.name,
-                    captionBody: r.author.location,
-                    totalPages: 1,
-                    currentPage: 1,
-                    isLiked: r.isLiked,
-                    isSaved: r.isSaved,
-                  });
-                }}
-                onNavigateProfile={() => handleTabChange('profile')}
-                onToast={triggerToast}
-              />
-            ))}
-          </div>
-        )}
+
 
         {/* ======================================= */}
         {/* SCREEN: SHOP / TIENDA                   */}
@@ -2506,13 +2433,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                       >
                         <div className="relative">
                           <div
-                            className="w-12 h-12 rounded-full p-[2px] transition-transform group-hover:scale-105"
+                            className="w-12 h-12 rounded-[14px] p-[2px] transition-transform group-hover:scale-105"
                             style={{ background: user.avatarGradient }}
                           >
-                            <div className={`w-full h-full rounded-full ${isDark ? 'bg-[#0B0C14]' : 'bg-white'}`} />
+                            <div className={`w-full h-full rounded-[12px] ${isDark ? 'bg-[#0B0C14]' : 'bg-white'}`} />
                           </div>
                           {user.online && (
-                            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#0B0C14]" />
+                            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-[3px] bg-emerald-400 border-2 border-[#0B0C14]" />
                           )}
                         </div>
                         <span className="text-[10px] font-semibold text-slate-300 max-w-[48px] truncate">
@@ -2544,13 +2471,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                         {/* Avatar */}
                         <div className="relative shrink-0">
                           <div
-                            className="w-12 h-12 rounded-full p-[2px]"
+                            className="w-12 h-12 rounded-[14px] p-[2px]"
                             style={{ background: user.avatarGradient }}
                           >
-                            <div className={`w-full h-full rounded-full ${isDark ? 'bg-[#0B0C14]' : 'bg-white'}`} />
+                            <div className={`w-full h-full rounded-[12px] ${isDark ? 'bg-[#0B0C14]' : 'bg-white'}`} />
                           </div>
                           {user.online && (
-                            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#0B0C14]" />
+                            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-[3px] bg-emerald-400 border-2 border-[#0B0C14]" />
                           )}
                         </div>
 
@@ -2685,14 +2612,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                           : 'hover:bg-slate-50 border-transparent'
                       }`}
                     >
-                      {/* Avatar with Action Icon Badge */}
+                      {/* Avatar with Action Icon Badge (Curved Square) */}
                       <div className="relative shrink-0">
                         <div
-                          className="w-10 h-10 rounded-full p-[2px]"
+                          className="w-10 h-10 rounded-[13px] p-[2px]"
                           style={{ background: notif.user.avatarGradient }}
                         >
                           <div
-                            className={`w-full h-full rounded-full ${
+                            className={`w-full h-full rounded-[11px] ${
                               isDark ? 'bg-[#0B0C14]' : 'bg-white'
                             }`}
                           />
@@ -2700,7 +2627,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
                         {/* Action Icon Badge */}
                         <div
-                          className={`absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full flex items-center justify-center text-white text-[9px] shadow-sm ${
+                          className={`absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-[5px] flex items-center justify-center text-white text-[9px] shadow-sm ${
                             notif.actionType === 'like'
                               ? 'bg-gradient-to-tr from-[#FF0A78] to-[#FF2D55]'
                               : notif.actionType === 'comment'
@@ -2772,20 +2699,20 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
           <div className="pb-28">
               {/* Top Avatar & Info */}
               <div className="flex flex-col items-center px-6 pt-3">
-                {/* Large Centered Avatar with vibrant gradient ring */}
+                {/* Large Centered Avatar with vibrant gradient ring (Curved Square) */}
                 <div
-                  className="w-22 h-22 rounded-full p-[3.5px] shadow-xl mb-3.5"
+                  className="w-22 h-22 rounded-[28px] p-[3.5px] shadow-xl mb-3.5"
                   style={{
                     background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
                   }}
                 >
                   <div
-                    className={`w-full h-full rounded-full p-[3px] ${
+                    className={`w-full h-full rounded-[24px] p-[3px] ${
                       isDark ? 'bg-[#0B0C14]' : 'bg-white'
                     }`}
                   >
                     <div
-                      className="w-full h-full rounded-full"
+                      className="w-full h-full rounded-[21px]"
                       style={{
                         background: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 60%, #4338CA 100%)',
                       }}
@@ -2929,27 +2856,43 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 </div>
               </div>
 
-              {/* Follow Button */}
-              <button
-                onClick={() => setIsFollowingMauricio(!isFollowingMauricio)}
-                className={`w-full max-w-[260px] h-10 rounded-full font-bold text-sm shadow-lg flex items-center justify-center transition-all active:scale-95 mb-5 cursor-pointer ${
-                  isFollowingMauricio
-                    ? isDark
-                      ? 'bg-white/10 text-white border border-white/20'
-                      : 'bg-slate-100 text-slate-800 border border-slate-200'
-                    : 'text-white shadow-pink-500/40 hover:opacity-95'
-                }`}
-                style={
-                  isFollowingMauricio
-                    ? {}
-                    : {
-                        background:
-                          'linear-gradient(135deg, #FF0A78 0%, #E11D48 100%)',
-                      }
-                }
-              >
-                {isFollowingMauricio ? 'Following' : 'Follow'}
-              </button>
+              {/* Actions Row: Follow + Create Post (+) */}
+              <div className="w-full max-w-[280px] flex items-center gap-2 mb-5">
+                <button
+                  onClick={() => setIsFollowingMauricio(!isFollowingMauricio)}
+                  className={`flex-1 h-10 rounded-full font-bold text-xs shadow-lg flex items-center justify-center transition-all active:scale-95 cursor-pointer ${
+                    isFollowingMauricio
+                      ? isDark
+                        ? 'bg-white/10 text-white border border-white/20'
+                        : 'bg-slate-100 text-slate-800 border border-slate-200'
+                      : 'text-white shadow-pink-500/40 hover:opacity-95'
+                  }`}
+                  style={
+                    isFollowingMauricio
+                      ? {}
+                      : {
+                          background:
+                            'linear-gradient(135deg, #FF0A78 0%, #E11D48 100%)',
+                        }
+                  }
+                >
+                  {isFollowingMauricio ? 'Following' : 'Follow'}
+                </button>
+
+                {/* Create Post Button with Plus (+) icon */}
+                <button
+                  onClick={() => handleTabChange('create')}
+                  className={`h-10 px-3.5 rounded-full font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer border ${
+                    isDark
+                      ? 'bg-pink-500/10 hover:bg-pink-500/20 border-pink-500/30 text-pink-400'
+                      : 'bg-pink-50 hover:bg-pink-100 border-pink-200 text-pink-600'
+                  }`}
+                  title="Create New Post (+)"
+                >
+                  <Plus size={15} strokeWidth={2.6} />
+                  <span>Post</span>
+                </button>
+              </div>
             </div>
 
             {/* Story Highlights */}
@@ -2961,18 +2904,18 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 >
                   <div className="relative">
                     <div
-                      className="w-15 h-15 rounded-full p-[2px] transition-transform group-hover:scale-105"
+                      className="w-15 h-15 rounded-[18px] p-[2px] transition-transform group-hover:scale-105"
                       style={{
                         background: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 100%)',
                       }}
                     >
                       <div
-                        className={`w-full h-full rounded-full p-[2px] ${
+                        className={`w-full h-full rounded-[16px] p-[2px] ${
                           isDark ? 'bg-[#0B0C14]' : 'bg-white'
                         }`}
                       >
                         <div
-                          className="w-full h-full rounded-full"
+                          className="w-full h-full rounded-[14px]"
                           style={{ background: hl.gradient }}
                         />
                       </div>
@@ -2980,7 +2923,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
                     {hl.isAdd && (
                       <div
-                        className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 rounded-full text-white flex items-center justify-center text-[10px] font-bold border-2 border-white shadow-sm"
+                        className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 rounded-[6px] text-white flex items-center justify-center text-[10px] font-bold border-2 border-white shadow-sm"
                         style={{
                           background: 'linear-gradient(135deg, #A855F7 0%, #7928CA 100%)',
                         }}

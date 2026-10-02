@@ -14,7 +14,6 @@ import {
   Volume2,
   VolumeX,
   Music,
-  Zap,
 } from 'lucide-react';
 import { ReelItem } from '../data/mockData';
 import { PawnRankBadge } from './PawnRankBadge';
@@ -153,16 +152,6 @@ export const ReelCard: React.FC<ReelCardProps> = ({
         </div>
       )}
 
-      {/* Performance Optimization Status Badge (Visible when this reel or next reel is preloaded) */}
-      <div className="absolute top-12 right-14 z-30 pointer-events-none">
-        {isActive && preloadStatus && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-[10px] font-bold shadow-lg animate-in fade-in duration-300">
-            <Zap size={10} className="fill-emerald-400 text-emerald-400 animate-pulse" />
-            <span>⚡ Next Pre-cached</span>
-          </div>
-        )}
-      </div>
-
       {/* Play / Pause Central Ripple Indicator */}
       {showPlayPauseFeedback && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 animate-in zoom-in-75 duration-200">
@@ -192,12 +181,12 @@ export const ReelCard: React.FC<ReelCardProps> = ({
           }}
         >
           <div
-            className="w-10 h-10 rounded-full p-[2px] shadow-lg shrink-0"
+            className="w-10 h-10 rounded-[12px] p-[2px] shadow-lg shrink-0"
             style={{ background: reel.author.avatarGradient }}
           >
-            <div className="w-full h-full rounded-full bg-slate-900/90 flex items-center justify-center">
+            <div className="w-full h-full rounded-[10px] bg-slate-900/90 flex items-center justify-center">
               <div
-                className="w-full h-full rounded-full"
+                className="w-full h-full rounded-[8px]"
                 style={{ background: reel.author.avatarGradient }}
               />
             </div>

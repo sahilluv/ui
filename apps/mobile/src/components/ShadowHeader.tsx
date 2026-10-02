@@ -7,7 +7,6 @@ interface ShadowHeaderProps {
   colors: ThemeColors;
   isDark: boolean;
   onToggleTheme?: () => void;
-  onAddPress?: () => void;
   onShadowPress?: () => void;
   onNotificationsPress?: () => void;
   unreadCount?: number;
@@ -17,7 +16,6 @@ export const ShadowHeader: React.FC<ShadowHeaderProps> = ({
   colors,
   isDark,
   onToggleTheme,
-  onAddPress,
   onShadowPress,
   onNotificationsPress,
   unreadCount = 2,

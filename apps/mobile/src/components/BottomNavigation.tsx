@@ -78,24 +78,24 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           </View>
         </TouchableOpacity>
 
-        {/* 3. Reels Section (TV Monitor with Play Icon) */}
+        {/* 3. Create (Post Composer) */}
         <TouchableOpacity
           style={[
             styles.tabButton,
-            currentTab === 'reels' && styles.tabButtonActive,
-            currentTab === 'reels' && {
+            currentTab === 'shop' && styles.tabButtonActive,
+            currentTab === 'shop' && {
               backgroundColor: colors.isDark ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.85)',
               borderColor: colors.isDark ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.6)',
             },
           ]}
-          onPress={() => onTabChange('reels')}
+          onPress={() => onTabChange('shop')}
           activeOpacity={0.7}
         >
           <View style={styles.iconWrapper}>
-            <MaterialCommunityIcons
-              name="television-play"
-              size={isCompact ? 20 : 24}
-              color={currentTab === 'reels' ? colors.tabActive : colors.tabInactive}
+            <Feather
+              name="plus-square"
+              size={isCompact ? 18 : 22}
+              color={currentTab === 'shop' ? colors.tabActive : colors.tabInactive}
             />
           </View>
         </TouchableOpacity>

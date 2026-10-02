@@ -37,7 +37,7 @@ export const StoryAvatar: React.FC<StoryAvatarProps> = ({
               source={{ uri: story.avatarUrl }}
               style={[
                 styles.avatarImage,
-                { borderRadius: (size - 10) / 2 },
+                { borderRadius: Math.round((size - 10) * 0.28) },
               ]}
             />
           ) : (
@@ -47,7 +47,7 @@ export const StoryAvatar: React.FC<StoryAvatarProps> = ({
               end={{ x: 0.9, y: 0.9 }}
               style={[
                 styles.avatarImage,
-                { borderRadius: (size - 10) / 2 },
+                { borderRadius: Math.round((size - 10) * 0.28) },
               ]}
             />
           )}
@@ -92,11 +92,11 @@ const styles = StyleSheet.create({
   },
   plusBadge: {
     position: 'absolute',
-    bottom: 0,
-    right: 0,
+    bottom: -1,
+    right: -1,
     width: 20,
     height: 20,
-    borderRadius: 10,
+    borderRadius: 6,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',

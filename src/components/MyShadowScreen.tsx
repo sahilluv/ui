@@ -101,8 +101,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-95 ${
               isDark ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-slate-800'
             }`}
-            title="Return to Profile"
-            aria-label="Back to Profile"
+            title="Return to Home Feed"
+            aria-label="Back to Home Feed"
           >
             <ChevronLeft size={22} />
           </button>

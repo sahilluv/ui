@@ -333,19 +333,19 @@ const styles = StyleSheet.create({
   avatarRing: {
     width: 86,
     height: 86,
-    borderRadius: 43,
+    borderRadius: 24,
     padding: 2.5,
     marginBottom: 12,
   },
   avatarGap: {
     width: '100%',
     height: '100%',
-    borderRadius: 40,
+    borderRadius: 21,
     padding: 2.5,
   },
   avatarGradient: {
     flex: 1,
-    borderRadius: 38,
+    borderRadius: 19,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -571,14 +571,14 @@ const styles = StyleSheet.create({
   highlightRing: {
     width: 58,
     height: 58,
-    borderRadius: 29,
+    borderRadius: 16,
     padding: 2,
     marginBottom: 6,
   },
   highlightInner: {
     width: '100%',
     height: '100%',
-    borderRadius: 27,
+    borderRadius: 14,
     padding: 2,
     alignItems: 'center',
     justifyContent: 'center',
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
   highlightAvatar: {
     width: '100%',
     height: '100%',
-    borderRadius: 25,
+    borderRadius: 12,
   },
   highlightTitle: {
     fontSize: 11,

@@ -557,7 +557,7 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
                     setSelectedGradientIndex(idx);
                     if (mode === 'camera') setMode('gradient');
                   }}
-                  className={`w-9 h-9 rounded-full shrink-0 border-2 transition-all cursor-pointer flex items-center justify-center ${
+                  className={`w-9 h-9 rounded-[10px] shrink-0 border-2 transition-all cursor-pointer flex items-center justify-center ${
                     isSelected
                       ? 'scale-110 border-white shadow-[0_0_12px_rgba(255,10,120,0.7)]'
                       : 'border-white/30 opacity-70 hover:opacity-100'

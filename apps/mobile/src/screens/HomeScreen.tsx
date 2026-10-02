@@ -157,6 +157,17 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
     }
   }, [route.params?.postCreated, loadFeed, navigation]);
 
+  if (isViewingMyShadow) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <MyShadowScreen
+          onBack={() => setIsViewingMyShadow(false)}
+          navigation={navigation}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* 1. Concept Shadow Header with Cursive Wordmark & Action Icons */}
@@ -164,7 +175,7 @@ export default function HomeScreen({ navigation, route }: HomeScreenProps) {
         colors={colors}
         isDark={isDark}
         onToggleTheme={toggleTheme}
-        onAddPress={() => navigation.navigate('Create')}
+        onShadowPress={() => setIsViewingMyShadow(true)}
         onNotificationsPress={() => navigation.navigate('Notifications')}
         unreadCount={2}
       />

@@ -27,7 +27,7 @@ export const GradientRing: React.FC<GradientRingProps> = ({
         {
           width: size,
           height: size,
-          borderRadius: size / 2,
+          borderRadius: Math.round(size * 0.32),
           padding: strokeWidth,
         },
       ]}
@@ -36,7 +36,7 @@ export const GradientRing: React.FC<GradientRingProps> = ({
         style={[
           styles.innerRing,
           {
-            borderRadius: (size - strokeWidth * 2) / 2,
+            borderRadius: Math.round((size - strokeWidth * 2) * 0.3),
             backgroundColor: backgroundColor,
           },
         ]}

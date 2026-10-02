@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   cameraCircle: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 18,
     borderWidth: 1.5,
     borderStyle: 'dashed',
     alignItems: 'center',
