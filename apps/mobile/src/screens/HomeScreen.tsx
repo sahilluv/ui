@@ -16,6 +16,7 @@ import { useTheme } from '../context/ThemeContext';
 import { apiClient } from '../api/client';
 import { Post } from '../types/api';
 import { StoryItem } from '../types';
+import MyShadowScreen from './MyShadowScreen';
 
 interface HomeScreenProps {
   navigation: any;
@@ -24,6 +25,7 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ navigation, route }: HomeScreenProps) {
   const { colors, isDark, toggleTheme } = useTheme();
+  const [isViewingMyShadow, setIsViewingMyShadow] = useState(false);
 
   // Real backend feed state
   const [posts, setPosts] = useState<Post[]>([]);

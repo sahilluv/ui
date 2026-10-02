@@ -149,7 +149,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
               isActive || isNext ? 'opacity-30 blur-xs scale-105' : 'opacity-20 blur-sm'
             }`}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/85" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent pointer-events-none" />
         </div>
       )}
 

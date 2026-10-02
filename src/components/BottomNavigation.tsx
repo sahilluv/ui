@@ -109,19 +109,19 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
   return (
     <div
-      className={`px-4 ${
-        isShrunk ? 'pb-1' : 'pb-2'
-      } pt-1 shrink-0 z-30 transition-all duration-300`}
+      className={`absolute left-0 right-0 z-30 flex justify-center pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] ${
+        isShrunk ? 'bottom-2 px-5' : 'bottom-3 px-4'
+      }`}
     >
       <nav
-        className={`relative rounded-full flex items-center justify-between p-1.5 transition-all duration-300 select-none backdrop-blur-2xl backdrop-saturate-200 ${
+        className={`pointer-events-auto relative rounded-full flex items-center justify-between p-1.5 transition-all duration-300 select-none backdrop-blur-2xl backdrop-saturate-200 ${
           isShrunk
-            ? 'h-11 px-2 max-w-[310px] mx-auto shadow-lg'
-            : 'h-15 px-2.5 w-full shadow-2xl'
+            ? 'h-11 px-2 w-full max-w-[300px] shadow-xl'
+            : 'h-14 px-2.5 w-full max-w-[350px] shadow-2xl'
         } ${
           isDark
-            ? 'bg-[#0B0C16]/75 border border-white/12 shadow-[0_16px_36px_rgba(0,0,0,0.45),inset_0_1px_1px_rgba(255,255,255,0.15)] text-slate-400'
-            : 'bg-white/70 border border-white/60 shadow-[0_14px_34px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.8)] text-slate-600'
+            ? 'bg-[#0F111E]/70 border border-white/15 shadow-[0_12px_36px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.22)] text-slate-300'
+            : 'bg-white/80 border border-white/70 shadow-[0_10px_30px_rgba(0,0,0,0.12),inset_0_1px_1px_rgba(255,255,255,0.9)] text-slate-700'
         }`}
       >
         {/* Top Rim Specular Glare (iPhone Dynamic Glass refraction) */}

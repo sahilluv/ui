@@ -304,6 +304,7 @@ export default function App() {
       {/* 3. Interactive Fullscreen Story Viewer Modal */}
       <StoryViewerModal
         story={activeStory}
+        stories={INITIAL_STORIES}
         onClose={() => setActiveStory(null)}
         onNext={handleNextStory}
         onPrev={handlePrevStory}

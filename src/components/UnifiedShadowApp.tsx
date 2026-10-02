@@ -33,9 +33,10 @@ import {
   ChevronRight,
   Bell,
 } from 'lucide-react';
-import { PawnRankBadge } from './PawnRankBadge';
+import { PawnRankBadge, ShadowRankType } from './PawnRankBadge';
 import { ReelCommentsDrawer } from './ReelCommentsDrawer';
 import { PullUpRefresh } from './PullUpRefresh';
+import { MyShadowScreen } from './MyShadowScreen';
 import { darkColors, lightColors, shadowGradients, ThemeColors } from '../../expo-code/src/theme';
 
 export type UnifiedTab = 'home' | 'explore' | 'reels' | 'create' | 'notifications' | 'profile';
@@ -266,6 +267,14 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
   // Active screen tab
   const [currentTab, setCurrentTab] = useState<UnifiedTab>('home');
+  const [isViewingMyShadow, setIsViewingMyShadow] = useState(false);
+
+  const handleTabChange = (tab: UnifiedTab) => {
+    if (tab !== 'profile') {
+      setIsViewingMyShadow(false);
+    }
+    setCurrentTab(tab);
+  };
 
   // Transparent Offline-First Cache for Unified Feed & Reels
   const [feedPosts, setFeedPosts] = useState<FeedPost[]>(() => {
@@ -340,10 +349,11 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [currentUser, setCurrentUser] = useState({
     name: 'Mauricio Lopez',
+    username: 'maoo.lopez',
     email: 'mauricio@shadow.campus',
     bio: 'Visual Designer & Photography - Campus Community',
     shadowId: 'sh_89f02a91',
-    shadowRank: 'PAWN',
+    shadowRank: 'PAWN' as ShadowRankType,
     verification: 'VERIFIED',
     postsCount: 12,
     followersCount: 876,
@@ -945,6 +955,22 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               onScroll={handleFeedScroll}
               className="flex-1 overflow-y-auto no-scrollbar pb-20"
             >
+            {isViewingMyShadow ? (
+              <MyShadowScreen
+                onBack={() => setIsViewingMyShadow(false)}
+                isDark={isDark}
+                currentUser={{
+                  name: currentUser.name,
+                  username: currentUser.username,
+                  shadowId: currentUser.shadowId,
+                  rank: currentUser.shadowRank,
+                  isVerified: currentUser.verification === 'VERIFIED',
+                  avatarGradient: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                }}
+                onToast={(msg) => showToast(msg)}
+              />
+            ) : (
+              <>
             {/* 1. HOME SCREEN (Real Feed + Concept Stories & Visual PostCards) */}
             {currentTab === 'home' && (
               <div>
@@ -953,12 +979,27 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   className="h-14 px-5 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md"
                   style={{ backgroundColor: colors.background + 'EE' }}
                 >
+                  {/* Left Action: Direct Shadow Navigation Tab Icon on Home Feed */}
                   <button
-                    onClick={() => setCurrentTab('create')}
-                    className="w-9 h-9 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
-                    style={{ borderColor: colors.border, borderWidth: 1 }}
+                    onClick={() => setIsViewingMyShadow(true)}
+                    className="relative group p-0.5 rounded-full transition-transform active:scale-90 cursor-pointer"
+                    title="My Shadow Dashboard"
+                    aria-label="Open My Shadow directly from Home Feed"
                   >
-                    <Plus size={18} style={{ color: colors.text }} />
+                    <div
+                      className="w-9 h-9 rounded-full p-[1.5px] shadow-md shadow-pink-500/25 flex items-center justify-center transition-all group-hover:scale-105"
+                      style={{
+                        background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                      }}
+                    >
+                      <div
+                        className="w-full h-full rounded-full flex items-center justify-center transition-colors"
+                        style={{ backgroundColor: colors.background }}
+                      >
+                        <span className="text-sm font-bold text-pink-400">♙</span>
+                      </div>
+                    </div>
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#0B0C14] shadow-xs" />
                   </button>
 
                   <h1
@@ -1432,9 +1473,20 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
             {currentTab === 'profile' && (
               <div className="p-4 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-extrabold" style={{ color: colors.text }}>
-                    Profile
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleTabChange('create')}
+                      className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity cursor-pointer"
+                      style={{ borderColor: colors.border, borderWidth: 1 }}
+                      title="Create Post (+)"
+                      aria-label="Create Post"
+                    >
+                      <Plus size={16} style={{ color: colors.text }} />
+                    </button>
+                    <h2 className="text-xl font-extrabold" style={{ color: colors.text }}>
+                      Profile
+                    </h2>
+                  </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={onToggleTheme}
@@ -1638,8 +1690,10 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 </div>
               </div>
             )}
-          </div>
+            </>
           )}
+        </div>
+        )}
 
           {/* 7. FLOATING 5-DESTINATION CONCEPT BOTTOM NAVIGATION (Scroll-Responsive Sizing) */}
           <div
@@ -1666,7 +1720,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
             >
               {/* Home */}
               <button
-                onClick={() => setCurrentTab('home')}
+                onClick={() => handleTabChange('home')}
                 className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
               >
                 <span
@@ -1693,7 +1747,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
               {/* Explore */}
               <button
-                onClick={() => setCurrentTab('explore')}
+                onClick={() => handleTabChange('explore')}
                 className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
               >
                 <Search
@@ -1717,7 +1771,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
               {/* Reels */}
               <button
-                onClick={() => setCurrentTab('reels')}
+                onClick={() => handleTabChange('reels')}
                 className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
               >
                 <Play
@@ -1741,7 +1795,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
               {/* Create */}
               <button
-                onClick={() => setCurrentTab('create')}
+                onClick={() => handleTabChange('create')}
                 className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
               >
                 <Plus
@@ -1765,7 +1819,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
               {/* Notifications / Activity */}
               <button
-                onClick={() => setCurrentTab('notifications')}
+                onClick={() => handleTabChange('notifications')}
                 className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
                 title="Notifications"
               >

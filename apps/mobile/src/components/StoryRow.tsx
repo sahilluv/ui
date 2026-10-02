@@ -25,32 +25,18 @@ export const StoryRow: React.FC<StoryRowProps> = ({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Quick Camera Story Button */}
-        <TouchableOpacity
-          style={styles.cameraBtnWrap}
-          activeOpacity={0.8}
-          onPress={onCameraPress}
-        >
-          <View
-            style={[
-              styles.cameraCircle,
-              {
-                borderColor: colors.accent,
-                backgroundColor: colors.inputBackground,
-              },
-            ]}
-          >
-            <Feather name="camera" size={20} color={colors.accent} />
-          </View>
-          <Text style={[styles.cameraLabel, { color: colors.accent }]}>Cámara</Text>
-        </TouchableOpacity>
-
         {stories.map((story) => (
           <StoryAvatar
             key={story.id}
             story={story}
             colors={colors}
-            onPress={() => onStoryPress?.(story)}
+            onPress={() => {
+              if (story.isCurrentUser && onCameraPress) {
+                onCameraPress();
+              } else {
+                onStoryPress?.(story);
+              }
+            }}
           />
         ))}
       </ScrollView>

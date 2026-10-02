@@ -8,6 +8,7 @@ interface ShadowHeaderProps {
   isDark: boolean;
   onToggleTheme?: () => void;
   onAddPress?: () => void;
+  onShadowPress?: () => void;
   onNotificationsPress?: () => void;
   unreadCount?: number;
 }
@@ -17,18 +18,19 @@ export const ShadowHeader: React.FC<ShadowHeaderProps> = ({
   isDark,
   onToggleTheme,
   onAddPress,
+  onShadowPress,
   onNotificationsPress,
   unreadCount = 2,
 }) => {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Left Action: Menu / Options or Back */}
+      {/* Left Action: Direct My Shadow Navigation Tab Icon on Home Feed */}
       <TouchableOpacity 
-        style={[styles.iconButton, { borderColor: colors.border }]} 
-        onPress={onAddPress}
+        style={[styles.shadowTabButton, { borderColor: colors.border }]} 
+        onPress={onShadowPress}
         activeOpacity={0.7}
       >
-        <Feather name="plus" size={20} color={colors.text} />
+        <Text style={{ fontSize: 16, color: colors.accent, fontWeight: 'bold' }}>♙</Text>
       </TouchableOpacity>
 
       {/* Center: Shadow Logo Wordmark */}
@@ -36,7 +38,7 @@ export const ShadowHeader: React.FC<ShadowHeaderProps> = ({
         <Text style={[styles.brandText, { color: colors.text }]}>Shadow</Text>
       </View>
 
-      {/* Right Action: + Create, Notifications & Theme Switch */}
+      {/* Right Action: Notifications & Theme Switch */}
       <View style={styles.rightGroup}>
         {onToggleTheme && (
           <TouchableOpacity 
@@ -51,15 +53,6 @@ export const ShadowHeader: React.FC<ShadowHeaderProps> = ({
             />
           </TouchableOpacity>
         )}
-
-        {/* Top Right Corner + Button (Keep top corner create button) */}
-        <TouchableOpacity 
-          style={styles.iconButton} 
-          onPress={onAddPress}
-          activeOpacity={0.7}
-        >
-          <Feather name="plus-square" size={20} color={colors.text} />
-        </TouchableOpacity>
 
         <TouchableOpacity 
           style={styles.iconButton} 
@@ -93,6 +86,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+  },
+  shadowTabButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
   },
   brandContainer: {
     flex: 1,

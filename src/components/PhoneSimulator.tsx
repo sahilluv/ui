@@ -85,6 +85,7 @@ import { ReelCommentsDrawer } from './ReelCommentsDrawer';
 import { PullUpRefresh } from './PullUpRefresh';
 import { ReelCard } from './ReelCard';
 import { useReelIntersectionObserver } from '../hooks/useReelIntersectionObserver';
+import { MyShadowScreen } from './MyShadowScreen';
 
 export type TabType = 'home' | 'explore' | 'reels' | 'shop' | 'chat' | 'create' | 'notifications' | 'profile';
 
@@ -237,9 +238,13 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
   const prevScrollTopRef = useRef(0);
   const scrollStopTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const [isViewingMyShadow, setIsViewingMyShadow] = useState(false);
 
   const handleTabChange = (tab: TabType) => {
     setIsNavShrunk(false);
+    if (tab !== 'profile') {
+      setIsViewingMyShadow(false);
+    }
     if (externalOnTabChange) {
       externalOnTabChange(tab);
     } else {
@@ -942,20 +947,52 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       </div>
 
       {/* 2. Top Header (Shared between main screens) */}
-      {currentTab !== 'create' && currentTab !== 'reels' && (
+      {currentTab !== 'create' && currentTab !== 'reels' && !isViewingMyShadow && (
         <header className="h-13 px-5 flex items-center justify-between shrink-0 z-10">
-          {/* Left Action: Circle with Plus (+) matching reference exactly */}
-          <button
-            onClick={() => handleTabChange('create')}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-transform active:scale-95 ${
-              isDark ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-[#12131D]'
-            }`}
-            title="Crear Publicación (+)"
-          >
-            <div className="w-6.5 h-6.5 rounded-full border-2 border-current flex items-center justify-center">
-              <Plus size={14} strokeWidth={2.8} />
-            </div>
-          </button>
+          {/* Left Action: Dedicated Shadow navigation tab on Home feed, Plus (+) ONLY on Profile */}
+          {currentTab === 'home' ? (
+            <button
+              onClick={() => setIsViewingMyShadow(true)}
+              className="relative group p-0.5 rounded-full transition-transform active:scale-90 cursor-pointer"
+              title="My Shadow Dashboard"
+              aria-label="Open My Shadow directly from Home Feed"
+            >
+              <div
+                className="w-9 h-9 rounded-full p-[1.5px] shadow-md shadow-pink-500/25 flex items-center justify-center transition-all group-hover:scale-105"
+                style={{
+                  background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                }}
+              >
+                <div
+                  className={`w-full h-full rounded-full flex items-center justify-center transition-colors ${
+                    isDark ? 'bg-[#0F111D]' : 'bg-white'
+                  }`}
+                >
+                  <PremiumPawnInsignia
+                    size={16}
+                    glow={false}
+                    className={isDark ? 'text-pink-400 group-hover:text-pink-300' : 'text-purple-600'}
+                  />
+                </div>
+              </div>
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#0B0C14] shadow-xs" />
+            </button>
+          ) : currentTab === 'profile' ? (
+            <button
+              onClick={() => handleTabChange('create')}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-transform active:scale-95 cursor-pointer ${
+                isDark ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-[#12131D]'
+              }`}
+              title="Create Post (+)"
+              aria-label="Create Post"
+            >
+              <div className="w-6.5 h-6.5 rounded-full border-2 border-current flex items-center justify-center">
+                <Plus size={14} strokeWidth={2.8} />
+              </div>
+            </button>
+          ) : (
+            <div className="w-9 h-9" aria-hidden="true" />
+          )}
 
           {/* Center Brand: "Shadow" cursive script (hidden on profile to match reference image) */}
           <div className="flex items-center justify-center">
@@ -1042,109 +1079,123 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             : 'flex-1 overflow-y-auto'
         }`}
       >
-        {/* ======================================= */}
-        {/* SCREEN 1: HOME / FEED                   */}
-        {/* ======================================= */}
+        {isViewingMyShadow ? (
+          <MyShadowScreen
+            onBack={() => setIsViewingMyShadow(false)}
+            isDark={isDark}
+            currentUser={{
+              name: 'Mauricio Lopez',
+              username: 'maoo.lopez',
+              shadowId: 'shdw_mlopez89',
+              rank: mauricioRank,
+              isVerified: isMauricioVerified,
+              avatarGradient: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+            }}
+            onToast={triggerToast}
+          />
+        ) : (
+          <>
+            {/* ======================================= */}
+            {/* SCREEN 1: HOME / FEED                   */}
+            {/* ======================================= */}
         {currentTab === 'home' && (
-          <div className="pb-8">
+          <div className="pb-28">
             {/* Stories Row */}
             <div className="pt-2 pb-3 px-4 flex items-center gap-3 overflow-x-auto no-scrollbar">
-              {/* Dedicated Camera / 24h Story Creator Quick Action */}
-              <div
-                onClick={() => setIsCameraOverlayOpen(true)}
-                className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group"
-                title="Open Camera · Create 24h Story"
-              >
-                <div
-                  className={`w-16 h-16 rounded-full border-2 border-dashed flex items-center justify-center transition-all group-hover:scale-105 active:scale-95 ${
-                    isDark
-                      ? 'border-pink-500/50 bg-pink-500/10 text-pink-400 hover:border-pink-500 hover:bg-pink-500/20 shadow-xs'
-                      : 'border-pink-500/60 bg-pink-50 text-pink-600 hover:bg-pink-100 shadow-xs'
-                  }`}
-                >
-                  <div className="relative flex items-center justify-center">
-                    <Camera size={22} className="group-hover:scale-110 transition-transform" />
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center text-white shadow-xs">
-                      <Plus size={10} strokeWidth={3} />
-                    </div>
-                  </div>
-                </div>
-                <span className="text-[11px] font-bold text-pink-500 tracking-tight">Camera</span>
-              </div>
+              {stories.map((story) => {
+                const hasActiveStory = !!(story.hasUnseen || story.storyImageUrl || story.storyCaption);
 
-              {stories.map((story) => (
-                <div
-                  key={story.id}
-                  onClick={() => {
-                    if (story.isCurrentUser && !story.hasUnseen && !story.storyImageUrl && !story.storyCaption) {
-                      setIsCameraOverlayOpen(true);
-                    } else {
-                      onSelectStory?.(story);
+                return (
+                  <div
+                    key={story.id}
+                    onClick={() => {
+                      if (story.isCurrentUser && !hasActiveStory) {
+                        setIsCameraOverlayOpen(true);
+                      } else {
+                        onSelectStory?.(story);
+                      }
+                    }}
+                    className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group"
+                    title={
+                      story.isCurrentUser
+                        ? hasActiveStory
+                          ? 'View your story or tap + to open camera'
+                          : 'Open Camera · Create 24h Story'
+                        : `View @${story.username}'s story`
                     }
-                  }}
-                  className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group"
-                >
-                  <div className="relative">
-                    {/* Multi-stop gradient story ring */}
-                    <div
-                      className={`w-16 h-16 rounded-full p-[2.5px] transition-transform group-hover:scale-105 ${
-                        story.hasUnseen
-                          ? 'shadow-md shadow-pink-500/40 ring-1 ring-pink-500/60'
-                          : ''
-                      }`}
-                      style={{ background: story.gradient }}
-                    >
+                  >
+                    <div className="relative">
+                      {/* Multi-stop gradient story ring */}
                       <div
-                        className={`w-full h-full rounded-full p-[2px] ${
-                          isDark ? 'bg-[#0B0C14]' : 'bg-white'
+                        className={`w-16 h-16 rounded-full p-[2.5px] transition-transform group-hover:scale-105 ${
+                          story.hasUnseen || (story.isCurrentUser && hasActiveStory)
+                            ? 'shadow-md shadow-pink-500/40 ring-1 ring-pink-500/60'
+                            : ''
                         }`}
+                        style={{
+                          background:
+                            story.isCurrentUser && !hasActiveStory
+                              ? isDark
+                                ? 'linear-gradient(135deg, rgba(255,10,120,0.5) 0%, rgba(153,27,234,0.4) 100%)'
+                                : 'linear-gradient(135deg, rgba(255,10,120,0.4) 0%, rgba(153,27,234,0.3) 100%)'
+                              : story.gradient,
+                        }}
                       >
                         <div
-                          className="w-full h-full rounded-full overflow-hidden"
-                          style={{ background: story.avatarGradient }}
+                          className={`w-full h-full rounded-full p-[2px] ${
+                            isDark ? 'bg-[#0B0C14]' : 'bg-white'
+                          }`}
                         >
-                          {story.storyImageUrl && (
-                            <img
-                              src={story.storyImageUrl}
-                              alt="Current user story thumbnail"
-                              className="w-full h-full object-cover"
-                            />
-                          )}
+                          <div
+                            className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative"
+                            style={{ background: story.avatarGradient }}
+                          >
+                            {story.storyImageUrl ? (
+                              <img
+                                src={story.storyImageUrl}
+                                alt="Current user story thumbnail"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : story.isCurrentUser && !hasActiveStory ? (
+                              <Camera size={19} className="text-white/90 drop-shadow-sm" />
+                            ) : null}
+                          </div>
                         </div>
                       </div>
+
+                      {/* Integrated Camera / Plus Creation Badge for Current User */}
+                      {story.isCurrentUser && (
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsCameraOverlayOpen(true);
+                          }}
+                          className="absolute bottom-0 right-0 w-5.5 h-5.5 rounded-full flex items-center justify-center text-white border-2 text-[10px] font-bold shadow-md hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                          style={{
+                            background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 100%)',
+                            borderColor: isDark ? '#0B0C14' : '#FFFFFF',
+                          }}
+                          title="Open Camera · Create 24h Story"
+                        >
+                          <Plus size={12} strokeWidth={3.2} />
+                        </div>
+                      )}
                     </div>
 
-                    {/* User Story Plus Badge (Clicking opens camera overlay) */}
-                    {story.isCurrentUser && (
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsCameraOverlayOpen(true);
-                        }}
-                        className="absolute bottom-0 right-0 w-5 h-5 rounded-full flex items-center justify-center text-white border-2 text-[10px] font-bold shadow-md hover:scale-110 active:scale-95 transition-transform cursor-pointer"
-                        style={{
-                          background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 100%)',
-                          borderColor: isDark ? '#0B0C14' : '#FFFFFF',
-                        }}
-                        title="Add to 24h Story"
-                      >
-                        <Plus size={11} strokeWidth={3} />
-                      </div>
-                    )}
+                    <span
+                      className={`text-[11px] font-medium tracking-tight text-center max-w-[66px] truncate ${
+                        story.hasUnseen || (story.isCurrentUser && hasActiveStory)
+                          ? 'text-pink-400 font-bold'
+                          : isDark
+                          ? 'text-slate-400'
+                          : 'text-slate-600'
+                      }`}
+                    >
+                      {story.username}
+                    </span>
                   </div>
-                  <span
-                    className={`text-[11px] font-medium tracking-tight text-center max-w-[62px] truncate ${
-                      story.hasUnseen
-                        ? 'text-pink-400 font-bold'
-                        : isDark
-                        ? 'text-slate-400'
-                        : 'text-slate-600'
-                    }`}
-                  >
-                    {story.username}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Explorar Section & Search Control */}
@@ -1418,7 +1469,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         {/* SCREEN 2: DISCOVER / EXPLORE            */}
         {/* ======================================= */}
         {currentTab === 'explore' && (
-          <div className="pb-8">
+          <div className="pb-28">
             {/* Horizontal Categories Row: IGTV, TIENDA, VIAJES, FITNESS */}
             <div className="px-4 py-2 flex items-center gap-3 overflow-x-auto no-scrollbar">
               {CATEGORIES.map((cat) => (
@@ -1716,7 +1767,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                                 </span>
                               </div>
 
-                              <div className="space-y-1">
+                              <div className="space-y-1 pb-28">
                                 {matchingTags.map((tag) => (
                                   <div
                                     key={tag.id}
@@ -2473,7 +2524,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 </div>
 
                 {/* Conversation Threads List */}
-                <div className="divide-y divide-white/5 px-2">
+                <div className="divide-y divide-white/5 px-2 pb-28">
                   {CHAT_USERS.filter(
                     (u) =>
                       u.name.toLowerCase().includes(chatSearchQuery.toLowerCase()) ||
@@ -2554,7 +2605,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         {/* SCREEN 5: NOTIFICATIONS & ACTIVITY      */}
         {/* ======================================= */}
         {currentTab === 'notifications' && (
-          <div className="flex flex-col h-full overflow-y-auto no-scrollbar pb-8">
+          <div className="flex flex-col h-full overflow-y-auto no-scrollbar pb-28">
             {/* Notifications Header */}
             <div className="px-5 pt-2 pb-3 flex items-center justify-between shrink-0">
               <div>
@@ -2718,117 +2769,117 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         {/* SCREEN 6: PROFILE (Mauricio Lopez)      */}
         {/* ======================================= */}
         {currentTab === 'profile' && (
-          <div className="pb-8">
-            {/* Top Avatar & Info */}
-            <div className="flex flex-col items-center px-6 pt-3">
-              {/* Large Centered Avatar with vibrant gradient ring */}
-              <div
-                className="w-22 h-22 rounded-full p-[3.5px] shadow-xl mb-3.5"
-                style={{
-                  background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
-                }}
-              >
+          <div className="pb-28">
+              {/* Top Avatar & Info */}
+              <div className="flex flex-col items-center px-6 pt-3">
+                {/* Large Centered Avatar with vibrant gradient ring */}
                 <div
-                  className={`w-full h-full rounded-full p-[3px] ${
-                    isDark ? 'bg-[#0B0C14]' : 'bg-white'
-                  }`}
+                  className="w-22 h-22 rounded-full p-[3.5px] shadow-xl mb-3.5"
+                  style={{
+                    background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                  }}
                 >
                   <div
-                    className="w-full h-full rounded-full"
-                    style={{
-                      background: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 60%, #4338CA 100%)',
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Mauricio Lopez Title & Username */}
-              <h2
-                className={`text-xl font-bold tracking-tight ${
-                  isDark ? 'text-white' : 'text-[#12131D]'
-                }`}
-              >
-                Mauricio Lopez
-              </h2>
-              <span className="text-[11px] font-semibold text-slate-400 mb-2">
-                @maoo.lopez
-              </span>
-
-              {/* Shadow Identity & Pawn Rank Card */}
-              <div
-                className={`w-full max-w-[325px] rounded-[24px] p-3 mb-3.5 border transition-all duration-300 ${
-                  isDark
-                    ? 'bg-[#151726]/95 border-white/10 shadow-xl shadow-black/40'
-                    : 'bg-white/95 border-slate-200/90 shadow-lg shadow-slate-200/50'
-                }`}
-              >
-                {/* Header row: Shadow Identity label + Shadow ID */}
-                <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-white/5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
-                    <span className="text-[10px] font-extrabold tracking-wider uppercase text-slate-400">
-                      Shadow Identity
-                    </span>
+                    className={`w-full h-full rounded-full p-[3px] ${
+                      isDark ? 'bg-[#0B0C14]' : 'bg-white'
+                    }`}
+                  >
+                    <div
+                      className="w-full h-full rounded-full"
+                      style={{
+                        background: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 60%, #4338CA 100%)',
+                      }}
+                    />
                   </div>
-                  <button
-                    onClick={() => triggerToast('Shadow ID copied: shdw_mlopez89')}
-                    className="flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors cursor-pointer"
-                    title="Click to copy Shadow ID"
-                  >
-                    <span className="text-pink-400 font-bold">ID:</span>
-                    <span>shdw_mlopez89</span>
-                    <Copy size={10} className="text-slate-400 ml-0.5" />
-                  </button>
                 </div>
 
-                {/* Primary Premium Status Indicator: Distinct Proportional Rank Badge with Visual Transition */}
-                <div className="mb-2.5">
-                  <PawnRankBadge
-                    rank={mauricioRank}
-                    variant="profile"
-                    isDark={isDark}
-                    isPromoting={isRankTransitioning}
-                    onClick={() => setShowRankHierarchyModal(true)}
-                  />
-                </div>
+                {/* Mauricio Lopez Title & Username */}
+                <h2
+                  className={`text-xl font-bold tracking-tight ${
+                    isDark ? 'text-white' : 'text-[#12131D]'
+                  }`}
+                >
+                  Mauricio Lopez
+                </h2>
+                <span className="text-[11px] font-semibold text-slate-400 mb-2">
+                  @maoo.lopez
+                </span>
 
-                {/* Secondary Row: Independent Verification Status + Rank Progression Demo Button */}
-                <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/5">
-                  {/* Rank Elevate Trigger Button */}
-                  <button
-                    onClick={handlePromoteRank}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[9.5px] font-extrabold transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 ${
-                      mauricioRank === 'PAWN'
-                        ? 'bg-purple-500/15 border-purple-500/35 text-purple-300 hover:bg-purple-500/25 shadow-xs shadow-purple-500/20'
-                        : 'bg-pink-500/15 border-pink-500/35 text-pink-300 hover:bg-pink-500/25 shadow-xs shadow-pink-500/20'
-                    }`}
-                    title="Simulate Shadow Rank Progression: PAWN ↔ KNIGHT"
-                  >
-                    <Sparkles size={11} className={mauricioRank === 'PAWN' ? 'text-cyan-400 animate-pulse' : 'text-pink-400'} />
-                    <span>{mauricioRank === 'PAWN' ? 'Elevate to KNIGHT' : 'Revert to PAWN'}</span>
-                  </button>
+                {/* Shadow Identity & Pawn Rank Card */}
+                <div
+                  className={`w-full max-w-[325px] rounded-[24px] p-3 mb-2.5 border transition-all duration-300 ${
+                    isDark
+                      ? 'bg-[#151726]/95 border-white/10 shadow-xl shadow-black/40'
+                      : 'bg-white/95 border-slate-200/90 shadow-lg shadow-slate-200/50'
+                  }`}
+                >
+                  {/* Header row: Shadow Identity label + Shadow ID */}
+                  <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-white/5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
+                      <span className="text-[10px] font-extrabold tracking-wider uppercase text-slate-400">
+                        Shadow Identity
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => triggerToast('Shadow ID copied: shdw_mlopez89')}
+                      className="flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-md bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition-colors cursor-pointer"
+                      title="Click to copy Shadow ID"
+                    >
+                      <span className="text-pink-400 font-bold">ID:</span>
+                      <span>shdw_mlopez89</span>
+                      <Copy size={10} className="text-slate-400 ml-0.5" />
+                    </button>
+                  </div>
 
-                  {/* Verification Status (Independent from Rank) */}
-                  <button
-                    onClick={() => setShowVerificationModal(true)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all hover:scale-105 active:scale-95 cursor-pointer ${
-                      isMauricioVerified
-                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                        : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                    }`}
-                    title="Independent Verification Status - Tap to toggle & inspect"
-                  >
-                    {isMauricioVerified ? (
-                      <ShieldCheck size={12} className="shrink-0" />
-                    ) : (
-                      <ShieldAlert size={12} className="shrink-0" />
-                    )}
-                    <span className="text-[9.5px] font-extrabold tracking-wider">
-                      {isMauricioVerified ? 'VERIFIED' : 'UNVERIFIED'}
-                    </span>
-                  </button>
+                  {/* Primary Premium Status Indicator: Distinct Proportional Rank Badge with Visual Transition */}
+                  <div className="mb-2.5">
+                    <PawnRankBadge
+                      rank={mauricioRank}
+                      variant="profile"
+                      isDark={isDark}
+                      isPromoting={isRankTransitioning}
+                      onClick={() => setShowRankHierarchyModal(true)}
+                    />
+                  </div>
+
+                  {/* Secondary Row: Independent Verification Status + Rank Progression Demo Button */}
+                  <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/5">
+                    {/* Rank Elevate Trigger Button */}
+                    <button
+                      onClick={handlePromoteRank}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[9.5px] font-extrabold transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 ${
+                        mauricioRank === 'PAWN'
+                          ? 'bg-purple-500/15 border-purple-500/35 text-purple-300 hover:bg-purple-500/25 shadow-xs shadow-purple-500/20'
+                          : 'bg-pink-500/15 border-pink-500/35 text-pink-300 hover:bg-pink-500/25 shadow-xs shadow-pink-500/20'
+                      }`}
+                      title="Simulate Shadow Rank Progression: PAWN ↔ KNIGHT"
+                    >
+                      <Sparkles size={11} className={mauricioRank === 'PAWN' ? 'text-cyan-400 animate-pulse' : 'text-pink-400'} />
+                      <span>{mauricioRank === 'PAWN' ? 'Elevate to KNIGHT' : 'Revert to PAWN'}</span>
+                    </button>
+
+                    {/* Verification Status (Independent from Rank) */}
+                    <button
+                      onClick={() => setShowVerificationModal(true)}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all hover:scale-105 active:scale-95 cursor-pointer ${
+                        isMauricioVerified
+                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                          : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                      }`}
+                      title="Independent Verification Status - Tap to toggle & inspect"
+                    >
+                      {isMauricioVerified ? (
+                        <ShieldCheck size={12} className="shrink-0" />
+                      ) : (
+                        <ShieldAlert size={12} className="shrink-0" />
+                      )}
+                      <span className="text-[9.5px] font-extrabold tracking-wider">
+                        {isMauricioVerified ? 'VERIFIED' : 'UNVERIFIED'}
+                      </span>
+                    </button>
+                  </div>
                 </div>
-              </div>
 
               <p
                 className={`text-xs text-center max-w-[290px] mb-1 ${
@@ -3010,22 +3061,26 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             </div>
           </div>
         )}
-      </div>
+      </>
+    )}
+  </div>
 
       {/* 4. Modular BottomNavigation with Notification button in place of duplicate profile button */}
-      <BottomNavigation
-        currentTab={currentTab === 'shop' ? 'explore' : currentTab}
-        onTabChange={(tab) => {
-          if (tab === 'notifications') {
-            setHasUnreadNotifs(false);
-          }
-          handleTabChange(tab);
-        }}
-        isDark={isDark}
-        isShrunk={isNavShrunk}
-        unreadCount={activeChatUserId ? 0 : 2}
-        unreadNotificationsCount={hasUnreadNotifs ? 3 : 0}
-      />
+      {(!activeChatUserId || (currentTab !== 'chat' && currentTab !== 'shop')) && (
+        <BottomNavigation
+          currentTab={currentTab === 'shop' ? 'explore' : currentTab}
+          onTabChange={(tab) => {
+            if (tab === 'notifications') {
+              setHasUnreadNotifs(false);
+            }
+            handleTabChange(tab);
+          }}
+          isDark={isDark}
+          isShrunk={isNavShrunk}
+          unreadCount={activeChatUserId ? 0 : 2}
+          unreadNotificationsCount={hasUnreadNotifs ? 3 : 0}
+        />
+      )}
 
       {/* Slide-Up Reel Comments Drawer matching Shadow UI aesthetic */}
       <ReelCommentsDrawer
