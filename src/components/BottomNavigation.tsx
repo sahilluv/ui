@@ -52,24 +52,26 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       ),
     },
     {
-      id: 'create',
-      label: 'Create',
+      id: 'reels',
+      label: 'Reels',
       icon: (active, shrunk) => (
         <div className="relative flex items-center justify-center">
           <div
             className={`${
-              shrunk ? 'w-5 h-5 rounded-[7px]' : 'w-6 h-6 rounded-[8px]'
-            } border-2 flex items-center justify-center transition-all duration-300 ${
-              active
-                ? 'border-pink-500 bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-sm'
-                : 'border-current text-current'
-            }`}
+              shrunk ? 'w-5 h-4 rounded-[4px]' : 'w-6 h-5 rounded-[5px]'
+            } border-2 flex items-center justify-center border-current transition-all duration-300`}
           >
-            <Plus
-              size={shrunk ? 13 : 15}
-              strokeWidth={active ? 3.2 : 2.5}
+            <div
+              className={`w-0 h-0 ${
+                shrunk ? 'border-y-[2.5px] border-l-[4px]' : 'border-y-[3px] border-l-[5px]'
+              } border-y-transparent border-l-current ml-0.5 transition-all duration-300`}
             />
           </div>
+          <div
+            className={`absolute ${
+              shrunk ? '-bottom-0.5 w-2 h-[1px]' : '-bottom-1 w-2.5 h-[1.5px]'
+            } bg-current rounded-full transition-all duration-300`}
+          />
         </div>
       ),
     },

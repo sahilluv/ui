@@ -96,17 +96,17 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
           </div>
         </div>
 
-        {/* Row 3: Create UI (Post Composer) */}
+        {/* Row 3: Reels UI (Matching Reference Screenshot - Eliott Johnson & Christian Lue) */}
         <div className="flex flex-col items-center mt-6">
           <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-gradient-to-r from-purple-900/60 to-pink-900/60 border border-pink-500/30 text-[11px] font-semibold text-pink-200">
             <span className="w-2 h-2 rounded-full bg-pink-400" />
-            Create / Composer UI
+            Reels Section (Eliott Johnson & Christian Lue)
           </div>
           <div className="transform hover:scale-[1.01] transition-transform duration-300">
             <PhoneSimulator
               isDark={false}
               onToggleTheme={() => {}}
-              activeTab="create"
+              activeTab="reels"
               onSelectStory={onSelectStory}
               standalone={false}
             />

@@ -262,16 +262,16 @@ export default function App() {
                 />
               </div>
 
-              {/* Screen 4: Create Composer Light (Screenshot 3) */}
+              {/* Screen 4: TV Videos Light (Screenshot 3) */}
               <div className="flex flex-col items-center gap-3">
                 <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
                   <span className="w-2 h-2 rounded-full bg-pink-400" />
-                  Create / Compose (Light Mode)
+                  TV / Videos (Light Mode)
                 </span>
                 <PhoneSimulator
                   isDark={false}
                   onToggleTheme={toggleTheme}
-                  activeTab="create"
+                  activeTab="reels"
                   onSelectStory={setActiveStory}
                 />
               </div>

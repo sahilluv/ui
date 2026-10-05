@@ -32,6 +32,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Bell,
+  ArrowDown,
+  RotateCw,
 } from 'lucide-react';
 import { PawnRankBadge, ShadowRankType } from './PawnRankBadge';
 import { ReelCommentsDrawer } from './ReelCommentsDrawer';
@@ -105,6 +107,51 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     likesCount: 1890,
     commentsCount: 94,
     isLiked: false,
+    isSaved: false,
+  },
+];
+
+const NEW_FEED_POSTS_POOL: FeedPost[] = [
+  {
+    id: 'post_fresh_elena',
+    authorName: 'Elena Rostova',
+    username: 'elena.art',
+    avatarGradient: ['#EC4899', '#F43F5E', '#FB7185'],
+    timeAgo: 'Just now',
+    imageGradient: ['#5B1CE6', '#991BEA', '#FF0A78', '#FF7F50'],
+    content: 'Generative bio-crystal forms rendered with chromatic aberration. Testing our new shadow depth shaders!',
+    captionTitle: 'CHROMA RESONANCE',
+    likesCount: 512,
+    commentsCount: 42,
+    isLiked: false,
+    isSaved: false,
+  },
+  {
+    id: 'post_fresh_marcus',
+    authorName: 'Marcus Chen',
+    username: 'marcus.vfx',
+    avatarGradient: ['#06B6D4', '#3B82F6', '#6366F1'],
+    timeAgo: 'Just now',
+    imageGradient: ['#09203F', '#537895', '#0E626B', '#13928E'],
+    content: 'Interactive fluid simulation running in real-time WebGL on mobile GPU! Drop feedback on framerate below.',
+    captionTitle: 'FLUID DYNAMICS',
+    likesCount: 388,
+    commentsCount: 29,
+    isLiked: false,
+    isSaved: false,
+  },
+  {
+    id: 'post_fresh_kai',
+    authorName: 'Kai Tanaka',
+    username: 'kai.sound',
+    avatarGradient: ['#F59E0B', '#D97706', '#78350F'],
+    timeAgo: 'Just now',
+    imageGradient: ['#2E0854', '#662D8C', '#ED1E79', '#FFA07A'],
+    content: 'Spatial ambient score for the upcoming Shadow exhibition. Best experienced with studio headphones 🎧',
+    captionTitle: 'SPATIAL AUDIO',
+    likesCount: 674,
+    commentsCount: 58,
+    isLiked: true,
     isSaved: false,
   },
 ];
@@ -443,6 +490,126 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     }, 1000);
   };
 
+  // Pull-To-Refresh State & Handlers for Feed View
+  const [pullDownDistance, setPullDownDistance] = useState(0);
+  const [isPullRefreshing, setIsPullRefreshing] = useState(false);
+  const [isPullDragging, setIsPullDragging] = useState(false);
+  const pullStartYRef = useRef<number | null>(null);
+  const freshPostIndexRef = useRef(0);
+  const PULL_THRESHOLD = 58;
+
+  const executeRefreshFeed = async () => {
+    if (isPullRefreshing) return;
+    setIsPullRefreshing(true);
+    setPullDownDistance(54);
+
+    try {
+      // Simulate real fetch with network latency
+      await new Promise((r) => setTimeout(r, 850));
+
+      // Attempt background endpoint fetch if online
+      try {
+        await fetch('/api/feed');
+      } catch (_e) {
+        // Silently handled
+      }
+
+      // Cycle next post from fresh pool
+      const nextPostToInject = NEW_FEED_POSTS_POOL[freshPostIndexRef.current % NEW_FEED_POSTS_POOL.length];
+      freshPostIndexRef.current += 1;
+
+      setFeedPosts((prev) => {
+        // Update likes slightly on existing posts to simulate live activity
+        const updatedExisting = prev.map((p, idx) => ({
+          ...p,
+          likesCount: p.likesCount + (idx % 2 === 0 ? Math.floor(Math.random() * 8) + 2 : 0),
+        }));
+
+        const exists = prev.some((p) => p.id === nextPostToInject.id);
+        const postToAdd: FeedPost = exists
+          ? {
+              ...nextPostToInject,
+              id: `${nextPostToInject.id}_${Date.now()}`,
+              timeAgo: 'Just now',
+            }
+          : { ...nextPostToInject, timeAgo: 'Just now' };
+
+        return [postToAdd, ...updatedExisting];
+      });
+
+      showToast('Feed updated with latest posts!');
+    } finally {
+      setIsPullRefreshing(false);
+      setPullDownDistance(0);
+    }
+  };
+
+  const handleFeedTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (currentTab !== 'home' || isPullRefreshing) return;
+    if (feedScrollRef.current && feedScrollRef.current.scrollTop <= 2) {
+      pullStartYRef.current = e.touches[0].clientY;
+      setIsPullDragging(true);
+    }
+  };
+
+  const handleFeedTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (pullStartYRef.current === null || isPullRefreshing || currentTab !== 'home') return;
+    const currentY = e.touches[0].clientY;
+    const diff = currentY - pullStartYRef.current;
+
+    if (diff > 0 && feedScrollRef.current && feedScrollRef.current.scrollTop <= 2) {
+      const dampened = Math.min(Math.pow(diff, 0.82) * 1.8, 88);
+      setPullDownDistance(dampened);
+    } else {
+      setPullDownDistance(0);
+    }
+  };
+
+  const handleFeedTouchEnd = () => {
+    if (pullStartYRef.current !== null) {
+      pullStartYRef.current = null;
+      setIsPullDragging(false);
+      if (pullDownDistance >= PULL_THRESHOLD && !isPullRefreshing) {
+        void executeRefreshFeed();
+      } else {
+        setPullDownDistance(0);
+      }
+    }
+  };
+
+  const handleFeedMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (currentTab !== 'home' || isPullRefreshing) return;
+    if (feedScrollRef.current && feedScrollRef.current.scrollTop <= 2) {
+      pullStartYRef.current = e.clientY;
+      setIsPullDragging(true);
+    }
+  };
+
+  const handleFeedMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (pullStartYRef.current === null || isPullRefreshing || currentTab !== 'home') return;
+    const currentY = e.clientY;
+    const diff = currentY - pullStartYRef.current;
+
+    if (diff > 0 && feedScrollRef.current && feedScrollRef.current.scrollTop <= 2) {
+      const dampened = Math.min(Math.pow(diff, 0.82) * 1.8, 88);
+      setPullDownDistance(dampened);
+    } else {
+      setPullDownDistance(0);
+    }
+  };
+
+  const handleFeedMouseUp = () => {
+    if (pullStartYRef.current !== null) {
+      pullStartYRef.current = null;
+      setIsPullDragging(false);
+      if (pullDownDistance >= PULL_THRESHOLD && !isPullRefreshing) {
+        void executeRefreshFeed();
+      } else {
+        setPullDownDistance(0);
+      }
+    }
+  };
+
   // Horizontal swipe-to-navigate in Reels view (Swipe Left -> Profile, Swipe Right -> Feed)
   const [reelSwipeStartX, setReelSwipeStartX] = useState<number | null>(null);
   const [reelSwipeStartY, setReelSwipeStartY] = useState<number | null>(null);
@@ -636,12 +803,310 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
             </div>
           </div>
 
+          {/* 3. REELS SCREEN (TRUE 100% MAXIMUM FULL-SCREEN IMMERSIVE VERTICAL VIDEO WITH HORIZONTAL SWIPE NAVIGATION) */}
+          {currentTab === 'reels' && (
+            <div
+              ref={reelsScrollRef}
+              onScroll={handleReelsScroll}
+              onTouchStart={handleReelsTouchStart}
+              onTouchMove={handleReelsTouchMove}
+              onTouchEnd={handleReelsTouchEnd}
+              onMouseDown={handleReelsTouchStart}
+              onMouseMove={handleReelsTouchMove}
+              onMouseUp={handleReelsTouchEnd}
+              onMouseLeave={() => {
+                if (isSwipingReels) {
+                  setIsSwipingReels(false);
+                  setReelSwipeDeltaX(0);
+                  setReelSwipeStartX(null);
+                  setReelSwipeStartY(null);
+                }
+              }}
+              className="absolute inset-0 z-10 snap-y snap-mandatory overflow-y-scroll no-scrollbar bg-black cursor-grab active:cursor-grabbing"
+              style={{
+                transform: isSwipingReels && Math.abs(reelSwipeDeltaX) > 8 ? `translateX(${reelSwipeDeltaX * 0.35}px)` : undefined,
+                transition: isSwipingReels ? 'none' : 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+              }}
+            >
+              {/* Swipe Right Visual Cue: Return to Feed */}
+              {isSwipingReels && reelSwipeDeltaX > 20 && (
+                <div className="fixed left-6 top-1/2 -translate-y-1/2 z-50 bg-black/85 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-2 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
+                  <ChevronLeft size={16} className="text-[#FF0A78]" />
+                  <span>Return to Feed</span>
+                </div>
+              )}
+
+              {/* Swipe Left Visual Cue: View Profile */}
+              {isSwipingReels && reelSwipeDeltaX < -20 && (
+                <div className="fixed right-6 top-1/2 -translate-y-1/2 z-50 bg-black/85 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-2 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
+                  <span>View Profile</span>
+                  <ChevronRight size={16} className="text-[#991BEA]" />
+                </div>
+              )}
+
+              {reels.map((reel) => {
+                const isPaused = !!pausedReels[reel.id];
+                const isHeartPopping = heartPopReelId === reel.id;
+
+                return (
+                  <div
+                    key={reel.id}
+                    className="w-full h-full snap-start snap-always relative shrink-0 overflow-hidden flex flex-col justify-between select-none"
+                    style={{
+                      background: `linear-gradient(135deg, ${reel.gradient.join(', ')})`,
+                    }}
+                    onDoubleClick={() => handleReelDoubleClick(reel.id)}
+                  >
+                    {/* Ambient subtle animated shimmer overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/60 pointer-events-none" />
+
+                    {/* Central Play/Pause Tap Target */}
+                    <div
+                      onClick={() => handleTogglePlayPause(reel.id)}
+                      className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer"
+                    >
+                      {isPaused && (
+                        <div className="w-16 h-16 rounded-[16px] bg-black/60 backdrop-blur-md flex items-center justify-center text-white/90 shadow-2xl animate-scale-in border border-white/20">
+                          <Play size={28} className="translate-x-0.5 fill-white text-white" />
+                        </div>
+                      )}
+
+                      {/* Double tap heart pop animation */}
+                      {isHeartPopping && (
+                        <div className="absolute flex items-center justify-center animate-ping pointer-events-none">
+                          <Heart size={90} className="fill-[#FF2A55] text-[#FF2A55] drop-shadow-2xl" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Top Floating Overlay (Reels Header & Controls) */}
+                    <div className="relative z-20 pt-11 px-5 flex items-center justify-between bg-gradient-to-b from-black/80 via-black/40 to-transparent pb-6 pointer-events-auto">
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-xl font-extrabold text-white tracking-tight drop-shadow-md">
+                          Reels
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsMuted(!isMuted);
+                            showToast(isMuted ? 'Sound unmuted' : 'Sound muted');
+                          }}
+                          className="w-8 h-8 rounded-[10px] bg-black/40 backdrop-blur-md border border-white/15 flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+                          title={isMuted ? 'Unmute' : 'Mute'}
+                        >
+                          {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+                        </button>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            showToast('Camera launched for new Reel');
+                          }}
+                          className="w-8 h-8 rounded-[10px] bg-black/40 backdrop-blur-md border border-white/15 flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+                          title="Record Reel"
+                        >
+                          <Camera size={15} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Bottom-Left Information Overlay */}
+                    <div className="relative z-20 pb-16 px-4 flex items-end justify-between pointer-events-auto">
+                      <div className="flex flex-col gap-2 max-w-[72%] text-white">
+                        {/* Author row */}
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className="w-9 h-9 rounded-[11px] p-0.5 flex items-center justify-center shadow-lg"
+                            style={{
+                              background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                            }}
+                          >
+                            <div
+                              className="w-full h-full rounded-[9px] flex items-center justify-center text-[11px] font-extrabold text-white"
+                              style={{
+                                background: `linear-gradient(135deg, ${reel.avatarGradient.join(', ')})`,
+                              }}
+                            >
+                              {reel.author[0]}
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-extrabold text-white drop-shadow-sm">
+                                {reel.author}
+                              </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleFollow(reel.id);
+                                }}
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all ${
+                                  reel.isFollowing
+                                    ? 'bg-white/20 border-white/30 text-white'
+                                    : 'bg-pink-500/90 border-pink-400 text-white shadow-sm'
+                                }`}
+                              >
+                                {reel.isFollowing ? 'Following' : 'Follow'}
+                              </button>
+                            </div>
+                            <div className="flex items-center gap-1 text-[11px] text-white/80">
+                              <MapPin size={10} className="text-pink-400" />
+                              <span>{reel.location}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Caption & Tags */}
+                        <p className="text-xs text-white/95 leading-relaxed drop-shadow-sm">
+                          {reel.caption}
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {reel.tags.map((tag: string) => (
+                            <span
+                              key={tag}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                showToast(`Explore tag ${tag}`);
+                              }}
+                              className="text-[10px] font-semibold text-pink-300 hover:text-pink-200 cursor-pointer drop-shadow-sm"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Music Audio Ticker */}
+                        <div className="flex items-center gap-2 mt-0.5 py-1 px-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 self-start text-[10px] text-white/90">
+                          <Music size={11} className="text-pink-400 animate-pulse shrink-0" />
+                          <span className="truncate max-w-[190px] font-medium">
+                            {reel.audioTrack}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Right Action Stack */}
+                      <div className="flex flex-col items-center gap-3 text-white pb-2">
+                        {/* Like Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleReelLike(reel.id);
+                          }}
+                          className="flex flex-col items-center gap-0.5 group"
+                        >
+                          <div
+                            className={`w-11 h-11 rounded-[14px] backdrop-blur-md border flex items-center justify-center transition-all group-active:scale-90 ${
+                              reel.isLiked
+                                ? 'bg-pink-500/30 border-pink-400/50 shadow-lg shadow-pink-500/20'
+                                : 'bg-black/45 border-white/15 hover:bg-black/60'
+                            }`}
+                          >
+                            <Heart
+                              size={21}
+                              className={
+                                reel.isLiked
+                                  ? 'fill-[#FF2A55] text-[#FF2A55] scale-110'
+                                  : 'text-white group-hover:scale-110 transition-transform'
+                              }
+                            />
+                          </div>
+                          <span className="text-[11px] font-extrabold drop-shadow-md">
+                            {reel.likesCount.toLocaleString()}
+                          </span>
+                        </button>
+
+                        {/* Comments Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveReelComments(reel);
+                          }}
+                          className="flex flex-col items-center gap-0.5 group"
+                        >
+                          <div className="w-11 h-11 rounded-[14px] bg-black/45 backdrop-blur-md border border-white/15 flex items-center justify-center hover:bg-black/60 transition-all group-active:scale-90">
+                            <MessageCircle size={21} className="text-white group-hover:scale-110 transition-transform" />
+                          </div>
+                          <span className="text-[11px] font-extrabold drop-shadow-md">
+                            {reel.commentsCount}
+                          </span>
+                        </button>
+
+                        {/* Bookmark Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleReelSave(reel.id);
+                          }}
+                          className="flex flex-col items-center gap-0.5 group"
+                        >
+                          <div
+                            className={`w-11 h-11 rounded-[14px] backdrop-blur-md border flex items-center justify-center transition-all group-active:scale-90 ${
+                              reel.isSaved
+                                ? 'bg-amber-500/30 border-amber-400/50 shadow-lg shadow-amber-500/20'
+                                : 'bg-black/45 border-white/15 hover:bg-black/60'
+                            }`}
+                          >
+                            <Bookmark
+                              size={20}
+                              className={
+                                reel.isSaved
+                                  ? 'fill-amber-400 text-amber-400 scale-110'
+                                  : 'text-white group-hover:scale-110 transition-transform'
+                              }
+                            />
+                          </div>
+                          <span className="text-[11px] font-extrabold drop-shadow-md">
+                            {reel.bookmarksCount}
+                          </span>
+                        </button>
+
+                        {/* Share Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator?.clipboard?.writeText?.(window.location.href);
+                            showToast('Reel link copied to clipboard!');
+                          }}
+                          className="flex flex-col items-center gap-0.5 group"
+                        >
+                          <div className="w-11 h-11 rounded-[14px] bg-black/45 backdrop-blur-md border border-white/15 flex items-center justify-center hover:bg-black/60 transition-all group-active:scale-90">
+                            <Send size={19} className="text-white -rotate-12 group-hover:scale-110 transition-transform" />
+                          </div>
+                          <span className="text-[11px] font-extrabold drop-shadow-md">
+                            Share
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-20">
+                      <div className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 w-2/3 animate-pulse" />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
           {/* MAIN SCREEN SWITCHER (For Home, Explore, Create, Notifications, Profile) */}
-          <div
-            ref={feedScrollRef}
-            onScroll={handleFeedScroll}
-            className="flex-1 overflow-y-auto no-scrollbar pb-20"
-          >
+          {currentTab !== 'reels' && (
+            <div
+              ref={feedScrollRef}
+              onScroll={handleFeedScroll}
+              onTouchStart={handleFeedTouchStart}
+              onTouchMove={handleFeedTouchMove}
+              onTouchEnd={handleFeedTouchEnd}
+              onMouseDown={handleFeedMouseDown}
+              onMouseMove={handleFeedMouseMove}
+              onMouseUp={handleFeedMouseUp}
+              onMouseLeave={handleFeedMouseUp}
+              className="flex-1 overflow-y-auto no-scrollbar pb-20"
+            >
             {isViewingMyShadow ? (
               <MyShadowScreen
                 onBack={() => setIsViewingMyShadow(false)}
@@ -697,6 +1162,21 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   </h1>
 
                   <div className="flex items-center gap-2">
+                    {/* Header Manual Refresh Button */}
+                    <button
+                      onClick={() => void executeRefreshFeed()}
+                      disabled={isPullRefreshing}
+                      className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-80 active:scale-95 transition-all cursor-pointer"
+                      style={{ backgroundColor: colors.inputBackground }}
+                      title="Fetch latest posts"
+                      aria-label="Refresh feed"
+                    >
+                      <RotateCw
+                        size={14}
+                        className={`text-pink-500 transition-all ${isPullRefreshing ? 'animate-spin' : ''}`}
+                      />
+                    </button>
+
                     <button
                       onClick={onToggleTheme}
                       className="w-8 h-8 rounded-full flex items-center justify-center hover:opacity-80 transition-opacity"
@@ -721,6 +1201,48 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         />
                       )}
                     </button>
+                  </div>
+                </div>
+
+                {/* TOP PULL-TO-REFRESH VISUAL ACCORDION */}
+                <div
+                  style={{
+                    height: isPullRefreshing ? 54 : pullDownDistance,
+                    opacity: pullDownDistance > 6 || isPullRefreshing ? 1 : 0,
+                    transition: isPullDragging ? 'none' : 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                  }}
+                  className="overflow-hidden flex items-center justify-center select-none relative z-10"
+                >
+                  <div
+                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border shadow-md backdrop-blur-md transition-transform"
+                    style={{
+                      backgroundColor: isDark ? 'rgba(24, 26, 38, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                      borderColor: isPullRefreshing ? '#FF0A78' : colors.border,
+                      boxShadow: isPullRefreshing ? '0 0 16px rgba(255, 10, 120, 0.35)' : undefined,
+                      transform: `scale(${Math.min(0.7 + (pullDownDistance / PULL_THRESHOLD) * 0.3, 1)})`,
+                    }}
+                  >
+                    {isPullRefreshing ? (
+                      <RotateCw size={15} className="animate-spin text-pink-500" />
+                    ) : (
+                      <ArrowDown
+                        size={15}
+                        className="text-pink-500 transition-transform duration-200"
+                        style={{
+                          transform: `rotate(${pullDownDistance >= PULL_THRESHOLD ? 180 : (pullDownDistance / PULL_THRESHOLD) * 180}deg)`,
+                        }}
+                      />
+                    )}
+                    <span
+                      className="text-xs font-semibold"
+                      style={{ color: colors.text }}
+                    >
+                      {isPullRefreshing
+                        ? 'Fetching latest posts...'
+                        : pullDownDistance >= PULL_THRESHOLD
+                        ? 'Release to refresh feed'
+                        : 'Pull down to refresh'}
+                    </span>
                   </div>
                 </div>
 
@@ -892,10 +1414,8 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 {/* Pull Up to Refresh Feed */}
                 <div className="pt-2 pb-4 flex justify-center">
                   <PullUpRefresh
-                    onRefresh={async () => {
-                      await new Promise((r) => setTimeout(r, 850));
-                      showToast('Shadow feed synced with fresh updates!');
-                    }}
+                    onRefresh={executeRefreshFeed}
+                    isRefreshing={isPullRefreshing}
                     isDark={isDark}
                     label="Pull up to refresh feed"
                   />
@@ -1390,6 +1910,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
             </>
           )}
         </div>
+        )}
 
           {/* 7. FLOATING 5-DESTINATION CONCEPT BOTTOM NAVIGATION (Scroll-Responsive Sizing) */}
           <div
@@ -1404,10 +1925,12 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   : 'h-14 w-[355px] px-4 shadow-2xl'
               }`}
               style={{
-                backgroundColor: isDark
-                  ? (isCompactNav ? 'rgba(18, 20, 32, 0.88)' : 'rgba(18, 20, 32, 0.94)')
-                  : (isCompactNav ? 'rgba(255, 255, 255, 0.90)' : 'rgba(255, 255, 255, 0.95)'),
-                borderColor: colors.border,
+                backgroundColor: currentTab === 'reels'
+                  ? (isCompactNav ? 'rgba(12, 14, 22, 0.88)' : 'rgba(12, 14, 22, 0.94)')
+                  : (isDark
+                      ? (isCompactNav ? 'rgba(18, 20, 32, 0.88)' : 'rgba(18, 20, 32, 0.94)')
+                      : (isCompactNav ? 'rgba(255, 255, 255, 0.90)' : 'rgba(255, 255, 255, 0.95)')),
+                borderColor: currentTab === 'reels' ? 'rgba(255, 255, 255, 0.16)' : colors.border,
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
               }}
@@ -1459,6 +1982,30 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       isCompactNav ? 'w-2 h-0.5' : 'w-3 h-0.5'
                     }`}
                     style={{ backgroundColor: colors.text }}
+                  />
+                )}
+              </button>
+
+              {/* Reels */}
+              <button
+                onClick={() => handleTabChange('reels')}
+                className="flex flex-col items-center justify-center p-1.5 relative hover:opacity-80 transition-opacity"
+              >
+                <Play
+                  size={isCompactNav ? 16 : 19}
+                  className="transition-all duration-300"
+                  style={{
+                    color: currentTab === 'reels'
+                      ? '#FFFFFF'
+                      : colors.tabInactive,
+                  }}
+                />
+                {currentTab === 'reels' && (
+                  <div
+                    className={`rounded-full absolute bottom-0.5 transition-all duration-300 ${
+                      isCompactNav ? 'w-2 h-0.5' : 'w-3 h-0.5'
+                    }`}
+                    style={{ backgroundColor: '#FFFFFF' }}
                   />
                 )}
               </button>

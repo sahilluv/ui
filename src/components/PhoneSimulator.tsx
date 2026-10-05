@@ -87,7 +87,7 @@ import { ReelCard } from './ReelCard';
 import { useReelIntersectionObserver } from '../hooks/useReelIntersectionObserver';
 import { MyShadowScreen } from './MyShadowScreen';
 
-export type TabType = 'home' | 'explore' | 'shop' | 'chat' | 'create' | 'notifications' | 'profile';
+export type TabType = 'home' | 'explore' | 'reels' | 'shop' | 'chat' | 'create' | 'notifications' | 'profile';
 
 export interface MockExploreProfile {
   id: string;
@@ -262,8 +262,8 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     const currentScrollTop = e.currentTarget.scrollTop;
     const diff = currentScrollTop - prevScrollTopRef.current;
 
-    // Apply scroll-responsive shrinking for Feed ('home')
-    if (currentTab === 'home') {
+    // Apply scroll-responsive shrinking for Feed ('home') and Reels ('reels')
+    if (currentTab === 'home' || currentTab === 'reels') {
       if (currentScrollTop <= 15) {
         // At or near top -> expand back to normal full size
         setIsNavShrunk(false);
@@ -917,15 +917,19 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
       {/* 1. Phone Top Notch & Status Bar (9:41, Icons) */}
       <div
-        className="pt-3 pb-1 px-7 flex items-center justify-between text-xs font-semibold relative z-20 shrink-0"
+        className={`pt-3 pb-1 px-7 flex items-center justify-between text-xs font-semibold ${
+          currentTab === 'reels'
+            ? 'absolute top-0 left-0 right-0 z-30 pointer-events-none text-white drop-shadow-md'
+            : 'relative z-20 shrink-0'
+        }`}
       >
-        <span className={isDark ? 'text-white' : 'text-slate-900'}>
+        <span className={currentTab === 'reels' ? 'text-white font-bold' : isDark ? 'text-white' : 'text-slate-900'}>
           9:41
         </span>
         <div className="w-24 h-4 bg-black/80 rounded-full flex items-center justify-center">
           <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
         </div>
-        <div className="flex items-center gap-1.5 opacity-80">
+        <div className={`flex items-center gap-1.5 opacity-80 ${currentTab === 'reels' ? 'text-white' : ''}`}>
           {/* Signal */}
           <div className="flex items-end gap-0.5 h-2.5">
             <span className="w-0.5 h-1 bg-current rounded-xs" />
@@ -941,7 +945,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       </div>
 
       {/* 2. Top Header (Shared between main screens) */}
-      {currentTab !== 'create' && !isViewingMyShadow && (
+      {currentTab !== 'create' && currentTab !== 'reels' && !isViewingMyShadow && (
         <header className="h-13 px-5 flex items-center justify-between shrink-0 z-10">
           {/* Left Action: Dedicated Shadow navigation tab on Home feed, Plus (+) ONLY on Profile */}
           {currentTab === 'home' ? (
@@ -1067,7 +1071,11 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="no-scrollbar relative flex-1 overflow-y-auto"
+        className={`no-scrollbar relative ${
+          currentTab === 'reels'
+            ? 'absolute inset-0 z-10 w-full h-full overflow-y-auto snap-y snap-mandatory scroll-smooth'
+            : 'flex-1 overflow-y-auto'
+        }`}
       >
         {isViewingMyShadow ? (
           <MyShadowScreen
@@ -1467,7 +1475,8 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   key={cat.id}
                   onClick={() => {
                     setSelectedCategory(cat.id);
-                    if (cat.id === 'tienda') handleTabChange('shop');
+                    if (cat.id === 'igtv') handleTabChange('reels');
+                    else if (cat.id === 'tienda') handleTabChange('shop');
                     else triggerToast(`Filtering ${cat.title}`, 'sparkles');
                   }}
                   className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group"
@@ -1951,6 +1960,71 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         )}
 
 
+
+        {/* ======================================= */}
+        {/* SCREEN: REELS (Full-Screen Immersive Snapping Feed with Background Preloading) */}
+        {/* ======================================= */}
+        {currentTab === 'reels' && (
+          <div className="w-full h-full">
+            {reels.map((reel, index) => (
+              <ReelCard
+                key={reel.id}
+                reel={reel}
+                index={index}
+                isActive={activeReelIndex === index}
+                isNext={activeReelIndex + 1 === index}
+                preloadStatus={preloadedStatusMap.get(reel.id)}
+                isNavShrunk={isNavShrunk}
+                isDark={isDark}
+                isFollowing={!!followedAuthors[reel.author.username]}
+                poppingBookmarkId={poppingBookmarkReelId}
+                heartBurstId={heartBurstReelId}
+                isSwipingReel={isSwipingReel}
+                reelSwipeDeltaX={reelSwipeDeltaX}
+                onTouchStart={handleReelTouchStart}
+                onTouchMove={handleReelTouchMove}
+                onTouchEnd={() => handleReelTouchEnd(reel)}
+                onTouchLeave={() => {
+                  if (isSwipingReel) {
+                    setIsSwipingReel(false);
+                    setReelSwipeDeltaX(0);
+                    setReelSwipeStartX(null);
+                    setReelSwipeStartY(null);
+                  }
+                }}
+                registerRef={registerReelRef}
+                onToggleLike={handleToggleReelLike}
+                onToggleSave={handleToggleReelSave}
+                onToggleFollow={handleToggleFollowAuthor}
+                onOpenComments={setActiveReelComments}
+                onOpenShare={(r) => {
+                  setShareModalPost({
+                    id: r.id,
+                    author: {
+                      name: r.author.name,
+                      username: r.author.username,
+                      location: r.author.location,
+                      avatarGradient: r.author.avatarGradient,
+                    },
+                    timeAgo: 'Just now',
+                    gradient: r.gradient,
+                    likesCount: r.likesCount,
+                    commentsCount: r.commentsCount,
+                    likedByText: `${r.likes} likes`,
+                    captionTitle: r.caption || r.author.name,
+                    captionBody: r.author.location,
+                    totalPages: 1,
+                    currentPage: 1,
+                    isLiked: r.isLiked,
+                    isSaved: r.isSaved,
+                  });
+                }}
+                onNavigateProfile={() => handleTabChange('profile')}
+                onToast={triggerToast}
+              />
+            ))}
+          </div>
+        )}
 
         {/* ======================================= */}
         {/* SCREEN: SHOP / TIENDA                   */}

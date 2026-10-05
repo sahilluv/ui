@@ -125,7 +125,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
     >
       {/* Swipe Right Visual Cue: Return to Feed */}
       {isSwipingReel && reelSwipeDeltaX > 20 && (
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-[10px] text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
           <ChevronLeft size={16} className="text-[#FF0A78]" />
           <span>Return to Feed</span>
         </div>
@@ -133,7 +133,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
 
       {/* Swipe Left Visual Cue: View Creator Profile */}
       {isSwipingReel && reelSwipeDeltaX < -20 && (
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-[10px] text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
           <span>@{reel.author.username}</span>
           <ChevronRight size={16} className="text-[#991BEA]" />
         </div>
@@ -155,7 +155,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
       {/* Play / Pause Central Ripple Indicator */}
       {showPlayPauseFeedback && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 animate-in zoom-in-75 duration-200">
-          <div className="w-16 h-16 rounded-full bg-black/65 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-2xl">
+          <div className="w-16 h-16 rounded-[16px] bg-black/65 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-2xl">
             {isPlaying ? <Play size={28} className="ml-1 fill-white" /> : <Pause size={28} className="fill-white" />}
           </div>
         </div>
@@ -209,7 +209,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
                   e.stopPropagation();
                   onToggleFollow(reel.author.username);
                 }}
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all active:scale-90 cursor-pointer ${
+                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[8px] text-[10px] font-bold transition-all active:scale-90 cursor-pointer ${
                   isFollowing
                     ? 'bg-black/50 text-emerald-400 border border-emerald-400/40 backdrop-blur-md'
                     : 'bg-gradient-to-r from-[#FF0A78] to-[#991BEA] text-white shadow-md hover:opacity-95'
@@ -242,7 +242,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
               setIsMuted((prev) => !prev);
               onToast(isMuted ? 'Audio unmuted 🔊' : 'Audio muted 🔇');
             }}
-            className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/90 hover:text-white hover:bg-black/60 transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-[10px] bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/90 hover:text-white hover:bg-black/60 transition-colors cursor-pointer"
             title={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
@@ -253,7 +253,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
               e.stopPropagation();
               onOpenShare(reel);
             }}
-            className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/90 hover:text-white hover:bg-black/60 transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-[10px] bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/90 hover:text-white hover:bg-black/60 transition-colors cursor-pointer"
             title="Options"
           >
             <MoreVertical size={16} />
@@ -271,7 +271,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
 
         {/* Audio Track Ticker */}
         {reel.audioTrack && (
-          <div className="flex items-center gap-2 py-1 px-3 rounded-full bg-black/45 backdrop-blur-md border border-white/15 self-start text-[10px] text-white/90 shadow-md">
+          <div className="flex items-center gap-2 py-1 px-3 rounded-[10px] bg-black/45 backdrop-blur-md border border-white/15 self-start text-[10px] text-white/90 shadow-md">
             <Music size={11} className="text-pink-400 shrink-0 animate-pulse" />
             <span className="truncate max-w-[210px] font-medium">
               {reel.audioTrack}
@@ -286,7 +286,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
           isNavShrunk ? 'bottom-16' : 'bottom-22'
         } left-0 right-0 flex justify-center z-20 pointer-events-auto select-none transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]`}
       >
-        <div className="bg-white rounded-full px-5 py-2.5 shadow-2xl flex items-center gap-3.5 border border-black/5 select-none">
+        <div className="bg-white rounded-[18px] px-5 py-2.5 shadow-2xl flex items-center gap-3.5 border border-black/5 select-none">
           {/* Heart Like Button */}
           <button
             onClick={(e) => {

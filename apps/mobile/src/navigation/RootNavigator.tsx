@@ -13,6 +13,7 @@ import { TabType } from '../types';
 // Screens
 import HomeScreen from '../screens/HomeScreen';
 import DiscoverScreen from '../screens/DiscoverScreen';
+import ReelsScreen from '../screens/ReelsScreen';
 import CreateScreen from '../screens/CreateScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -22,6 +23,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 export type RootTabParamList = {
   Home: { postCreated?: boolean } | undefined;
   Discover: undefined;
+  Reels: undefined;
   Create: undefined;
   Notifications: undefined;
   Profile: undefined;
@@ -48,6 +50,8 @@ function AppTabsContent() {
             ? 'home'
             : routeName === 'Discover'
             ? 'explore'
+            : routeName === 'Reels'
+            ? 'reels'
             : routeName === 'Create'
             ? 'shop'
             : 'profile';
@@ -60,6 +64,7 @@ function AppTabsContent() {
             onTabChange={(tab) => {
               if (tab === 'home') navigation.navigate('Home');
               else if (tab === 'explore') navigation.navigate('Discover');
+              else if (tab === 'reels') navigation.navigate('Reels');
               else if (tab === 'shop') navigation.navigate('Create');
               else if (tab === 'profile') navigation.navigate('Profile');
             }}
@@ -81,6 +86,7 @@ function AppTabsContent() {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Discover" component={DiscoverScreen} />
+      <Tab.Screen name="Reels" component={ReelsScreen} />
       <Tab.Screen name="Create" component={CreateScreen} />
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
