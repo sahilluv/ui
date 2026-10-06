@@ -11,6 +11,7 @@ export interface PawnRankBadgeProps {
   className?: string;
   showSubtitle?: boolean;
   isPromoting?: boolean;
+  periodicSheen?: boolean;
 }
 
 export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
@@ -404,6 +405,7 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
   className = '',
   showSubtitle = true,
   isPromoting = false,
+  periodicSheen = true,
 }) => {
   const [internalTransitioning, setInternalTransitioning] = useState(false);
   const [isPawnToKnightBloom, setIsPawnToKnightBloom] = useState(false);
@@ -495,11 +497,17 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
           }}
         >
           {/* Glow sheen sweep */}
-          {isElevating && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-rank-sheen" />
-            </div>
-          )}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-xl">
+            <div
+              className={`absolute -inset-full bg-gradient-to-r from-transparent via-white/30 to-transparent ${
+                isElevating
+                  ? 'animate-rank-sheen'
+                  : periodicSheen
+                  ? 'animate-rank-sheen-periodic'
+                  : ''
+              }`}
+            />
+          </div>
 
           <div className={`transition-transform duration-500 ${isElevating ? 'scale-115 rotate-6' : ''}`}>
             {rank === 'KNIGHT' ? (
@@ -597,11 +605,15 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
             }}
           />
         )}
-        {/* 3. Luminous Shimmer Sheen Wave Sweeping Across on Elevation */}
+        {/* 3. Luminous Shimmer Sheen Wave Sweeping Across Periodically and on Elevation */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
           <div
             className={`absolute -inset-full bg-gradient-to-r from-transparent via-white/35 to-transparent ${
-              isElevating ? 'animate-rank-sheen' : '-translate-x-full group-hover:translate-x-full transition-transform duration-1000'
+              isElevating
+                ? 'animate-rank-sheen'
+                : periodicSheen
+                ? 'animate-rank-sheen-periodic'
+                : '-translate-x-full group-hover:translate-x-full transition-transform duration-1000'
             }`}
           />
         </div>

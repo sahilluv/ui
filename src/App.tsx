@@ -153,8 +153,31 @@ export default function App() {
                 Live Interactive Shadow Experience
               </span>
               <p className="text-[11px] text-slate-400 mt-1">
-                Feed, Stories, Explore, TV, Shop, and Profile. Tap like buttons, carousel dots, follow, and themes.
+                Feed, Stories, Explore, Reels, and Profile. Tap like buttons, reels, follow, and themes.
               </p>
+
+              {/* Quick Tab Jump Chips */}
+              <div className="flex items-center justify-center gap-1.5 mt-2.5 overflow-x-auto no-scrollbar py-1">
+                {[
+                  { id: 'home', label: 'Feed' },
+                  { id: 'explore', label: 'Explore' },
+                  { id: 'reels', label: '🎬 Reels' },
+                  { id: 'chat', label: 'Messages' },
+                  { id: 'profile', label: 'Profile' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setCurrentTab(tab.id as any)}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                      currentTab === tab.id
+                        ? 'bg-gradient-to-r from-[#FF0A78] to-[#9900FF] text-white shadow-lg shadow-pink-500/25 scale-105'
+                        : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/5'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <PhoneSimulator
