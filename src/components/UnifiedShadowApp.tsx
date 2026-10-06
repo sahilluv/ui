@@ -43,6 +43,33 @@ import { darkColors, lightColors, shadowGradients, ThemeColors } from '../../exp
 
 export type UnifiedTab = 'home' | 'explore' | 'reels' | 'create' | 'notifications' | 'profile';
 
+export type EncounterValidationStatus = 'pending' | 'verified' | 'rejected';
+
+export interface ShadowEncounter {
+  /** Unique identifier of the encounter event */
+  encounterId: string;
+  /** Reference to the physical Shadow / wearable device or campaign projection ID encountered */
+  shadowId: string;
+  /** Optional reference to the user who projected the physical Shadow */
+  emitterUserId?: string;
+  /** Optional campaign identifier if the physical Shadow was projecting a brand campaign */
+  campaignId?: string;
+  /** ISO-8601 timestamp or Unix epoch ms when the physical encounter was captured */
+  timestamp: string;
+  /** Mocked real-world location metadata where the encounter took place */
+  location: {
+    latitude: number;
+    longitude: number;
+    placeName: string;
+    accuracyMeters?: number;
+    isMocked: boolean;
+  };
+  /** Verification state used to separate unverified captures from validated participation */
+  validationStatus: EncounterValidationStatus;
+  /** Optional reference to an active Shadow Chain / Streak this encounter extends */
+  chainId?: string;
+}
+
 export interface FeedPost {
   id: string;
   authorName: string;
@@ -56,6 +83,10 @@ export interface FeedPost {
   commentsCount: number;
   isLiked?: boolean;
   isSaved?: boolean;
+  /** Distinguishes standard social posts from real-world Shadow Encounters */
+  postType?: 'standard' | 'shadow_encounter';
+  /** Present when the post represents a captured real-world Shadow Encounter */
+  shadowEncounter?: ShadowEncounter;
 }
 
 const INITIAL_STORIES = [
