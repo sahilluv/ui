@@ -140,6 +140,35 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     isLiked: false,
     isSaved: false,
   },
+  {
+    id: 'post_encounter_1',
+    authorName: 'Kenji Sato',
+    username: 'kenji.tokyo',
+    avatarGradient: ['#2185D0', '#00B5AD', '#21BA45'],
+    timeAgo: '5h ago',
+    imageGradient: ['#0A3A40', '#0E626B', '#13928E', '#20C997'],
+    content: 'Physical node encounter captured at Shibuya Crossing node beacon. Chain extended +450 REP.',
+    captionTitle: 'SHADOW ENCOUNTER #882',
+    likesCount: 3120,
+    commentsCount: 88,
+    isLiked: false,
+    isSaved: false,
+    postType: 'shadow_encounter',
+    shadowEncounter: {
+      encounterId: 'enc_shibuya_9921',
+      shadowId: 'shdw_kenji04',
+      emitterUserId: 'usr_tokyo_node_01',
+      timestamp: '2026-10-12T05:30:00Z',
+      location: {
+        latitude: 35.6595,
+        longitude: 139.7004,
+        placeName: 'Tokyo, Japan (Shibuya Hub)',
+        isMocked: true,
+      },
+      validationStatus: 'verified',
+      chainId: 'chain_global_tokyo_09',
+    },
+  },
 ];
 
 const NEW_FEED_POSTS_POOL: FeedPost[] = [
@@ -799,7 +828,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
       {/* Concept Phone Frame */}
       <div
         className="w-full max-w-[420px] min-h-[780px] h-[830px] rounded-[52px] p-3 shadow-[0_25px_65px_-15px_rgba(0,0,0,0.85)] border-[7px] border-[#25283D] flex flex-col relative overflow-hidden transition-colors duration-300"
-        style={{ backgroundColor: isDark ? '#080910' : '#E2E5EE' }}
+        style={{ backgroundColor: isDark ? '#12131A' : '#F4F5F7' }}
       >
         {/* Dynamic Island Notch */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2 w-32 h-4 bg-[#05060A] rounded-full z-40 flex items-center justify-center pointer-events-none">
@@ -1348,9 +1377,24 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                             <span className="text-xs font-bold block" style={{ color: colors.text }}>
                               {post.username}
                             </span>
-                            <span className="text-[10px]" style={{ color: colors.secondaryText }}>
-                              {post.timeAgo}
-                            </span>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px]" style={{ color: colors.secondaryText }}>
+                                {post.timeAgo}
+                              </span>
+                              {post.shadowEncounter && (
+                                <span className="inline-flex items-center gap-1 text-[9.5px] font-semibold text-[#00B5AD]">
+                                  <span>·</span>
+                                  <span>📍 {post.shadowEncounter.location.placeName}</span>
+                                  <span className={`px-1.5 py-0.2 rounded-full text-[8.5px] font-bold ${
+                                    post.shadowEncounter.validationStatus === 'verified'
+                                      ? 'bg-emerald-500/20 text-emerald-500'
+                                      : 'bg-amber-500/20 text-amber-500'
+                                  }`}>
+                                    {post.shadowEncounter.validationStatus.toUpperCase()}
+                                  </span>
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -1393,8 +1437,8 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           >
                             <Heart
                               size={20}
-                              className={post.isLiked ? 'fill-[#FF2A55] text-[#FF2A55]' : ''}
-                              style={{ color: post.isLiked ? '#FF2A55' : colors.text }}
+                              className={post.isLiked ? 'fill-[#DB2828] text-[#DB2828]' : ''}
+                              style={{ color: post.isLiked ? '#DB2828' : colors.text }}
                             />
                           </button>
 
@@ -1479,7 +1523,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   <input
                     type="text"
                     placeholder="Search creators, topics, or campus..."
-                    className="w-full text-xs bg-transparent focus:outline-none placeholder:text-slate-400"
+                    className="w-full text-xs bg-transparent focus:outline-none"
                     style={{ color: colors.text }}
                   />
                 </div>
@@ -1592,8 +1636,10 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           onClick={() => setSelectedGradientIndex(i)}
                           className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                             selectedGradientIndex === i
-                              ? 'border-pink-500 bg-pink-500/20 text-pink-400'
-                              : 'border-white/10 text-slate-400'
+                              ? 'border-[#E1306C] bg-pink-500/20 text-[#E1306C]'
+                              : isDark
+                              ? 'border-white/10 text-[#8E92A0] hover:text-white'
+                              : 'border-[#E0E1E2] text-[#767676] bg-[#F7F8FA] hover:text-[#1B1C1D]'
                           }`}
                         >
                           {name}
@@ -1794,8 +1840,13 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           Shadow Identity
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-md bg-white/5 border border-white/10" style={{ color: colors.text }}>
-                        <span className="text-pink-400 font-bold">ID:</span>
+                      <div
+                        className={`flex items-center gap-1 font-mono text-[10px] px-2 py-0.5 rounded-md border ${
+                          isDark ? 'bg-white/5 border-white/10' : 'bg-[#F4F5F7] border-[#E0E1E2]'
+                        }`}
+                        style={{ color: colors.text }}
+                      >
+                        <span className="text-[#E1306C] font-bold">ID:</span>
                         <span>{currentUser.shadowId}</span>
                       </div>
                     </div>
@@ -1824,12 +1875,16 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         }}
                         className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border text-[9.5px] font-extrabold transition-all cursor-pointer ${
                           currentUser.shadowRank === 'PAWN'
-                            ? 'bg-purple-500/15 border-purple-500/35 text-purple-300'
-                            : 'bg-pink-500/15 border-pink-500/35 text-pink-300'
+                            ? isDark
+                              ? 'bg-purple-500/15 border-purple-500/35 text-purple-300'
+                              : 'bg-purple-50 border-purple-200 text-[#6435C9]'
+                            : isDark
+                              ? 'bg-pink-500/15 border-pink-500/35 text-pink-300'
+                              : 'bg-pink-50 border-pink-200 text-[#E1306C]'
                         }`}
                         title="Simulate Shadow Rank Progression: PAWN ↔ KNIGHT"
                       >
-                        <Sparkles size={11} className={currentUser.shadowRank === 'PAWN' ? 'text-cyan-400' : 'text-pink-400'} />
+                        <Sparkles size={11} className={currentUser.shadowRank === 'PAWN' ? (isDark ? 'text-cyan-400' : 'text-[#00B5AD]') : (isDark ? 'text-pink-400' : 'text-[#E1306C]')} />
                         <span>{currentUser.shadowRank === 'PAWN' ? 'Elevate to KNIGHT' : 'Revert to PAWN'}</span>
                       </button>
 
@@ -1841,8 +1896,12 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         }}
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all hover:scale-105 active:scale-95 cursor-pointer ${
                           currentUser.verification === 'VERIFIED'
-                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                            : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                            ? isDark
+                              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                              : 'bg-[#21BA45]/10 border-[#21BA45]/30 text-[#1E7E34]'
+                            : isDark
+                              ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                              : 'bg-[#F2711C]/10 border-[#F2711C]/30 text-[#C35108]'
                         }`}
                         title="Independent Verification Status - Click to toggle"
                       >

@@ -361,11 +361,11 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
                 </span>
               </button>
 
-              {/* Instagram (prismatic gradient pill) */}
+              {/* Shadow (prismatic gradient pill) */}
               <button
-                onClick={() => handleExternalShare('Instagram')}
+                onClick={() => handleExternalShare('Shadow')}
                 className="flex flex-col items-center gap-1 shrink-0 group cursor-pointer"
-                title="Share to Instagram"
+                title="Share to Shadow"
               >
                 <div
                   className="w-11 h-11 rounded-2xl text-white flex items-center justify-center shadow-md shadow-pink-500/20 group-hover:scale-105 group-active:scale-95 transition-all"
@@ -380,7 +380,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
                   </svg>
                 </div>
                 <span className="text-[10px] text-slate-300 font-semibold truncate max-w-[56px] text-center">
-                  Instagram
+                  Shadow
                 </span>
               </button>
 

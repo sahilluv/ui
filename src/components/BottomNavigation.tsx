@@ -120,8 +120,8 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             : 'h-14 px-2.5 w-full max-w-[350px] shadow-2xl'
         } ${
           isDark
-            ? 'bg-[#0F111E]/70 border border-white/15 shadow-[0_12px_36px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.22)] text-slate-300'
-            : 'bg-white/80 border border-white/70 shadow-[0_10px_30px_rgba(0,0,0,0.12),inset_0_1px_1px_rgba(255,255,255,0.9)] text-slate-700'
+            ? 'bg-[#12131A]/85 border border-white/15 shadow-[0_12px_36px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.22)] text-[#D4D4D5]'
+            : 'bg-white/90 border border-[#E0E1E2] shadow-[0_10px_30px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] text-[#1B1C1D]'
         }`}
       >
         {/* Top Rim Specular Glare (iPhone Dynamic Glass refraction) */}

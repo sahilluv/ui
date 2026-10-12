@@ -27,6 +27,7 @@ import {
   PremiumKnightInsignia,
   getRankMeta,
 } from './PawnRankBadge';
+import { getSemUiTokens, semUiPalette } from '../theme/semUiPalette';
 
 export interface MyShadowScreenProps {
   onBack: () => void;
@@ -538,11 +539,10 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
   },
   onToast,
 }) => {
-  // Use pure reference image color mode (#FFFFFF, #E1306C, #262626, #8E8E8E, #ED4956)
-  const [usePureReferenceTheme, setUsePureReferenceTheme] = useState(true);
-
-  // When usePureReferenceTheme is true, strictly render the reference image's color scheme:
-  const isDarkTheme = usePureReferenceTheme ? false : isDark;
+  // Sem UI Theme Settings (Strictly adheres to Sem UI dark/light tokens with WCAG AA compliance)
+  const [internalDark, setInternalDark] = useState<boolean | null>(null);
+  const isDarkTheme = internalDark !== null ? internalDark : !!isDark;
+  const semTokens = getSemUiTokens(isDarkTheme);
 
   // Navigation Tabs: 'rankings' (👑 World Rankings) | 'world' (World Upgrades) | 'following' | 'all'
   const [activeMainTab, setActiveMainTab] = useState<'rankings' | 'world' | 'following' | 'all'>('rankings');
@@ -745,25 +745,24 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
   return (
     <div
       className={`flex flex-col h-full overflow-y-auto no-scrollbar pb-32 transition-colors ${
-        isDarkTheme ? 'bg-[#0B0C14] text-white' : 'bg-[#FFFFFF] text-[#262626]'
+        isDarkTheme ? 'bg-[#12131A] text-white' : 'bg-[#FFFFFF] text-[#1B1C1D]'
       }`}
     >
       {/* ======================================================== */}
-      {/* 1. HEADER (Exact Reference UI Background & Rose Wordmark) */}
-      {/* Pure White Background (#FFFFFF) + Signature #E1306C script*/}
+      {/* 1. HEADER (Sem UI Calibrated Background & Rose Wordmark)  */}
       {/* ======================================================== */}
       <header
         className={`sticky top-0 z-30 h-13 px-4 flex items-center justify-between shrink-0 border-b transition-colors ${
           isDarkTheme
-            ? 'bg-[#0B0C14]/95 border-white/10 text-white'
-            : 'bg-[#FFFFFF]/95 border-[#EFEFEF] text-[#262626]'
+            ? 'bg-[#12131A]/95 border-white/10 text-white'
+            : 'bg-[#FFFFFF]/95 border-[#E0E1E2] text-[#1B1C1D]'
         }`}
       >
         <div className="flex items-center gap-2">
           <button
             onClick={onBack}
             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-95 ${
-              isDarkTheme ? 'hover:bg-white/10 text-white' : 'hover:bg-[#F2F2F2] text-[#262626]'
+              isDarkTheme ? 'hover:bg-white/10 text-white' : 'hover:bg-[#F2F3F5] text-[#1B1C1D]'
             }`}
             title="Return to Home Feed"
             aria-label="Back to Home Feed"
@@ -786,22 +785,22 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
 
         {/* Right Action: Sync Consensus, Theme Toggle, & Options */}
         <div className="flex items-center gap-1">
-          {/* Theme Mode Toggle (defaults to Reference White #FFFFFF) */}
+          {/* Theme Mode Toggle (Synchronized Sem UI Dark / Light Palette) */}
           <button
-            onClick={() => setUsePureReferenceTheme((prev) => !prev)}
+            onClick={() => setInternalDark((prev) => (prev !== null ? !prev : !isDark))}
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-95 ${
-              isDarkTheme ? 'hover:bg-white/10 text-yellow-300' : 'hover:bg-[#F2F2F2] text-[#737373]'
+              isDarkTheme ? 'hover:bg-white/10 text-yellow-300' : 'hover:bg-[#F2F3F5] text-[#767676]'
             }`}
-            title={usePureReferenceTheme ? 'Switch to Dark Mode' : 'Switch to Reference UI Colors'}
+            title={isDarkTheme ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
-            {usePureReferenceTheme ? <Moon size={15} /> : <Sun size={15} />}
+            {isDarkTheme ? <Sun size={15} /> : <Moon size={15} />}
           </button>
 
           <button
             onClick={() => fetchWorldRankings(false)}
             disabled={isFetchingRankings}
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-95 ${
-              isDarkTheme ? 'hover:bg-white/10 text-slate-300' : 'hover:bg-[#F2F2F2] text-[#262626]'
+              isDarkTheme ? 'hover:bg-white/10 text-slate-300' : 'hover:bg-[#F2F3F5] text-[#1B1C1D]'
             }`}
             title="Sync Consensus State"
           >
@@ -814,7 +813,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
           <button
             onClick={() => onToast('Profile options', 'bookmark')}
             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-95 ${
-              isDarkTheme ? 'hover:bg-white/10 text-white' : 'hover:bg-[#F2F2F2] text-[#262626]'
+              isDarkTheme ? 'hover:bg-white/10 text-white' : 'hover:bg-[#F2F3F5] text-[#1B1C1D]'
             }`}
             title="More options"
           >
@@ -833,8 +832,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
         <div
           className={`p-4 rounded-[24px] border transition-all ${
             isDarkTheme
-              ? 'bg-[#121422] border-white/10 shadow-black/40'
-              : 'bg-[#FFFFFF] border-[#EFEFEF] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
+              ? 'bg-[#1A1B24] border-white/10 shadow-black/40'
+              : 'bg-[#FFFFFF] border-[#E0E1E2] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
           }`}
         >
           <div className="flex items-start gap-4">
@@ -842,24 +841,24 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
             <div className="relative shrink-0">
               <div
                 className={`w-20 h-20 rounded-full p-[2px] shadow-sm flex items-center justify-center ${
-                  isDarkTheme ? 'ring-2 ring-pink-500/40' : 'ring-2 ring-[#EFEFEF]'
+                  isDarkTheme ? 'ring-2 ring-pink-500/40' : 'ring-2 ring-[#E0E1E2]'
                 }`}
                 style={{
                   background: isDarkTheme
-                    ? 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)'
+                    ? 'linear-gradient(135deg, #E1306C 0%, #991BEA 50%, #2185D0 100%)'
                     : 'linear-gradient(135deg, #E5C3A6 0%, #C89B7B 60%, #E1306C 100%)',
                 }}
               >
                 <div
                   className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden ${
-                    isDarkTheme ? 'bg-[#0B0C14]' : 'bg-[#FAFAFA]'
+                    isDarkTheme ? 'bg-[#12131A]' : 'bg-[#F7F8FA]'
                   }`}
                 >
                   <div
                     className="w-full h-full rounded-full flex items-center justify-center relative overflow-hidden"
                     style={{
                       background: isDarkTheme
-                        ? 'radial-gradient(circle at 35% 35%, #3B154C 0%, #171126 60%, #0B0A14 100%)'
+                        ? 'radial-gradient(circle at 35% 35%, #3B154C 0%, #171126 60%, #12131A 100%)'
                         : 'radial-gradient(circle at 35% 35%, #F4ECE1 0%, #E5D5C5 60%, #D8C3AE 100%)',
                     }}
                   >
@@ -884,46 +883,46 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
             {/* Right Column: Name, Handle & Exact Reference Stats Stack */}
             <div className="flex-1 min-w-0 pt-0.5">
               <div className="flex items-center justify-between">
-                <h2 className={`text-base font-extrabold tracking-tight truncate ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                <h2 className={`text-base font-extrabold tracking-tight truncate ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                   {currentUser.name}
                 </h2>
               </div>
-              <p className={`text-xs font-semibold truncate mt-0.5 ${isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E]'}`}>
+              <p className={`text-xs font-semibold truncate mt-0.5 ${isDarkTheme ? 'text-[#D4D4D5]' : 'text-[#767676]'}`}>
                 @{currentUser.username}
               </p>
 
-              {/* Clean Stats Stack Matching Reference UI:
-                  ❤️ 1.2k likes (Exact Red-Pink #ED4956)
-                  🔥 48 streaks (Replaces followers count)
-                  735 posts (#262626 bold) */}
+              {/* Clean Stats Stack Matching Sem UI Palette:
+                  ❤️ 1.2k likes (Sem UI Red #DB2828)
+                  🔥 48 streaks (Sem UI Orange #F2711C)
+                  735 posts (#1B1C1D bold) */}
               <div className="flex items-center gap-4 mt-3">
                 {/* 1. Post Count */}
                 <div className="flex items-center gap-1">
-                  <span className={`text-xs font-extrabold ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                  <span className={`text-xs font-extrabold ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                     735
                   </span>
-                  <span className={`text-[11px] font-medium ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
+                  <span className={`text-[11px] font-medium ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                     posts
                   </span>
                 </div>
 
                 {/* 2. Streaks Count (Replaces followers) */}
                 <div className="flex items-center gap-1">
-                  <span className={`text-xs font-extrabold ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                  <span className={`text-xs font-extrabold ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                     48
                   </span>
-                  <span className={`text-[11px] font-medium flex items-center gap-0.5 ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
-                    streaks <Flame size={12} className="fill-[#FF8500] text-[#FF8500]" />
+                  <span className={`text-[11px] font-medium flex items-center gap-0.5 ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
+                    streaks <Flame size={12} className="fill-[#F2711C] text-[#F2711C]" />
                   </span>
                 </div>
 
-                {/* 3. Likes Count (Exact Instagram Red-Pink #ED4956) */}
+                {/* 3. Likes Count (Sem UI Red #DB2828) */}
                 <div className="flex items-center gap-1">
-                  <span className={`text-xs font-extrabold ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                  <span className={`text-xs font-extrabold ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                     1.2k
                   </span>
-                  <span className={`text-[11px] font-medium flex items-center gap-0.5 ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
-                    likes <Heart size={11} className="fill-[#ED4956] text-[#ED4956]" />
+                  <span className={`text-[11px] font-medium flex items-center gap-0.5 ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
+                    likes <Heart size={11} className="fill-[#DB2828] text-[#DB2828]" />
                   </span>
                 </div>
               </div>
@@ -933,7 +932,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
           {/* Shadow ID Capsule, Rank Badge & Progression Control */}
           <div
             className={`mt-4 pt-3.5 border-t ${
-              isDarkTheme ? 'border-white/10' : 'border-[#EFEFEF]'
+              isDarkTheme ? 'border-white/10' : 'border-[#E0E1E2]'
             }`}
           >
             <div className="flex items-center justify-between gap-2 mb-2.5">
@@ -942,14 +941,14 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                 onClick={() => handleCopyId(currentUser.shadowId)}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[11px] font-mono transition-all cursor-pointer active:scale-95 ${
                   isDarkTheme
-                    ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
-                    : 'bg-[#FAFAFA] border-[#EFEFEF] text-[#262626] hover:bg-[#F2F2F2]'
+                    ? 'bg-white/5 border-white/10 text-[#D4D4D5] hover:bg-white/10'
+                    : 'bg-[#F7F8FA] border-[#E0E1E2] text-[#1B1C1D] hover:bg-[#F2F3F5]'
                 }`}
                 title="Click to copy Shadow ID"
               >
                 <span className="text-[#E1306C] font-extrabold text-[10px]">ID:</span>
                 <span>{currentUser.shadowId}</span>
-                <Copy size={11} className={isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E] ml-0.5'} />
+                <Copy size={11} className={isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676] ml-0.5'} />
               </button>
 
               {/* Simulated Rank Progression Toggle Button (PAWN ↔ KNIGHT) */}
@@ -969,7 +968,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
               >
                 <Sparkles size={12} className={isPromoting ? 'animate-spin' : ''} />
                 <span>{localRank === 'KNIGHT' ? 'Knight (Vanguard)' : 'Pawn (Foundation)'}</span>
-                <span className={`text-[9px] uppercase tracking-wider ${isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E]'}`}>Toggle</span>
+                <span className={`text-[9px] uppercase tracking-wider ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>Toggle</span>
               </button>
             </div>
 
@@ -984,7 +983,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
             />
 
             {/* Bio & Tagline */}
-            <p className={`text-xs leading-relaxed mt-2.5 ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
+            <p className={`text-xs leading-relaxed mt-2.5 ${isDarkTheme ? 'text-[#D4D4D5]' : 'text-[#555963]'}`}>
               UI/UX Design & Photography · Digital Shadow Identity · Zihuatanejo, Mexico
             </p>
             <div className="flex flex-wrap gap-1.5 mt-1.5">
@@ -1022,13 +1021,13 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                 >
                   <div
                     className={`w-full h-full rounded-[16px] flex items-center justify-center text-xl shadow-inner ${
-                      isDarkTheme ? 'bg-[#151726]' : 'bg-[#FFFFFF]'
+                      isDarkTheme ? 'bg-[#222430]' : 'bg-[#FFFFFF]'
                     }`}
                   >
                     <span>{item.icon}</span>
                   </div>
                 </div>
-                <span className={`text-[10.5px] font-bold tracking-tight text-center ${isDarkTheme ? 'text-slate-300' : 'text-[#262626]'}`}>
+                <span className={`text-[10.5px] font-bold tracking-tight text-center ${isDarkTheme ? 'text-[#D4D4D5]' : 'text-[#1B1C1D]'}`}>
                   {item.label}
                 </span>
               </button>
@@ -1037,14 +1036,13 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
         </div>
 
         {/* ======================================================== */}
-        {/* 4. PRIMARY NAVIGATION TABS (Clean White Reference UI)    */}
-        {/* 👑 World Rankings (Primary) | World Upgrades | Following */}
+        {/* 4. PRIMARY NAVIGATION TABS (Sem UI Segmented Tabs)       */}
         {/* ======================================================== */}
         <div
           className={`sticky top-13 z-20 pt-2 pb-2 rounded-[22px] border transition-colors ${
             isDarkTheme
-              ? 'bg-[#121422]/95 border-white/10 shadow-xl'
-              : 'bg-[#FFFFFF]/95 border-[#EFEFEF] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
+              ? 'bg-[#1A1B24]/95 border-white/10 shadow-xl'
+              : 'bg-[#FFFFFF]/95 border-[#E0E1E2] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
           }`}
         >
           {/* Main 4 Navigation Tabs */}
@@ -1056,8 +1054,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                 activeMainTab === 'rankings'
                   ? 'bg-gradient-to-r from-[#E1306C] to-[#C13584] text-white shadow-md'
                   : isDarkTheme
-                  ? 'text-slate-400 hover:text-white hover:bg-white/5'
-                  : 'bg-[#FAFAFA] text-[#737373] hover:text-[#262626] border border-[#EFEFEF]'
+                  ? 'text-[#8E92A0] hover:text-white hover:bg-white/5'
+                  : 'bg-[#F7F8FA] text-[#767676] hover:text-[#1B1C1D] border border-[#E0E1E2]'
               }`}
             >
               <Crown size={14} className={activeMainTab === 'rankings' ? 'text-amber-200' : ''} />
@@ -1071,8 +1069,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                 activeMainTab === 'world'
                   ? 'bg-gradient-to-r from-[#E1306C] to-[#C13584] text-white shadow-md'
                   : isDarkTheme
-                  ? 'text-slate-400 hover:text-white hover:bg-white/5'
-                  : 'bg-[#FAFAFA] text-[#737373] hover:text-[#262626] border border-[#EFEFEF]'
+                  ? 'text-[#8E92A0] hover:text-white hover:bg-white/5'
+                  : 'bg-[#F7F8FA] text-[#767676] hover:text-[#1B1C1D] border border-[#E0E1E2]'
               }`}
             >
               <Globe size={14} />
@@ -1086,8 +1084,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                 activeMainTab === 'following'
                   ? 'bg-gradient-to-r from-[#E1306C] to-[#C13584] text-white shadow-md'
                   : isDarkTheme
-                  ? 'text-slate-400 hover:text-white hover:bg-white/5'
-                  : 'bg-[#FAFAFA] text-[#737373] hover:text-[#262626] border border-[#EFEFEF]'
+                  ? 'text-[#8E92A0] hover:text-white hover:bg-white/5'
+                  : 'bg-[#F7F8FA] text-[#767676] hover:text-[#1B1C1D] border border-[#E0E1E2]'
               }`}
             >
               <Users size={14} />
@@ -1103,8 +1101,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                 activeMainTab === 'all'
                   ? 'bg-gradient-to-r from-[#E1306C] to-[#C13584] text-white shadow-md'
                   : isDarkTheme
-                  ? 'text-slate-400 hover:text-white hover:bg-white/5'
-                  : 'bg-[#FAFAFA] text-[#737373] hover:text-[#262626] border border-[#EFEFEF]'
+                  ? 'text-[#8E92A0] hover:text-white hover:bg-white/5'
+                  : 'bg-[#F7F8FA] text-[#767676] hover:text-[#1B1C1D] border border-[#E0E1E2]'
               }`}
             >
               <Trophy size={14} />
@@ -1117,7 +1115,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
             <div className="flex items-center gap-2">
               {/* Search Input */}
               <div className="relative flex-1">
-                <Search size={13} className={`absolute left-3 top-1/2 -translate-y-1/2 ${isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E]'}`} />
+                <Search size={13} className={`absolute left-3 top-1/2 -translate-y-1/2 ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`} />
                 <input
                   type="text"
                   value={searchQuery}
@@ -1129,15 +1127,15 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                   }
                   className={`w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border outline-none transition-colors ${
                     isDarkTheme
-                      ? 'bg-white/5 border-white/10 text-white placeholder-slate-500 focus:border-pink-500'
-                      : 'bg-[#FAFAFA] border-[#EFEFEF] text-[#262626] placeholder-[#8E8E8E] focus:border-[#E1306C]'
+                      ? 'bg-white/5 border-white/10 text-white placeholder-[#8E92A0] focus:border-[#E1306C]'
+                      : 'bg-[#F4F5F7] border-[#E0E1E2] text-[#1B1C1D] placeholder-[#767676] focus:border-[#E1306C]'
                   }`}
                 />
               </div>
 
               {/* Last Synced Indicator */}
               {activeMainTab === 'rankings' && (
-                <div className="shrink-0 text-[10px] font-mono hidden sm:inline-flex items-center gap-1 text-[#8E8E8E]">
+                <div className="shrink-0 text-[10px] font-mono hidden sm:inline-flex items-center gap-1 text-[#767676]">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span>Synced: {lastSyncedTime}</span>
                 </div>
@@ -1154,8 +1152,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                     filterTier === tier
                       ? 'bg-[#E1306C] text-white border-[#E1306C] shadow-xs'
                       : isDarkTheme
-                      ? 'bg-white/5 text-slate-400 border-white/5 hover:text-white'
-                      : 'bg-[#FAFAFA] text-[#737373] border-[#EFEFEF] hover:text-[#262626]'
+                      ? 'bg-white/5 text-[#8E92A0] border-white/5 hover:text-white'
+                      : 'bg-[#F7F8FA] text-[#767676] border-[#E0E1E2] hover:text-[#1B1C1D]'
                   }`}
                 >
                   {tier}
@@ -1175,8 +1173,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
               <div
                 className={`relative rounded-[24px] p-4 border shadow-sm overflow-hidden transition-all ${
                   isDarkTheme
-                    ? 'bg-gradient-to-r from-[#17192C] via-[#121422] to-[#1A182E] border-pink-500/30 shadow-black/50'
-                    : 'bg-gradient-to-r from-pink-50/50 via-white to-purple-50/40 border-[#EFEFEF]'
+                    ? 'bg-gradient-to-r from-[#1A1B24] via-[#161720] to-[#1E1F2C] border-pink-500/30 shadow-black/50'
+                    : 'bg-gradient-to-r from-pink-50/40 via-white to-purple-50/30 border-[#E0E1E2]'
                 }`}
               >
                 {/* Specular Top Rim */}
@@ -1190,7 +1188,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                     <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#FFF0F5] text-[#E1306C] border border-pink-200">
                       Your Global Standing
                     </span>
-                    <span className={`text-[10px] font-mono font-bold ${isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E]'}`}>
+                    <span className={`text-[10px] font-mono font-bold ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                       {localRank === 'KNIGHT' ? 'TOP 25%' : 'TOP 40%'}
                     </span>
                   </div>
@@ -1210,7 +1208,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                           : 'linear-gradient(135deg, #E5C3A6 0%, #C89B7B 60%, #E1306C 100%)',
                       }}
                     >
-                      <div className={`w-full h-full rounded-full flex items-center justify-center ${isDarkTheme ? 'bg-black' : 'bg-[#FAFAFA]'}`}>
+                      <div className={`w-full h-full rounded-full flex items-center justify-center ${isDarkTheme ? 'bg-[#12131A]' : 'bg-[#F7F8FA]'}`}>
                         {localRank === 'KNIGHT' ? (
                           <PremiumKnightInsignia size={24} glow={false} className={isDarkTheme ? 'text-white' : 'text-[#3E2723]'} />
                         ) : (
@@ -1221,7 +1219,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className={`text-xs font-black truncate ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                        <span className={`text-xs font-black truncate ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                           {currentUser.name}
                         </span>
                         <ShieldCheck size={12} className="text-emerald-500 shrink-0" />
@@ -1237,22 +1235,22 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                     onClick={() => handleCopyId(currentUser.shadowId)}
                     className={`inline-flex items-center gap-1 font-mono text-[10px] px-2.5 py-1 rounded-lg border transition-colors shrink-0 ${
                       isDarkTheme
-                        ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
-                        : 'bg-[#FAFAFA] border-[#EFEFEF] text-[#262626] hover:bg-[#F2F2F2]'
+                        ? 'bg-white/5 border-white/10 text-[#D4D4D5] hover:bg-white/10'
+                        : 'bg-[#F7F8FA] border-[#E0E1E2] text-[#1B1C1D] hover:bg-[#F2F3F5]'
                     }`}
                     title="Copy Shadow ID"
                   >
                     <span className="text-[#E1306C] font-bold">ID:</span>
                     <span>{currentUser.shadowId}</span>
-                    <Copy size={10} className="text-[#8E8E8E] ml-0.5" />
+                    <Copy size={10} className="text-[#767676] ml-0.5" />
                   </button>
                 </div>
 
                 {/* Progression Stepper Trigger */}
-                <div className={`mt-3 pt-2.5 border-t flex items-center justify-between text-xs ${isDarkTheme ? 'border-white/5' : 'border-[#EFEFEF]'}`}>
+                <div className={`mt-3 pt-2.5 border-t flex items-center justify-between text-xs ${isDarkTheme ? 'border-white/5' : 'border-[#E0E1E2]'}`}>
                   <div className="flex items-center gap-2">
-                    <span className={`text-[11px] flex items-center gap-1 ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
-                      <Flame size={12} className="fill-[#FF8500] text-[#FF8500]" />
+                    <span className={`text-[11px] flex items-center gap-1 ${isDarkTheme ? 'text-[#D4D4D5]' : 'text-[#555963]'}`}>
+                      <Flame size={12} className="fill-[#F2711C] text-[#F2711C]" />
                       48 streaks
                     </span>
                     <span className="text-slate-400">•</span>
@@ -1277,19 +1275,19 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
               <div
                 className={`p-4 rounded-[24px] border relative overflow-hidden transition-all ${
                   isDarkTheme
-                    ? 'bg-[#121422] border-white/10 shadow-lg'
-                    : 'bg-[#FFFFFF] border-[#EFEFEF] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
+                    ? 'bg-[#1A1B24] border-white/10 shadow-lg'
+                    : 'bg-[#FFFFFF] border-[#E0E1E2] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
                 }`}
               >
                 {/* Header */}
                 <div className="flex items-center justify-between mb-3.5">
                   <div className="flex items-center gap-2">
                     <Trophy size={16} className="text-amber-500" />
-                    <h3 className={`text-xs font-black uppercase tracking-wider ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                    <h3 className={`text-xs font-black uppercase tracking-wider ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                       Global Consensus Leaders (Top 3)
                     </h3>
                   </div>
-                  <span className={`text-[10px] font-mono ${isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E]'}`}>
+                  <span className={`text-[10px] font-mono ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                     Apex Tier
                   </span>
                 </div>
@@ -1303,10 +1301,10 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                       className={`p-3 rounded-2xl border text-center transition-all cursor-pointer hover:scale-[1.02] ${
                         isDarkTheme
                           ? 'bg-white/[0.03] border-slate-400/30'
-                          : 'bg-[#FAFAFA] border-[#EFEFEF] shadow-xs'
+                          : 'bg-[#F7F8FA] border-[#E0E1E2] shadow-xs'
                       }`}
                     >
-                      <span className={`text-[10px] font-black block mb-1 ${isDarkTheme ? 'text-slate-300' : 'text-[#737373]'}`}>
+                      <span className={`text-[10px] font-black block mb-1 ${isDarkTheme ? 'text-[#D4D4D5]' : 'text-[#555963]'}`}>
                         🥈 #2 Silver
                       </span>
                       <div
@@ -1315,7 +1313,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                       >
                         {worldRankings[1].avatarSymbol}
                       </div>
-                      <span className={`text-xs font-bold block truncate ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                      <span className={`text-xs font-bold block truncate ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                         {worldRankings[1].name}
                       </span>
                       <span className="text-[10.5px] font-extrabold text-[#E1306C] block truncate">
@@ -1326,11 +1324,11 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                           e.stopPropagation();
                           handleCopyId(worldRankings[1].shadowId);
                         }}
-                        className={`text-[9.5px] font-mono mt-1 block truncate mx-auto ${isDarkTheme ? 'text-slate-400 hover:text-white' : 'text-[#8E8E8E] hover:text-[#262626]'}`}
+                        className={`text-[9.5px] font-mono mt-1 block truncate mx-auto ${isDarkTheme ? 'text-[#8E92A0] hover:text-white' : 'text-[#767676] hover:text-[#1B1C1D]'}`}
                       >
                         {worldRankings[1].shadowId}
                       </button>
-                      <span className={`text-[10px] font-black block mt-1 ${isDarkTheme ? 'text-slate-300' : 'text-[#262626]'}`}>
+                      <span className={`text-[10px] font-black block mt-1 ${isDarkTheme ? 'text-[#D4D4D5]' : 'text-[#1B1C1D]'}`}>
                         {(worldRankings[1].reputation / 1000).toFixed(1)}k REP
                       </span>
                     </div>
@@ -1342,7 +1340,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                       onClick={() => onToast(`Rank #1: @${worldRankings[0].username} · ${worldRankings[0].shadowStatus}`, 'sparkles')}
                       className={`p-3.5 rounded-2xl border text-center transition-all cursor-pointer hover:scale-[1.02] -mt-2 ${
                         isDarkTheme
-                          ? 'bg-gradient-to-b from-amber-500/15 via-[#1E1C28] to-[#141420] border-amber-500/50 ring-1 ring-amber-500/30 shadow-xl'
+                          ? 'bg-gradient-to-b from-amber-500/15 via-[#222430] to-[#1A1B24] border-amber-500/50 ring-1 ring-amber-500/30 shadow-xl'
                           : 'bg-gradient-to-b from-amber-50/70 via-white to-amber-50/30 border-amber-300 shadow-sm ring-1 ring-amber-200'
                       }`}
                     >
@@ -1355,10 +1353,10 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                       >
                         {worldRankings[0].avatarSymbol}
                       </div>
-                      <span className={`text-xs font-black block truncate ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                      <span className={`text-xs font-black block truncate ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                         {worldRankings[0].name}
                       </span>
-                      <span className="text-[11px] font-extrabold text-amber-600 block truncate">
+                      <span className="text-[11px] font-extrabold text-[#F2711C] block truncate">
                         @{worldRankings[0].username}
                       </span>
                       <button
@@ -1366,11 +1364,11 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                           e.stopPropagation();
                           handleCopyId(worldRankings[0].shadowId);
                         }}
-                        className={`text-[9.5px] font-mono mt-1 block truncate mx-auto ${isDarkTheme ? 'text-slate-400 hover:text-amber-300' : 'text-[#8E8E8E] hover:text-[#262626]'}`}
+                        className={`text-[9.5px] font-mono mt-1 block truncate mx-auto ${isDarkTheme ? 'text-[#8E92A0] hover:text-amber-300' : 'text-[#767676] hover:text-[#1B1C1D]'}`}
                       >
                         {worldRankings[0].shadowId}
                       </button>
-                      <span className="text-[10.5px] font-black text-amber-600 block mt-1">
+                      <span className="text-[10.5px] font-black text-[#F2711C] block mt-1">
                         {(worldRankings[0].reputation / 1000).toFixed(1)}k REP
                       </span>
                     </div>
@@ -1383,7 +1381,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                       className={`p-3 rounded-2xl border text-center transition-all cursor-pointer hover:scale-[1.02] ${
                         isDarkTheme
                           ? 'bg-white/[0.03] border-amber-700/30'
-                          : 'bg-[#FAFAFA] border-[#EFEFEF] shadow-xs'
+                          : 'bg-[#F7F8FA] border-[#E0E1E2] shadow-xs'
                       }`}
                     >
                       <span className="text-[10px] font-black text-amber-700 block mb-1">
@@ -1395,7 +1393,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                       >
                         {worldRankings[2].avatarSymbol}
                       </div>
-                      <span className={`text-xs font-bold block truncate ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                      <span className={`text-xs font-bold block truncate ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                         {worldRankings[2].name}
                       </span>
                       <span className="text-[10.5px] font-extrabold text-[#E1306C] block truncate">
@@ -1406,7 +1404,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                           e.stopPropagation();
                           handleCopyId(worldRankings[2].shadowId);
                         }}
-                        className={`text-[9.5px] font-mono mt-1 block truncate mx-auto ${isDarkTheme ? 'text-slate-400 hover:text-white' : 'text-[#8E8E8E] hover:text-[#262626]'}`}
+                        className={`text-[9.5px] font-mono mt-1 block truncate mx-auto ${isDarkTheme ? 'text-[#8E92A0] hover:text-white' : 'text-[#767676] hover:text-[#1B1C1D]'}`}
                       >
                         {worldRankings[2].shadowId}
                       </button>
@@ -1426,7 +1424,7 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                   <div
                     key={sk}
                     className={`p-4 rounded-[24px] border animate-pulse ${
-                      isDarkTheme ? 'bg-[#121422] border-white/5' : 'bg-[#FFFFFF] border-[#EFEFEF]'
+                      isDarkTheme ? 'bg-[#1A1B24] border-white/5' : 'bg-[#FFFFFF] border-[#E0E1E2]'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -1447,14 +1445,14 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                 {filteredRankings.length === 0 ? (
                   <div
                     className={`p-8 rounded-[24px] border text-center ${
-                      isDarkTheme ? 'bg-[#121422] border-white/10' : 'bg-[#FFFFFF] border-[#EFEFEF]'
+                      isDarkTheme ? 'bg-[#1A1B24] border-white/10' : 'bg-[#FFFFFF] border-[#E0E1E2]'
                     }`}
                   >
                     <Crown size={32} className="mx-auto text-slate-400 mb-2 opacity-50" />
-                    <h3 className={`text-sm font-bold ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                    <h3 className={`text-sm font-bold ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                       No Node Operators Match Your Query
                     </h3>
-                    <p className={`text-xs mt-1 max-w-xs mx-auto ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
+                    <p className={`text-xs mt-1 max-w-xs mx-auto ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                       Try adjusting the search query or selecting ALL from the rank filter pills.
                     </p>
                   </div>
@@ -1465,8 +1463,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                         key={user.id}
                         className={`relative rounded-[24px] p-4 border transition-all hover:border-pink-300 ${
                           isDarkTheme
-                            ? 'bg-[#121422] border-white/10 shadow-black/40'
-                            : 'bg-[#FFFFFF] border-[#EFEFEF] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
+                            ? 'bg-[#1A1B24] border-white/10 shadow-black/40'
+                            : 'bg-[#FFFFFF] border-[#E0E1E2] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
                         }`}
                       >
                         {/* Specular Top Rim */}
@@ -1482,14 +1480,14 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                             <span
                               className={`text-[11px] font-black px-2.5 py-0.5 rounded-full flex items-center gap-1 ${
                                 user.rankPosition === 1
-                                  ? 'bg-amber-100/70 text-amber-800 border border-amber-300'
+                                  ? 'bg-amber-100/80 text-amber-900 border border-amber-300'
                                   : user.rankPosition === 2
-                                  ? 'bg-slate-100 text-slate-700 border border-slate-300'
+                                  ? 'bg-slate-100 text-slate-800 border border-slate-300'
                                   : user.rankPosition === 3
-                                  ? 'bg-amber-50 text-amber-800 border border-amber-300'
+                                  ? 'bg-amber-50 text-amber-900 border border-amber-300'
                                   : isDarkTheme
-                                  ? 'bg-white/5 text-slate-300 border border-white/10'
-                                  : 'bg-[#FAFAFA] text-[#262626] border border-[#EFEFEF]'
+                                  ? 'bg-white/5 text-[#D4D4D5] border border-white/10'
+                                  : 'bg-[#F7F8FA] text-[#1B1C1D] border border-[#E0E1E2]'
                               }`}
                             >
                               {user.rankPosition === 1 && '👑'}
@@ -1499,12 +1497,12 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                             </span>
 
                             {/* Shadow Status Rank Callout Bar */}
-                            <span className={`text-[10.5px] font-bold ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
+                            <span className={`text-[10.5px] font-bold ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                               RANK: <span className="text-[#E1306C] font-extrabold">{user.shadowRank}</span> · {user.shadowStatus}
                             </span>
                           </div>
 
-                          <span className={`text-[10px] font-mono uppercase tracking-wider ${isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E]'}`}>
+                          <span className={`text-[10px] font-mono uppercase tracking-wider ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                             {user.tierLevel}
                           </span>
                         </div>
@@ -1530,14 +1528,14 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                             {/* Name, @username & Location */}
                             <div className="min-w-0">
                               <div className="flex items-center gap-1.5">
-                                <h4 className={`text-xs font-black truncate ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                                <h4 className={`text-xs font-black truncate ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                                   {user.name}
                                 </h4>
                               </div>
                               <span className="text-xs font-black text-[#E1306C] block truncate">
                                 @{user.username}
                               </span>
-                              <div className={`flex items-center gap-1 text-[10.5px] mt-0.5 ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
+                              <div className={`flex items-center gap-1 text-[10.5px] mt-0.5 ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                                 <span>{user.flag}</span>
                                 <span className="truncate">{user.location}</span>
                               </div>
@@ -1550,9 +1548,9 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                             className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10.5px] font-bold border transition-all cursor-pointer active:scale-95 shrink-0 ${
                               user.isFollowing
                                 ? isDarkTheme
-                                  ? 'bg-white/10 border-white/20 text-emerald-400'
-                                  : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#262626]'
-                                : 'bg-[#262626] border-[#262626] text-white shadow-xs hover:opacity-90'
+                                  ? 'bg-white/10 border-white/20 text-[#2ECC71]'
+                                  : 'bg-[#F7F8FA] border-[#E0E1E2] text-[#1B1C1D]'
+                                : 'bg-[#1B1C1D] border-[#1B1C1D] text-white shadow-xs hover:opacity-90'
                             }`}
                           >
                             {user.isFollowing ? (
@@ -1575,41 +1573,41 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                             onClick={() => handleCopyId(user.shadowId)}
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl border text-[11px] font-mono transition-all cursor-pointer active:scale-95 ${
                               isDarkTheme
-                                ? 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
-                                : 'bg-[#FAFAFA] border-[#EFEFEF] text-[#262626] hover:bg-[#F2F2F2]'
+                                ? 'bg-white/5 border-white/10 text-[#D4D4D5] hover:bg-white/10'
+                                : 'bg-[#F7F8FA] border-[#E0E1E2] text-[#1B1C1D] hover:bg-[#F2F3F5]'
                             }`}
                             title="Click to copy Shadow ID"
                           >
                             <span className="text-[#E1306C] font-extrabold text-[10px]">ID:</span>
                             <span>{user.shadowId}</span>
-                            <Copy size={11} className={isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E] ml-0.5'} />
+                            <Copy size={11} className={isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676] ml-0.5'} />
                           </button>
                         </div>
 
                         {/* Status Quote */}
-                        <p className={`text-xs leading-relaxed mb-3 ${isDarkTheme ? 'text-slate-300' : 'text-[#737373]'}`}>
+                        <p className={`text-xs leading-relaxed mb-3 ${isDarkTheme ? 'text-[#D4D4D5]' : 'text-[#555963]'}`}>
                           "{user.statusQuote}"
                         </p>
 
                         {/* Protocol Metrics & Interactive Cheer Heart Reaction */}
-                        <div className={`flex items-center justify-between pt-2.5 border-t ${isDarkTheme ? 'border-white/5' : 'border-[#EFEFEF]'}`}>
+                        <div className={`flex items-center justify-between pt-2.5 border-t ${isDarkTheme ? 'border-white/5' : 'border-[#E0E1E2]'}`}>
                           {/* Protocol Metrics Pills */}
                           <div className="flex items-center gap-1.5 flex-wrap">
                             <div className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10.5px] font-mono font-black ${
-                              isDarkTheme ? 'bg-pink-500/15 border border-pink-500/30 text-pink-400' : 'bg-[#FFF0F3] border border-pink-200 text-[#E1306C]'
+                              isDarkTheme ? 'bg-pink-500/15 border border-pink-500/30 text-pink-400' : 'bg-[#FFF0F5] border border-pink-200 text-[#E1306C]'
                             }`}>
                               <span>{user.reputation.toLocaleString()} REP</span>
                             </div>
 
                             <div className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10.5px] font-bold ${
-                              isDarkTheme ? 'bg-amber-500/15 border border-amber-500/30 text-amber-400' : 'bg-[#FFFBEB] border border-amber-200 text-[#D97706]'
+                              isDarkTheme ? 'bg-amber-500/15 border border-amber-500/30 text-amber-400' : 'bg-[#FFFBEB] border border-amber-200 text-[#F2711C]'
                             }`}>
-                              <Flame size={11} className="fill-[#FF8500] text-[#FF8500]" />
+                              <Flame size={11} className="fill-[#F2711C] text-[#F2711C]" />
                               <span>{user.streakDays}d Streak</span>
                             </div>
 
                             <div className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10.5px] font-bold hidden sm:inline-flex ${
-                              isDarkTheme ? 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-400' : 'bg-[#F0F9FF] border border-sky-200 text-[#0284C7]'
+                              isDarkTheme ? 'bg-teal-500/15 border border-teal-500/30 text-teal-400' : 'bg-[#F0FDFA] border border-teal-200 text-[#00B5AD]'
                             }`}>
                               <Radio size={10} />
                               <span>{user.nodesActive} Nodes</span>
@@ -1622,11 +1620,11 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all cursor-pointer active:scale-95 ${
                               user.hasCheered
                                 ? isDarkTheme
-                                  ? 'bg-pink-500/20 border-pink-500/50 text-[#FF2A55] shadow-sm'
-                                  : 'bg-[#FFF0F3] border-pink-200 text-[#ED4956] shadow-xs'
+                                  ? 'bg-red-500/20 border-red-500/50 text-[#FF4D4D] shadow-sm'
+                                  : 'bg-[#FFF0F5] border-pink-200 text-[#DB2828] shadow-xs'
                                 : isDarkTheme
-                                ? 'bg-white/5 hover:bg-white/10 border-white/10 text-slate-300'
-                                : 'bg-[#FAFAFA] hover:bg-[#F2F2F2] border-[#EFEFEF] text-[#262626]'
+                                ? 'bg-white/5 hover:bg-white/10 border-white/10 text-[#D4D4D5]'
+                                : 'bg-[#F7F8FA] hover:bg-[#F2F3F5] border-[#E0E1E2] text-[#1B1C1D]'
                             }`}
                             title="Cheer for this operator"
                           >
@@ -1634,8 +1632,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                               size={13}
                               className={`transition-transform ${
                                 user.hasCheered
-                                  ? 'fill-[#ED4956] text-[#ED4956] scale-110 animate-bounce'
-                                  : isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E]'
+                                  ? 'fill-[#DB2828] text-[#DB2828] scale-110 animate-bounce'
+                                  : isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'
                               }`}
                             />
                             <span>{user.cheerCount}</span>
@@ -1659,16 +1657,16 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
             {filteredUpgrades.length === 0 ? (
               <div
                 className={`p-8 rounded-[24px] border text-center ${
-                  isDarkTheme ? 'bg-[#121422] border-white/10' : 'bg-[#FFFFFF] border-[#EFEFEF]'
+                  isDarkTheme ? 'bg-[#1A1B24] border-white/10' : 'bg-[#FFFFFF] border-[#E0E1E2]'
                 }`}
               >
                 <Users size={32} className="mx-auto text-slate-400 mb-2 opacity-50" />
-                <h3 className={`text-sm font-bold ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                <h3 className={`text-sm font-bold ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                   {activeMainTab === 'following'
                     ? 'No Upgrades From Followed Creators Yet'
                     : 'No Upgrades Match Your Filter'}
                 </h3>
-                <p className={`text-xs mt-1 max-w-xs mx-auto ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
+                <p className={`text-xs mt-1 max-w-xs mx-auto ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                   {activeMainTab === 'following'
                     ? 'Follow creators from the World Rankings or Upgrades feed to track their rank promotions in real time.'
                     : 'Try clearing your search query or selecting a different rank tier.'}
@@ -1692,8 +1690,8 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                     key={person.id}
                     className={`p-4 rounded-[24px] border transition-all hover:border-pink-300 ${
                       isDarkTheme
-                        ? 'bg-[#121422] border-white/10 shadow-black/40'
-                        : 'bg-[#FFFFFF] border-[#EFEFEF] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
+                        ? 'bg-[#1A1B24] border-white/10 shadow-black/40'
+                        : 'bg-[#FFFFFF] border-[#E0E1E2] shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
                     }`}
                   >
                     {/* Card Header: Creator Row & Follow Toggle */}
@@ -1708,14 +1706,14 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
 
                         <div className="flex flex-col min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <h4 className={`text-xs font-black truncate ${isDarkTheme ? 'text-white' : 'text-[#262626]'}`}>
+                            <h4 className={`text-xs font-black truncate ${isDarkTheme ? 'text-white' : 'text-[#1B1C1D]'}`}>
                               {person.name}
                             </h4>
                             {person.isVerified && (
                               <ShieldCheck size={12} className="text-emerald-500 shrink-0" />
                             )}
                           </div>
-                          <div className={`flex items-center gap-1 text-[11px] ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
+                          <div className={`flex items-center gap-1 text-[11px] ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                             <span className="text-[#E1306C] font-bold">@{person.username}</span>
                             <span>•</span>
                             <span className="flex items-center gap-0.5">
@@ -1732,9 +1730,9 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10.5px] font-bold border transition-all cursor-pointer active:scale-95 shrink-0 ${
                           person.isFollowing
                             ? isDarkTheme
-                              ? 'bg-white/10 border-white/20 text-emerald-400'
-                              : 'bg-[#FAFAFA] border-[#E0E0E0] text-[#262626]'
-                            : 'bg-[#262626] border-[#262626] text-white shadow-xs hover:opacity-90'
+                              ? 'bg-white/10 border-white/20 text-[#2ECC71]'
+                              : 'bg-[#F7F8FA] border-[#E0E1E2] text-[#1B1C1D]'
+                            : 'bg-[#1B1C1D] border-[#1B1C1D] text-white shadow-xs hover:opacity-90'
                         }`}
                       >
                         {person.isFollowing ? (
@@ -1754,12 +1752,12 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                     {/* Rank Evolution Pill: PAWN ➔ KNIGHT */}
                     <div
                       className={`p-2.5 rounded-2xl border mb-3 flex items-center justify-between ${
-                        isDarkTheme ? 'bg-white/[0.03] border-white/5' : 'bg-[#FAFAFA] border-[#EFEFEF]'
+                        isDarkTheme ? 'bg-white/[0.03] border-white/5' : 'bg-[#F7F8FA] border-[#E0E1E2]'
                       }`}
                     >
                       <div className="flex items-center gap-1.5">
                         <span className="text-base select-none">{fromMeta.symbol}</span>
-                        <span className={`text-xs font-bold ${isDarkTheme ? 'text-slate-400' : 'text-[#737373]'}`}>
+                        <span className={`text-xs font-bold ${isDarkTheme ? 'text-[#D4D4D5]' : 'text-[#555963]'}`}>
                           {person.fromRank}
                         </span>
                       </div>
@@ -1778,29 +1776,29 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                         >
                           {person.toRank}
                         </span>
-                        <span className={`text-[10px] font-mono ${isDarkTheme ? 'text-slate-400' : 'text-[#8E8E8E]'}`}>
+                        <span className={`text-[10px] font-mono ${isDarkTheme ? 'text-[#8E92A0]' : 'text-[#767676]'}`}>
                           ({person.toTier})
                         </span>
                       </div>
                     </div>
 
                     {/* Achievement Summary */}
-                    <p className={`text-xs leading-relaxed mb-3 ${isDarkTheme ? 'text-slate-300' : 'text-[#737373]'}`}>
+                    <p className={`text-xs leading-relaxed mb-3 ${isDarkTheme ? 'text-[#D4D4D5]' : 'text-[#555963]'}`}>
                       {person.achievementSummary}
                     </p>
 
                     {/* Card Footer: Streak Days, Rep Gained, & Congratulate Button */}
-                    <div className={`flex items-center justify-between pt-2 border-t ${isDarkTheme ? 'border-white/5' : 'border-[#EFEFEF]'}`}>
+                    <div className={`flex items-center justify-between pt-2 border-t ${isDarkTheme ? 'border-white/5' : 'border-[#E0E1E2]'}`}>
                       <div className="flex items-center gap-2">
                         <div className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10.5px] font-bold ${
-                          isDarkTheme ? 'bg-amber-500/15 border border-amber-500/30 text-amber-400' : 'bg-[#FFFBEB] border border-amber-200 text-[#D97706]'
+                          isDarkTheme ? 'bg-amber-500/15 border border-amber-500/30 text-amber-400' : 'bg-[#FFFBEB] border border-amber-200 text-[#F2711C]'
                         }`}>
-                          <Flame size={12} className="fill-[#FF8500] text-[#FF8500]" />
+                          <Flame size={12} className="fill-[#F2711C] text-[#F2711C]" />
                           <span>{person.streakDays}d Streak</span>
                         </div>
 
                         <div className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10.5px] font-mono font-bold ${
-                          isDarkTheme ? 'bg-pink-500/15 border border-pink-500/30 text-pink-400' : 'bg-[#FFF0F3] border border-pink-200 text-[#E1306C]'
+                          isDarkTheme ? 'bg-pink-500/15 border border-pink-500/30 text-pink-400' : 'bg-[#FFF0F5] border border-pink-200 text-[#E1306C]'
                         }`}>
                           <span>+{person.repGained} REP</span>
                         </div>
@@ -1813,10 +1811,10 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
                           person.hasCongratulated
                             ? isDarkTheme
                               ? 'bg-pink-500/20 border-pink-500/50 text-pink-400 shadow-sm'
-                              : 'bg-[#FFF0F3] border-pink-200 text-[#E1306C] shadow-xs'
+                              : 'bg-[#FFF0F5] border-pink-200 text-[#E1306C] shadow-xs'
                             : isDarkTheme
-                            ? 'bg-white/5 hover:bg-white/10 border-white/10 text-slate-300'
-                            : 'bg-[#FAFAFA] hover:bg-[#F2F2F2] border-[#EFEFEF] text-[#262626]'
+                            ? 'bg-white/5 hover:bg-white/10 border-white/10 text-[#D4D4D5]'
+                            : 'bg-[#F7F8FA] hover:bg-[#F2F3F5] border-[#E0E1E2] text-[#1B1C1D]'
                         }`}
                         title="Cheer and congratulate on rank promotion"
                       >

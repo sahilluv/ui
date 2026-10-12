@@ -99,7 +99,7 @@ export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
 };
 
 /**
- * Classic Chess Coin (Instagram-style verification coin badge)
+ * Classic Chess Coin (Shadow verification coin badge)
  * Supports all shadow ranks with smooth scale & glow transition
  */
 export const ChessCoin: React.FC<{
