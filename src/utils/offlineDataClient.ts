@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { PostItem, ReelItem, INITIAL_POSTS, INITIAL_REELS } from '../data/mockData';
+import { generateMorePostItems, generateMoreReelItems } from './endlessScrollData';
 
 // Cache keys for multi-tier persistence (Cache Storage API + LocalStorage)
 const FEED_CACHE_KEY = 'shadow_offline_feed_v2';
@@ -234,6 +235,26 @@ export function useOfflineFeed() {
     );
   }, [updatePosts]);
 
+  // Endless feed pagination state & generator
+  const feedPageRef = useRef(1);
+  const [isLoadingMorePosts, setIsLoadingMorePosts] = useState(false);
+
+  const loadMorePosts = useCallback(async () => {
+    if (isLoadingMorePosts) return;
+    setIsLoadingMorePosts(true);
+    try {
+      // Natural fluid delay for smooth UX transition
+      await new Promise((resolve) => setTimeout(resolve, 380));
+      feedPageRef.current += 1;
+      const nextBatch = generateMorePostItems(feedPageRef.current, 3);
+      updatePosts((prev) => [...prev, ...nextBatch]);
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoadingMorePosts(false);
+      }
+    }
+  }, [isLoadingMorePosts, updatePosts]);
+
   // Add new post directly to transparent cache
   const addNewPost = useCallback((newPost: PostItem) => {
     updatePosts((prev) => [newPost, ...prev]);
@@ -246,17 +267,21 @@ export function useOfflineFeed() {
     toggleLikePost,
     toggleSavePost,
     addNewPost,
+    loadMorePosts,
+    isLoadingMorePosts,
   };
 }
 
 /**
  * React Hook: useOfflineReels
  * Seamlessly provides offline-first reels data, background revalidation,
- * and persistent optimistic updates for likes, saves, and comments.
+ * and persistent optimistic updates for likes, saves, comments, and endless scrolling.
  */
 export function useOfflineReels() {
   const [reels, setReels] = useState<ReelItem[]>(() => getInitialReels());
   const isMountedRef = useRef(true);
+  const reelsPageRef = useRef(1);
+  const [isLoadingMoreReels, setIsLoadingMoreReels] = useState(false);
 
   // Background revalidation
   const revalidate = useCallback(async () => {
@@ -290,6 +315,22 @@ export function useOfflineReels() {
       return updated;
     });
   }, []);
+
+  // Endless reels loader
+  const loadMoreReels = useCallback(async () => {
+    if (isLoadingMoreReels) return;
+    setIsLoadingMoreReels(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 320));
+      reelsPageRef.current += 1;
+      const nextBatch = generateMoreReelItems(reelsPageRef.current, 3);
+      updateReels((prev) => [...prev, ...nextBatch]);
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoadingMoreReels(false);
+      }
+    }
+  }, [isLoadingMoreReels, updateReels]);
 
   // Optimistic Like on Reel
   const toggleLikeReel = useCallback((reelId: string) => {
@@ -349,5 +390,7 @@ export function useOfflineReels() {
     toggleLikeReel,
     toggleSaveReel,
     incrementReelComments,
+    loadMoreReels,
+    isLoadingMoreReels,
   };
 }

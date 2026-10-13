@@ -26,6 +26,8 @@ import {
   PremiumPawnInsignia,
   PremiumKnightInsignia,
   getRankMeta,
+  triggerRankConfetti,
+  playRankElevationChime,
 } from './PawnRankBadge';
 import { getSemUiTokens, semUiPalette } from '../theme/semUiPalette';
 
@@ -598,19 +600,36 @@ export const MyShadowScreen: React.FC<MyShadowScreenProps> = ({
   };
 
   // Toggle simulated rank promotion (PAWN ↔ KNIGHT)
-  const handleTogglePromote = () => {
+  const handleTogglePromote = (e?: React.MouseEvent) => {
+    if (isPromoting) return;
     setIsPromoting(true);
     const nextRank: ShadowRankType = localRank === 'PAWN' ? 'KNIGHT' : 'PAWN';
+
+    // Calculate origin coordinates from click event for precise confetti burst
+    let origin: { x: number; y: number } | undefined;
+    if (e && typeof window !== 'undefined') {
+      origin = {
+        x: Math.min(Math.max(e.clientX / window.innerWidth, 0.1), 0.9),
+        y: Math.min(Math.max(e.clientY / window.innerHeight, 0.1), 0.9),
+      };
+    }
+
+    // Play harmonious Web Audio chime and launch celebratory confetti
+    playRankElevationChime(nextRank === 'KNIGHT');
+    triggerRankConfetti(nextRank, origin);
+
+    // Apply next rank immediately so animations spring from the new tier
+    setLocalRank(nextRank);
+    onToast(
+      nextRank === 'KNIGHT'
+        ? '✦ Promoted to KNIGHT (Vanguard Status)'
+        : '✦ Reverted to PAWN (Foundation Status)',
+      'sparkles'
+    );
+
     setTimeout(() => {
-      setLocalRank(nextRank);
       setIsPromoting(false);
-      onToast(
-        nextRank === 'KNIGHT'
-          ? 'Promoted to KNIGHT (Vanguard Status)'
-          : 'Reverted to PAWN (Foundation Status)',
-        'sparkles'
-      );
-    }, 350);
+    }, 1200);
   };
 
   // Cheer / Heart reaction on World Ranking Cards

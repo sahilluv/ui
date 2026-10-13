@@ -45,7 +45,14 @@ import {
   ArrowUpRight,
   Camera,
 } from 'lucide-react';
-import { PawnRankBadge, PremiumPawnInsignia, PremiumKnightInsignia, ShadowRankType } from './PawnRankBadge';
+import {
+  PawnRankBadge,
+  PremiumPawnInsignia,
+  PremiumKnightInsignia,
+  ShadowRankType,
+  triggerRankConfetti,
+  playRankElevationChime,
+} from './PawnRankBadge';
 import { BottomNavigation } from './BottomNavigation';
 import { StoryCameraOverlay } from './StoryCameraOverlay';
 import {
@@ -286,6 +293,17 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       if (isNavShrunk) setIsNavShrunk(false);
     }
 
+    // Endless Feeds & Reels Scrolling: seamlessly load more content before reaching bottom
+    const scrollHeight = e.currentTarget.scrollHeight;
+    const clientHeight = e.currentTarget.clientHeight;
+    const distanceToBottom = scrollHeight - (currentScrollTop + clientHeight);
+
+    if (currentTab === 'home' && distanceToBottom < 420 && !isLoadingMorePosts) {
+      void loadMorePosts();
+    } else if (currentTab === 'reels' && distanceToBottom < 600 && !isLoadingMoreReels) {
+      void loadMoreReels();
+    }
+
     prevScrollTopRef.current = currentScrollTop;
   };
 
@@ -297,6 +315,8 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     toggleLikePost,
     toggleSavePost,
     addNewPost,
+    loadMorePosts,
+    isLoadingMorePosts,
   } = useOfflineFeed();
 
   const {
@@ -306,6 +326,8 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     toggleLikeReel,
     toggleSaveReel,
     incrementReelComments,
+    loadMoreReels,
+    isLoadingMoreReels,
   } = useOfflineReels();
 
   // State for stories, likes, followers
@@ -323,7 +345,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('igtv');
 
   // Performance-Optimized Reel Preloader & Intersection Observer:
-  // Monitors currently viewed reel in viewport and pre-loads next reel media in background
+  // Monitors currently viewed reel in viewport, pre-loads next media, and triggers endless reels
   const {
     activeIndex: activeReelIndex,
     isNextPreloaded,
@@ -333,6 +355,12 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
     containerRef: viewportRef,
     reels,
     threshold: 0.6,
+    onActiveChange: (_activeReel, activeIndex) => {
+      // Endless Reels Trigger: when within 2 items of the end, automatically append more reels!
+      if (activeIndex >= reels.length - 2 && !isLoadingMoreReels) {
+        void loadMoreReels();
+      }
+    },
   });
 
   const handlePublishNewStory = (newStoryData: {
@@ -508,14 +536,26 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
   const [showRankHierarchyModal, setShowRankHierarchyModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
 
-  const handlePromoteRank = () => {
+  const handlePromoteRank = (e?: React.MouseEvent) => {
     setIsRankTransitioning(true);
     const nextRank = mauricioRank === 'PAWN' ? 'KNIGHT' : 'PAWN';
+
+    let origin: { x: number; y: number } | undefined;
+    if (e && typeof window !== 'undefined') {
+      origin = {
+        x: Math.min(Math.max(e.clientX / window.innerWidth, 0.1), 0.9),
+        y: Math.min(Math.max(e.clientY / window.innerHeight, 0.1), 0.9),
+      };
+    }
+
+    playRankElevationChime(nextRank === 'KNIGHT');
+    triggerRankConfetti(nextRank, origin);
+
     setMauricioRank(nextRank);
     triggerToast(
       nextRank === 'KNIGHT'
-        ? '✦ Shadow Identity Elevated: KNIGHT (Rank II)'
-        : '✦ Shadow Identity Reverted: PAWN (Rank I)',
+        ? '✦ Shadow Identity Elevated: KNIGHT (Rank II · Vanguard)'
+        : '✦ Shadow Identity Reverted: PAWN (Rank I · Foundation)',
       'sparkles'
     );
     setTimeout(() => setIsRankTransitioning(false), 1400);
@@ -1449,6 +1489,14 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
               ))}
             </div>
 
+            {/* Endless Feed Dynamic Loading Shimmer */}
+            {isLoadingMorePosts && (
+              <div className="py-6 flex flex-col items-center justify-center gap-2 animate-in fade-in duration-200">
+                <div className="w-6 h-6 rounded-full border-2 border-pink-500/30 border-t-pink-500 animate-spin" />
+                <span className="text-[11px] font-semibold text-slate-400">Loading more Shadow moments...</span>
+              </div>
+            )}
+
             {/* Pull Up Refresh Component at Bottom of Home Feed */}
             <div className="pt-2 pb-6 flex justify-center">
               <PullUpRefresh
@@ -2023,6 +2071,26 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                 onToast={triggerToast}
               />
             ))}
+
+            {/* Endless Reels Snap Loader Card */}
+            {isLoadingMoreReels && (
+              <div className="snap-start snap-always shrink-0 relative w-full h-[780px] bg-[#0A0C16] flex flex-col items-center justify-center gap-3 text-white select-none">
+                <div
+                  className="w-12 h-12 rounded-2xl p-0.5 shadow-lg shadow-pink-500/30 flex items-center justify-center animate-pulse"
+                  style={{
+                    background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                  }}
+                >
+                  <div className="w-full h-full rounded-[14px] bg-[#0F111D] flex items-center justify-center">
+                    <span className="font-shadow-script text-2xl text-pink-400">S</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+                  <span className="w-4 h-4 rounded-full border-2 border-pink-500 border-t-transparent animate-spin" />
+                  Loading next Reel...
+                </div>
+              </div>
+            )}
           </div>
         )}
 

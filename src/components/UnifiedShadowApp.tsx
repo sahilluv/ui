@@ -35,11 +35,18 @@ import {
   ArrowDown,
   RotateCw,
 } from 'lucide-react';
-import { PawnRankBadge, ShadowRankType } from './PawnRankBadge';
+import {
+  PawnRankBadge,
+  ShadowRankType,
+  triggerRankConfetti,
+  playRankElevationChime,
+} from './PawnRankBadge';
 import { ReelCommentsDrawer } from './ReelCommentsDrawer';
 import { PullUpRefresh } from './PullUpRefresh';
 import { MyShadowScreen } from './MyShadowScreen';
 import { darkColors, lightColors, shadowGradients, ThemeColors } from '../../expo-code/src/theme';
+import { generateMoreFeedPosts, generateMoreReelData } from '../utils/endlessScrollData';
+import { ReelCircularProgress } from './ReelCircularProgress';
 
 export type UnifiedTab = 'home' | 'explore' | 'reels' | 'create' | 'notifications' | 'profile';
 
@@ -465,6 +472,37 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     followingCount: 568,
   });
 
+  // Rank progression elevation transition state
+  const [isPromotingRank, setIsPromotingRank] = useState(false);
+
+  const handleToggleUserRank = (e?: React.MouseEvent) => {
+    if (isPromotingRank) return;
+    setIsPromotingRank(true);
+    const nextRank: ShadowRankType = currentUser.shadowRank === 'PAWN' ? 'KNIGHT' : 'PAWN';
+
+    let origin: { x: number; y: number } | undefined;
+    if (e && typeof window !== 'undefined') {
+      origin = {
+        x: Math.min(Math.max(e.clientX / window.innerWidth, 0.1), 0.9),
+        y: Math.min(Math.max(e.clientY / window.innerHeight, 0.1), 0.9),
+      };
+    }
+
+    playRankElevationChime(nextRank === 'KNIGHT');
+    triggerRankConfetti(nextRank, origin);
+
+    setCurrentUser((prev) => ({ ...prev, shadowRank: nextRank }));
+    showToast(
+      nextRank === 'KNIGHT'
+        ? '✦ Rank Elevated: KNIGHT (Rank II · Vanguard Status)'
+        : '✦ Rank Reverted: PAWN (Rank I · Foundation Status)'
+    );
+
+    setTimeout(() => {
+      setIsPromotingRank(false);
+    }, 1200);
+  };
+
   // Create Post Form State
   const [createTitle, setCreateTitle] = useState('');
   const [createBody, setCreateBody] = useState('');
@@ -508,6 +546,39 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
   const prevFeedScrollTop = useRef(0);
   const prevReelsScrollTop = useRef(0);
 
+  // Endless pagination state
+  const feedPageRef = useRef(1);
+  const [isLoadingMoreFeed, setIsLoadingMoreFeed] = useState(false);
+
+  const loadMoreFeedPosts = async () => {
+    if (isLoadingMoreFeed) return;
+    setIsLoadingMoreFeed(true);
+    try {
+      await new Promise((r) => setTimeout(r, 380));
+      feedPageRef.current += 1;
+      const nextPosts = generateMoreFeedPosts(feedPageRef.current, 3);
+      setFeedPosts((prev) => [...prev, ...nextPosts]);
+    } finally {
+      setIsLoadingMoreFeed(false);
+    }
+  };
+
+  const reelsPageRef = useRef(1);
+  const [isLoadingMoreReels, setIsLoadingMoreReels] = useState(false);
+
+  const loadMoreReelsData = async () => {
+    if (isLoadingMoreReels) return;
+    setIsLoadingMoreReels(true);
+    try {
+      await new Promise((r) => setTimeout(r, 340));
+      reelsPageRef.current += 1;
+      const nextReels = generateMoreReelData(reelsPageRef.current, 3);
+      setReels((prev) => [...prev, ...nextReels]);
+    } finally {
+      setIsLoadingMoreReels(false);
+    }
+  };
+
   const handleFeedScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollTop = e.currentTarget.scrollTop;
     const diff = scrollTop - prevFeedScrollTop.current;
@@ -519,6 +590,12 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     } else if (diff < -4) {
       // Smoothly restore full size when scrolling up
       setIsCompactNav(false);
+    }
+
+    // Endless Feed Scrolling: load next batch when nearing bottom
+    const { scrollHeight, clientHeight } = e.currentTarget;
+    if (scrollHeight - (scrollTop + clientHeight) < 420 && !isLoadingMoreFeed) {
+      void loadMoreFeedPosts();
     }
 
     prevFeedScrollTop.current = scrollTop;
@@ -540,6 +617,12 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     } else if (diff < -4) {
       // Smoothly restore full size when scrolling up
       setIsCompactNav(false);
+    }
+
+    // Endless Reels Scrolling: load next batch when nearing bottom
+    const { scrollHeight, clientHeight } = e.currentTarget;
+    if (scrollHeight - (scrollTop + clientHeight) < 600 && !isLoadingMoreReels) {
+      void loadMoreReelsData();
     }
 
     prevReelsScrollTop.current = scrollTop;
@@ -1143,6 +1226,18 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       </div>
                     </div>
 
+                    {/* Dynamic Circular Progress Indicator Overlaying Bottom Right Corner */}
+                    <div className="absolute right-4 bottom-14 z-30 pointer-events-auto">
+                      <ReelCircularProgress
+                        isActive={currentTab === 'reels'}
+                        isPlaying={!isPaused}
+                        onTogglePlayPause={() => handleTogglePlayPause(reel.id)}
+                        onToast={showToast}
+                        reelId={reel.id}
+                        className="!relative !right-0 !bottom-0"
+                      />
+                    </div>
+
                     {/* Progress Bar at bottom */}
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-20">
                       <div className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 w-2/3 animate-pulse" />
@@ -1150,6 +1245,26 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   </div>
                 );
               })}
+
+              {/* Endless Reels Snap Loader Card */}
+              {isLoadingMoreReels && (
+                <div className="w-full h-full snap-start snap-always relative shrink-0 overflow-hidden flex flex-col items-center justify-center bg-black gap-3 text-white select-none">
+                  <div
+                    className="w-12 h-12 rounded-2xl p-0.5 shadow-lg shadow-pink-500/30 flex items-center justify-center animate-pulse"
+                    style={{
+                      background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                    }}
+                  >
+                    <div className="w-full h-full rounded-[14px] bg-[#0F111D] flex items-center justify-center">
+                      <span className="font-shadow-script text-2xl text-pink-400">S</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+                    <span className="w-4 h-4 rounded-full border-2 border-pink-500 border-t-transparent animate-spin" />
+                    Loading next Reel...
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -1485,6 +1600,16 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     </div>
                   ))}
                 </div>
+
+                {/* Endless Feed Dynamic Loading Indicator */}
+                {isLoadingMoreFeed && (
+                  <div className="py-6 flex flex-col items-center justify-center gap-2 animate-in fade-in duration-200">
+                    <div className="w-6 h-6 rounded-full border-2 border-pink-500/30 border-t-pink-500 animate-spin" />
+                    <span className="text-[11px] font-semibold" style={{ color: colors.secondaryText }}>
+                      Loading more Shadow moments...
+                    </span>
+                  </div>
+                )}
 
                 {/* Pull Up to Refresh Feed */}
                 <div className="pt-2 pb-4 flex justify-center">
@@ -1857,23 +1982,17 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         rank={currentUser.shadowRank as any}
                         variant="profile"
                         isDark={isDark}
-                        onClick={() => {
-                          const nextRank = currentUser.shadowRank === 'PAWN' ? 'KNIGHT' : 'PAWN';
-                          setCurrentUser((prev) => ({ ...prev, shadowRank: nextRank }));
-                          showToast(nextRank === 'KNIGHT' ? '✦ Rank Elevated: KNIGHT (Rank II)' : '✦ Rank Reverted: PAWN (Rank I)');
-                        }}
+                        isPromoting={isPromotingRank}
+                        onClick={(e) => handleToggleUserRank(e)}
                       />
                     </div>
 
                     {/* Secondary Row: Verification & Authority + Rank Elevation Toggle */}
                     <div className="flex items-center justify-between gap-2 pt-1 border-t" style={{ borderColor: colors.border }}>
                       <button
-                        onClick={() => {
-                          const nextRank = currentUser.shadowRank === 'PAWN' ? 'KNIGHT' : 'PAWN';
-                          setCurrentUser((prev) => ({ ...prev, shadowRank: nextRank }));
-                          showToast(nextRank === 'KNIGHT' ? '✦ Rank Elevated: KNIGHT (Rank II)' : '✦ Rank Reverted: PAWN (Rank I)');
-                        }}
-                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border text-[9.5px] font-extrabold transition-all cursor-pointer ${
+                        onClick={(e) => handleToggleUserRank(e)}
+                        disabled={isPromotingRank}
+                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border text-[9.5px] font-extrabold transition-all cursor-pointer active:scale-95 ${
                           currentUser.shadowRank === 'PAWN'
                             ? isDark
                               ? 'bg-purple-500/15 border-purple-500/35 text-purple-300'
@@ -1881,10 +2000,10 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                             : isDark
                               ? 'bg-pink-500/15 border-pink-500/35 text-pink-300'
                               : 'bg-pink-50 border-pink-200 text-[#E1306C]'
-                        }`}
+                        } ${isPromotingRank ? 'scale-105 ring-2 ring-pink-500/40 shadow-sm' : ''}`}
                         title="Simulate Shadow Rank Progression: PAWN ↔ KNIGHT"
                       >
-                        <Sparkles size={11} className={currentUser.shadowRank === 'PAWN' ? (isDark ? 'text-cyan-400' : 'text-[#00B5AD]') : (isDark ? 'text-pink-400' : 'text-[#E1306C]')} />
+                        <Sparkles size={11} className={isPromotingRank ? 'animate-spin text-pink-400' : currentUser.shadowRank === 'PAWN' ? (isDark ? 'text-cyan-400' : 'text-[#00B5AD]') : (isDark ? 'text-pink-400' : 'text-[#E1306C]')} />
                         <span>{currentUser.shadowRank === 'PAWN' ? 'Elevate to KNIGHT' : 'Revert to PAWN'}</span>
                       </button>
 

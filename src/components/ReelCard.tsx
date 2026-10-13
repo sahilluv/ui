@@ -18,6 +18,7 @@ import {
 import { ReelItem } from '../data/mockData';
 import { PawnRankBadge } from './PawnRankBadge';
 import { PreloadStatus } from '../utils/reelPreloader';
+import { ReelCircularProgress } from './ReelCircularProgress';
 
 interface ReelCardProps {
   reel: ReelItem;
@@ -362,6 +363,20 @@ export const ReelCard: React.FC<ReelCardProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Dynamic Circular Progress Indicator Overlaying Bottom Right Corner */}
+      <ReelCircularProgress
+        isActive={isActive}
+        isPlaying={isPlaying}
+        onTogglePlayPause={() => {
+          setIsPlaying((prev) => !prev);
+          setShowPlayPauseFeedback(true);
+          setTimeout(() => setShowPlayPauseFeedback(false), 800);
+        }}
+        isNavShrunk={isNavShrunk}
+        onToast={onToast}
+        reelId={reel.id}
+      />
     </div>
   );
 };

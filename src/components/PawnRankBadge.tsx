@@ -1,6 +1,109 @@
 import React, { useState, useEffect, useRef } from 'react';
+import confetti from 'canvas-confetti';
 
 export type ShadowRankType = 'PAWN' | 'KNIGHT' | 'BISHOP' | 'ROOK' | 'QUEEN' | 'KING';
+
+/**
+ * Pleasant Web Audio harmonic chime for rank promotion
+ */
+export const playRankElevationChime = (isUpgrade = true) => {
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+    const now = ctx.currentTime;
+    // Harmonic frequencies: rising joyful chords on elevation, pleasant resolving chime on revert
+    const freqs = isUpgrade
+      ? [523.25, 659.25, 783.99, 1046.5] // C5 -> E5 -> G5 -> C6
+      : [783.99, 659.25, 523.25]; // G5 -> E5 -> C5
+    freqs.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+      gain.gain.setValueAtTime(0.0001, now + idx * 0.07);
+      gain.gain.exponentialRampToValueAtTime(0.06, now + idx * 0.07 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.07 + 0.32);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.07);
+      osc.stop(now + idx * 0.07 + 0.35);
+    });
+  } catch {
+    // Non-blocking fallback
+  }
+};
+
+/**
+ * Multi-stage canvas confetti burst customized per Shadow Rank
+ */
+export const triggerRankConfetti = (
+  rank: ShadowRankType = 'KNIGHT',
+  originCoords?: { x: number; y: number }
+) => {
+  try {
+    const paletteMap: Record<ShadowRankType, string[]> = {
+      KING: ['#F59E0B', '#FBBF24', '#D97706', '#FEF08A', '#FFFFFF'],
+      QUEEN: ['#E1306C', '#EC4899', '#A855F7', '#C084FC', '#FFFFFF'],
+      ROOK: ['#0284C7', '#38BDF8', '#6366F1', '#93C5FD', '#FFFFFF'],
+      BISHOP: ['#7C3AED', '#A855F7', '#818CF8', '#C084FC', '#FFFFFF'],
+      KNIGHT: ['#A855F7', '#C026D3', '#06B6D4', '#E1306C', '#38BDF8', '#F59E0B'],
+      PAWN: ['#E1306C', '#F472B6', '#A855F7', '#FDA4AF', '#FFFFFF'],
+    };
+
+    const colors = paletteMap[rank] || paletteMap.KNIGHT;
+    const origin = originCoords || { x: 0.5, y: 0.4 };
+
+    // Initial immediate high-velocity burst
+    confetti({
+      particleCount: 50,
+      spread: 70,
+      startVelocity: 36,
+      origin,
+      colors,
+      ticks: 200,
+      gravity: 1.1,
+      scalar: 0.95,
+      zIndex: 9999,
+      disableForReducedMotion: true,
+    });
+
+    // Secondary dual-angle festive bursts
+    setTimeout(() => {
+      confetti({
+        particleCount: 30,
+        angle: 60,
+        spread: 55,
+        startVelocity: 30,
+        origin: { x: Math.max(0.15, origin.x - 0.15), y: origin.y },
+        colors,
+        ticks: 180,
+        gravity: 0.95,
+        scalar: 0.85,
+        zIndex: 9999,
+        disableForReducedMotion: true,
+      });
+      confetti({
+        particleCount: 30,
+        angle: 120,
+        spread: 55,
+        startVelocity: 30,
+        origin: { x: Math.min(0.85, origin.x + 0.15), y: origin.y },
+        colors,
+        ticks: 180,
+        gravity: 0.95,
+        scalar: 0.85,
+        zIndex: 9999,
+        disableForReducedMotion: true,
+      });
+    }, 140);
+  } catch {
+    // Non-blocking fallback
+  }
+};
 
 export interface PawnRankBadgeProps {
   rank?: ShadowRankType;
@@ -12,6 +115,7 @@ export interface PawnRankBadgeProps {
   showSubtitle?: boolean;
   isPromoting?: boolean;
   periodicSheen?: boolean;
+  enableConfetti?: boolean;
 }
 
 export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
@@ -406,13 +510,30 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
   showSubtitle = true,
   isPromoting = false,
   periodicSheen = true,
+  enableConfetti = true,
 }) => {
   const [internalTransitioning, setInternalTransitioning] = useState(false);
   const [isPawnToKnightBloom, setIsPawnToKnightBloom] = useState(false);
+  const [showShockwave, setShowShockwave] = useState(false);
+  const [showParticleBurst, setShowParticleBurst] = useState(false);
   const prevRankRef = useRef(rank);
   const isFirstMount = useRef(true);
+  const badgeRef = useRef<HTMLDivElement>(null);
 
-  // Trigger rankGlowBloom overlay specifically when rank changes from PAWN to KNIGHT
+  // Helper to trigger confetti from badge location
+  const fireBadgeConfetti = (targetRank: ShadowRankType) => {
+    let originCoords: { x: number; y: number } | undefined;
+    if (badgeRef.current && typeof window !== 'undefined') {
+      const rect = badgeRef.current.getBoundingClientRect();
+      originCoords = {
+        x: Math.min(Math.max((rect.left + rect.width / 2) / window.innerWidth, 0.1), 0.9),
+        y: Math.min(Math.max((rect.top + rect.height / 2) / window.innerHeight, 0.1), 0.9),
+      };
+    }
+    triggerRankConfetti(targetRank, originCoords);
+  };
+
+  // Trigger rich visual and audio effects when rank changes
   useEffect(() => {
     if (isFirstMount.current) {
       isFirstMount.current = false;
@@ -420,34 +541,58 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
       return;
     }
 
-    // Trigger specifically when transitioning from PAWN to KNIGHT
-    if (prevRankRef.current === 'PAWN' && rank === 'KNIGHT') {
-      setIsPawnToKnightBloom(true);
-      const bloomTimer = setTimeout(() => {
-        setIsPawnToKnightBloom(false);
-      }, 1200);
-
+    if (prevRankRef.current !== rank) {
+      const isElevatingToKnight = rank === 'KNIGHT' || rank === 'KING' || rank === 'QUEEN';
+      setShowShockwave(true);
+      setShowParticleBurst(true);
       setInternalTransitioning(true);
-      const transTimer = setTimeout(() => {
+
+      // Play harmonious Web Audio chime
+      playRankElevationChime(isElevatingToKnight);
+
+      // Fire festive canvas confetti
+      if (enableConfetti) {
+        fireBadgeConfetti(rank);
+      }
+
+      if (prevRankRef.current === 'PAWN' && rank === 'KNIGHT') {
+        setIsPawnToKnightBloom(true);
+      }
+
+      const timer = setTimeout(() => {
         setInternalTransitioning(false);
-      }, 1200);
+        setShowShockwave(false);
+        setIsPawnToKnightBloom(false);
+      }, 1300);
+
+      const particleTimer = setTimeout(() => {
+        setShowParticleBurst(false);
+      }, 1600);
 
       prevRankRef.current = rank;
       return () => {
-        clearTimeout(bloomTimer);
-        clearTimeout(transTimer);
+        clearTimeout(timer);
+        clearTimeout(particleTimer);
       };
     }
+  }, [rank, enableConfetti]);
 
-    if (prevRankRef.current !== rank) {
-      setInternalTransitioning(true);
-      const timer = setTimeout(() => {
-        setInternalTransitioning(false);
-      }, 1200);
-      prevRankRef.current = rank;
-      return () => clearTimeout(timer);
+  // Handle external isPromoting prop
+  useEffect(() => {
+    if (isPromoting) {
+      setShowShockwave(true);
+      setShowParticleBurst(true);
+      playRankElevationChime(true);
+      if (enableConfetti) {
+        fireBadgeConfetti(rank);
+      }
+      const t = setTimeout(() => {
+        setShowShockwave(false);
+        setShowParticleBurst(false);
+      }, 1400);
+      return () => clearTimeout(t);
     }
-  }, [rank]);
+  }, [isPromoting, enableConfetti, rank]);
 
   const showPawnToKnightBloom = isPawnToKnightBloom || (isPromoting && rank === 'KNIGHT' && prevRankRef.current === 'PAWN');
   const isElevating = isPromoting || internalTransitioning || showPawnToKnightBloom;
@@ -460,12 +605,33 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
       <ChessCoin
         rank={rank}
         size={coinSizes[size]}
-        onClick={onClick}
+        onClick={(e) => {
+          if (onClick) onClick(e);
+        }}
         className={className}
         isElevating={isElevating}
       />
     );
   }
+
+  // DOM Confetti / Sparkle particle definitions (16 multi-directional particles)
+  const particles = [
+    { glyph: '✦', angle: 0, dist: 52, delay: 0, color: '#F472B6', size: '13px' },
+    { glyph: '★', angle: 25, dist: 68, delay: 60, color: '#A855F7', size: '12px' },
+    { glyph: '✧', angle: 50, dist: 48, delay: 120, color: '#38BDF8', size: '11px' },
+    { glyph: '●', angle: 75, dist: 60, delay: 40, color: '#FBBF24', size: '7px' },
+    { glyph: '✦', angle: 100, dist: 50, delay: 90, color: '#C026D3', size: '13px' },
+    { glyph: '◆', angle: 130, dist: 70, delay: 140, color: '#06B6D4', size: '9px' },
+    { glyph: '✧', angle: 155, dist: 46, delay: 30, color: '#FDA4AF', size: '11px' },
+    { glyph: '★', angle: 180, dist: 58, delay: 80, color: '#E879F9', size: '12px' },
+    { glyph: '●', angle: 205, dist: 64, delay: 110, color: '#F59E0B', size: '8px' },
+    { glyph: '✦', angle: 230, dist: 52, delay: 50, color: '#A855F7', size: '13px' },
+    { glyph: '✧', angle: 255, dist: 48, delay: 100, color: '#38BDF8', size: '11px' },
+    { glyph: '◆', angle: 280, dist: 66, delay: 70, color: '#F472B6', size: '9px' },
+    { glyph: '★', angle: 305, dist: 54, delay: 130, color: '#FDE047', size: '12px' },
+    { glyph: '✦', angle: 330, dist: 62, delay: 40, color: '#C084FC', size: '13px' },
+    { glyph: '●', angle: 350, dist: 44, delay: 90, color: '#67E8F9', size: '7px' },
+  ];
 
   // Simple Badge Variant with smooth scale & glow
   if (variant === 'badge') {
@@ -543,13 +709,26 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
 
   // Profile Flagship Variant with smooth scale, blooming radial aura & specular sheen
   return (
-    <div className="relative flex-1">
-      {/* 1. Ambient Radial Glow Aura Blooming Outward on Elevation */}
+    <div ref={badgeRef} className="relative flex-1">
+      {/* 1. Ambient Expanding Shockwave Pulse on Elevation */}
+      {showShockwave && (
+        <div
+          aria-hidden="true"
+          className="absolute -inset-3 rounded-3xl pointer-events-none z-10 animate-rank-shockwave"
+          style={{
+            border: `2px solid ${meta.glowColor}`,
+            boxShadow: `0 0 35px ${meta.glowColor}, inset 0 0 20px ${meta.glowColorSecondary}`,
+            borderRadius: '24px',
+          }}
+        />
+      )}
+
+      {/* 1b. Ambient Radial Glow Aura Blooming Outward on Elevation */}
       <div
         aria-hidden="true"
-        className={`absolute -inset-1.5 rounded-3xl blur-xl pointer-events-none transition-all duration-700 ${
+        className={`absolute -inset-2 rounded-3xl blur-xl pointer-events-none transition-all duration-700 ${
           isElevating
-            ? 'opacity-95 scale-108 animate-rank-glow-bloom'
+            ? 'opacity-95 scale-110 animate-rank-glow-bloom'
             : 'opacity-0 scale-95'
         }`}
         style={{
@@ -557,23 +736,51 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
         }}
       />
 
-      {/* 1b. Dedicated rankGlowBloom overlay triggering specifically on PAWN to KNIGHT transition */}
+      {/* 1c. Dedicated rankGlowBloom overlay triggering specifically on PAWN to KNIGHT transition */}
       {showPawnToKnightBloom && (
         <div
           aria-hidden="true"
-          className="absolute -inset-2.5 rounded-3xl pointer-events-none z-30 animate-rank-glow-bloom"
+          className="absolute -inset-3 rounded-3xl pointer-events-none z-30 animate-rank-glow-bloom"
           style={{
-            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.9) 0%, rgba(6, 182, 212, 0.55) 45%, rgba(192, 38, 211, 0.25) 70%, transparent 85%)',
-            filter: 'blur(10px)',
+            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.95) 0%, rgba(6, 182, 212, 0.6) 45%, rgba(192, 38, 211, 0.3) 70%, transparent 85%)',
+            filter: 'blur(12px)',
           }}
         />
+      )}
+
+      {/* 1d. Floating DOM Confetti & Starburst Particle Explosion */}
+      {showParticleBurst && (
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none z-40 overflow-visible">
+          {particles.map((p, idx) => {
+            const rad = (p.angle * Math.PI) / 180;
+            const tx = Math.cos(rad) * p.dist;
+            const ty = Math.sin(rad) * p.dist;
+            return (
+              <span
+                key={idx}
+                className="absolute left-1/2 top-1/2 select-none font-bold inline-block"
+                style={{
+                  color: p.color,
+                  fontSize: p.size,
+                  textShadow: `0 0 8px ${p.color}, 0 0 16px ${p.color}`,
+                  transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(1.15)`,
+                  opacity: 1,
+                  transition: `all 1.1s cubic-bezier(0.16, 1, 0.3, 1) ${p.delay}ms`,
+                  animation: `miniHeartPop 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${p.delay}ms forwards`,
+                }}
+              >
+                {p.glyph}
+              </span>
+            );
+          })}
+        </div>
       )}
 
       {/* 2. Main Badge Container with Smooth Scale & Dynamic Elevation Box Shadow */}
       <div
         onClick={onClick}
         className={`group relative flex items-center justify-between gap-3 p-3 rounded-2xl border transition-all duration-500 select-none overflow-hidden ${
-          isElevating ? 'animate-rank-elevation' : ''
+          isElevating ? 'animate-rank-elevation animate-rank-glory' : ''
         } ${
           onClick ? 'cursor-pointer hover:scale-[1.015] active:scale-[0.985]' : ''
         } ${className}`}
@@ -600,15 +807,16 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
             aria-hidden="true"
             className="absolute inset-0 rounded-2xl pointer-events-none z-20 animate-rank-glow-bloom"
             style={{
-              background: 'radial-gradient(ellipse at center, rgba(168, 85, 247, 0.4) 0%, rgba(6, 182, 212, 0.2) 50%, transparent 80%)',
+              background: 'radial-gradient(ellipse at center, rgba(168, 85, 247, 0.45) 0%, rgba(6, 182, 212, 0.25) 50%, transparent 80%)',
               mixBlendMode: 'screen',
             }}
           />
         )}
+
         {/* 3. Luminous Shimmer Sheen Wave Sweeping Across Periodically and on Elevation */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
           <div
-            className={`absolute -inset-full bg-gradient-to-r from-transparent via-white/35 to-transparent ${
+            className={`absolute -inset-full bg-gradient-to-r from-transparent via-white/40 to-transparent ${
               isElevating
                 ? 'animate-rank-sheen'
                 : periodicSheen
@@ -623,17 +831,18 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
           <div className="absolute inset-0 pointer-events-none flex items-center justify-around z-20">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping [animation-delay:0.1s]" />
             <span className="w-2 h-2 rounded-full bg-amber-300 animate-ping [animation-delay:0.25s]" />
-            <span className="w-1 h-1 rounded-full bg-pink-300 animate-ping [animation-delay:0.4s]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-300 animate-ping [animation-delay:0.35s]" />
+            <span className="w-1 h-1 rounded-full bg-pink-300 animate-ping [animation-delay:0.45s]" />
           </div>
         )}
 
         {/* 5. Left side: Emblem & Status Details */}
         <div className="flex items-center gap-3 min-w-0">
-          {/* Sculpted Emblem with Smooth Spring Scale */}
+          {/* Sculpted Emblem with Smooth Spring Scale and Insignia Pop */}
           <div
             className={`transition-all duration-700 ${
               isElevating
-                ? 'scale-115 rotate-6 duration-700'
+                ? 'animate-rank-insignia-pop'
                 : 'group-hover:scale-105'
             }`}
           >
@@ -660,7 +869,7 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
               </span>
               <span
                 className={`inline-flex items-center gap-1 text-[8.5px] font-black uppercase px-2 py-0.5 rounded-full border transition-all duration-500 ${meta.badgeBg} tracking-wider ${
-                  isElevating ? 'scale-105 shadow-xs' : ''
+                  isElevating ? 'scale-110 shadow-md ring-1 ring-white/40' : ''
                 }`}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
@@ -685,7 +894,7 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
           <div
             className={`px-2 py-0.5 rounded-md border text-[8.5px] font-mono font-bold tracking-wider transition-all duration-500 ${
               isElevating
-                ? 'scale-105 shadow-sm'
+                ? 'scale-110 shadow-sm ring-1 ring-white/30'
                 : ''
             } ${meta.badgeBg}`}
           >

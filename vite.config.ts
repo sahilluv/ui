@@ -8,7 +8,7 @@ function offlineApiPlugin(): Plugin {
     name: 'offline-api-plugin',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url === '/api/feed') {
+        if (req.url?.startsWith('/api/feed')) {
           res.setHeader('Content-Type', 'application/json');
           res.end(
             JSON.stringify({
@@ -79,7 +79,7 @@ function offlineApiPlugin(): Plugin {
           return;
         }
 
-        if (req.url === '/api/reels') {
+        if (req.url?.startsWith('/api/reels')) {
           res.setHeader('Content-Type', 'application/json');
           res.end(
             JSON.stringify({
