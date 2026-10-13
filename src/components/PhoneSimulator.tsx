@@ -3039,7 +3039,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   <span>Post</span>
                 </button>
 
-                {/* Shh! Login & Auth Screen */}
+                {/* Shadow Login & Auth Screen */}
                 <button
                   onClick={() => handleTabChange('auth')}
                   className={`h-10 px-3.5 rounded-full font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer border ${
@@ -3047,7 +3047,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                       ? 'bg-purple-500/15 hover:bg-purple-500/25 border-purple-500/40 text-purple-300'
                       : 'bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-700'
                   }`}
-                  title="Open Shh! Login Page"
+                  title="Open Shadow Login Page"
                 >
                   <LogIn size={14} />
                   <span>Login</span>
@@ -3172,7 +3172,7 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
           <div className="absolute inset-0 z-30 w-full h-full bg-[#7B52B9]">
             <ShhAuthScreen
               onAuthSuccess={(user) => {
-                triggerToast(`Welcome to Shh! Logged in as @${user.username}`, 'sparkles');
+                triggerToast(`Welcome to Shadow! Logged in as @${user.username}`, 'sparkles');
                 handleTabChange('home');
               }}
               onClose={() => handleTabChange('home')}

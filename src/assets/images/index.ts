@@ -14,4 +14,7 @@ export {
   shhGirlReading,
   shhCharacterPointing,
   shhGirlGlassesBun,
+  shhGirlReading as shadowGirlReading,
+  shhCharacterPointing as shadowCharacterPointing,
+  shhGirlGlassesBun as shadowGirlGlassesBun,
 };

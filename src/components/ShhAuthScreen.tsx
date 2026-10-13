@@ -15,11 +15,12 @@ import {
 } from '../assets/images';
 import { MangaArtwork } from './MangaArtwork';
 
-export type ShhAuthStep = 'welcome' | 'signup' | 'login';
+export type ShadowAuthStep = 'welcome' | 'signup' | 'login';
+export type ShhAuthStep = ShadowAuthStep;
 
-interface ShhAuthScreenProps {
+export interface ShadowAuthScreenProps {
   /** Current step to display: 'welcome', 'signup', or 'login' */
-  initialStep?: ShhAuthStep;
+  initialStep?: ShadowAuthStep;
   /** Callback when authentication completes successfully */
   onAuthSuccess?: (userData: { name: string; username: string; email: string }) => void;
   /** Callback to close or go back to main app */
@@ -27,12 +28,14 @@ interface ShhAuthScreenProps {
   /** Toast callback for status messages */
   onToast?: (msg: string, icon?: 'sparkles' | 'bookmark') => void;
   /** If true, locks the screen to the specified initialStep without internal step navigation */
-  lockedStep?: ShhAuthStep;
+  lockedStep?: ShadowAuthStep;
   /** Custom outer container classes */
   className?: string;
   /** Show phone status bar (9:30 AM, signal, battery) */
   showStatusBar?: boolean;
 }
+
+export type ShhAuthScreenProps = ShadowAuthScreenProps;
 
 // Google Official 4-color 'G' Logo SVG
 export const GoogleLogoIcon: React.FC<{ size?: number }> = ({ size = 18 }) => (
@@ -64,7 +67,7 @@ export const GoogleLogoIcon: React.FC<{ size?: number }> = ({ size = 18 }) => (
 );
 
 // Cellular Signal, WiFi & Battery Status Icons matching exact screenshot
-export const ShhStatusBar: React.FC = () => (
+export const ShadowStatusBar: React.FC = () => (
   <div className="w-full pt-2.5 pb-2 px-6 flex items-center justify-between text-black text-[11px] font-bold tracking-tight select-none z-30">
     <span>9:30 AM</span>
     <div className="flex items-center gap-1.5">
@@ -83,7 +86,9 @@ export const ShhStatusBar: React.FC = () => (
   </div>
 );
 
-export const ShhAuthScreen: React.FC<ShhAuthScreenProps> = ({
+export const ShhStatusBar = ShadowStatusBar;
+
+export const ShadowAuthScreen: React.FC<ShadowAuthScreenProps> = ({
   initialStep = 'welcome',
   onAuthSuccess,
   onClose,
@@ -92,7 +97,7 @@ export const ShhAuthScreen: React.FC<ShhAuthScreenProps> = ({
   className = '',
   showStatusBar = true,
 }) => {
-  const [step, setStep] = useState<ShhAuthStep>(lockedStep || initialStep);
+  const [step, setStep] = useState<ShadowAuthStep>(lockedStep || initialStep);
 
   // Form states
   const [name, setName] = useState('');
@@ -116,7 +121,7 @@ export const ShhAuthScreen: React.FC<ShhAuthScreenProps> = ({
         username: 'alex_rivera',
         email: 'alex.rivera@gmail.com',
       };
-      onToast?.('Welcome to Shh! Signed in with Google 🎉', 'sparkles');
+      onToast?.('Welcome to Shadow! Signed in with Google 🎉', 'sparkles');
       onAuthSuccess?.(googleUser);
     }, 900);
   };
@@ -135,11 +140,11 @@ export const ShhAuthScreen: React.FC<ShhAuthScreenProps> = ({
     setTimeout(() => {
       setIsLoading(false);
       const newUser = {
-        name: name || 'Whisperer',
-        username: username || 'shh_user',
+        name: name || 'Shadow User',
+        username: username || 'shadow_user',
         email: email,
       };
-      onToast?.('Account created! Welcome to Shh! ✨', 'sparkles');
+      onToast?.('Account created! Welcome to Shadow! ✨', 'sparkles');
       onAuthSuccess?.(newUser);
     }, 800);
   };
@@ -158,9 +163,9 @@ export const ShhAuthScreen: React.FC<ShhAuthScreenProps> = ({
     setTimeout(() => {
       setIsLoading(false);
       const loggedUser = {
-        name: username || 'Whisperer',
-        username: username || 'whisper_echo',
-        email: email || `${username}@shh.network`,
+        name: username || 'Shadow User',
+        username: username || 'shadow_user',
+        email: email || `${username}@shadow.network`,
       };
       onToast?.(`Welcome back, @${loggedUser.username}! 🚀`, 'sparkles');
       onAuthSuccess?.(loggedUser);
@@ -244,10 +249,10 @@ export const ShhAuthScreen: React.FC<ShhAuthScreenProps> = ({
             <h1 className="text-white text-[32px] sm:text-[34px] font-black tracking-tight leading-[1.12]">
               Welcome To
               <br />
-              Shh!
+              Shadow 
             </h1>
             <p className="text-[#1F1F2E] text-[13px] sm:text-[14px] font-extrabold leading-snug mt-3.5 max-w-[260px]">
-              A Hub Where Whispers Echo Loudest
+              another you
             </p>
           </div>
 
@@ -295,14 +300,14 @@ export const ShhAuthScreen: React.FC<ShhAuthScreenProps> = ({
       )}
 
       {/* ========================================================= */}
-      {/* SCREEN 2: SIGN UP TO SHH!                                */}
+      {/* SCREEN 2: SIGN UP TO SHADOW!                             */}
       {/* ========================================================= */}
       {activeStep === 'signup' && (
         <div className="relative flex-1 flex flex-col justify-between px-6 pt-3 pb-0 animate-in fade-in duration-300">
           <div className="relative z-20 flex flex-col gap-3.5">
             {/* Header Title */}
             <h2 className="text-white text-2xl font-black text-center tracking-tight drop-shadow-sm pt-1">
-              Sign up to Shh!
+              Sign up to Shadow!
             </h2>
 
             {/* Google Social Button */}
@@ -433,14 +438,14 @@ export const ShhAuthScreen: React.FC<ShhAuthScreenProps> = ({
       )}
 
       {/* ========================================================= */}
-      {/* SCREEN 3: LOG IN TO SHH!                                 */}
+      {/* SCREEN 3: LOG IN TO SHADOW!                              */}
       {/* ========================================================= */}
       {activeStep === 'login' && (
         <div className="relative flex-1 flex flex-col justify-between px-6 pt-3 pb-0 animate-in fade-in duration-300">
           <div className="relative z-20 flex flex-col gap-3.5">
             {/* Header Title */}
             <h2 className="text-white text-2xl font-black text-center tracking-tight drop-shadow-sm pt-1">
-              Log in to Shh!
+              Log in to Shadow!
             </h2>
 
             {/* Google Social Button */}
@@ -555,3 +560,5 @@ export const ShhAuthScreen: React.FC<ShhAuthScreenProps> = ({
     </div>
   );
 };
+
+export const ShhAuthScreen = ShadowAuthScreen;
