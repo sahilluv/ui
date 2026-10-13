@@ -12,13 +12,15 @@ import {
   Moon,
   Sun,
   Sparkles,
+  LogIn,
 } from 'lucide-react';
 import { PhoneSimulator, TabType } from './components/PhoneSimulator';
 import { StoryViewerModal } from './components/StoryViewerModal';
 import { ExpoCodeViewer } from './components/ExpoCodeViewer';
+import { ShhAuthScreen } from './components/ShhAuthScreen';
 import { StoryItem, INITIAL_STORIES } from './data/mockData';
 
-type AppViewMode = 'single' | 'side-by-side' | 'gallery' | 'code';
+type AppViewMode = 'single' | 'side-by-side' | 'gallery' | 'code' | 'shh-auth';
 
 export default function App() {
   const [viewMode, setViewMode] = useState<AppViewMode>('single');
@@ -132,6 +134,19 @@ export default function App() {
             <span className="hidden sm:inline">Monorepo & Expo Code</span>
             <span className="sm:hidden">Code</span>
           </button>
+
+          <button
+            onClick={() => setViewMode('shh-auth')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+              viewMode === 'shh-auth'
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
+                : 'text-purple-400 hover:text-white bg-purple-500/10 hover:bg-purple-500/20'
+            }`}
+          >
+            <LogIn size={14} />
+            <span className="hidden sm:inline">Shh! Login & Auth (3 Screens)</span>
+            <span className="sm:hidden">Shh! Auth</span>
+          </button>
         </div>
 
         {/* Global Brand Indicator */}
@@ -164,6 +179,7 @@ export default function App() {
                   { id: 'reels', label: '🎬 Reels' },
                   { id: 'chat', label: 'Messages' },
                   { id: 'profile', label: 'Profile' },
+                  { id: 'auth', label: '🔐 Shh! Login' },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -320,6 +336,83 @@ export default function App() {
         {viewMode === 'code' && (
           <div className="flex-1 p-4 sm:p-8 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
             <ExpoCodeViewer />
+          </div>
+        )}
+
+        {/* VIEW 5: SHH! AUTH EXPERIENCE (EXACT 3 SCREENS MATCHING UPLOADED UI) */}
+        {viewMode === 'shh-auth' && (
+          <div className="flex-1 overflow-x-auto p-4 sm:p-8 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
+            <div className="max-w-4xl mx-auto mb-6 text-center">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-bold shadow-md">
+                <Sparkles size={13} className="text-pink-400" />
+                Shh! Authentication Flow — Exact 3 Screens
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-white mt-2 tracking-tight">
+                Welcome, Sign Up, and Log In Screens
+              </h2>
+              <p className="text-xs text-slate-400 mt-1 max-w-lg mx-auto">
+                Features the exact vibrant purple canvas, Google 4-color sign-in, clean white pill inputs, and black-and-white manga character illustrations.
+              </p>
+              <div className="mt-3 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => {
+                    setViewMode('single');
+                    setCurrentTab('auth');
+                  }}
+                  className="px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-95 active:scale-95 text-white text-xs font-bold shadow-lg shadow-purple-500/25 flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Smartphone size={13} />
+                  <span>Test in Live Interactive Phone</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="min-w-fit mx-auto flex items-start justify-center gap-6 sm:gap-8 pb-12">
+              {/* Screen 1: Welcome To Shh! */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  Screen 1: Welcome To Shh!
+                </span>
+                <div className="w-[360px] h-[740px] rounded-[44px] border-[7px] border-[#1C1E2B] shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col bg-[#7B52B9] relative">
+                  <ShhAuthScreen
+                    lockedStep="welcome"
+                    showStatusBar={true}
+                    onToast={(msg) => console.log(msg)}
+                  />
+                </div>
+              </div>
+
+              {/* Screen 2: Sign up to Shh! */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  Screen 2: Sign up to Shh!
+                </span>
+                <div className="w-[360px] h-[740px] rounded-[44px] border-[7px] border-[#1C1E2B] shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col bg-[#7B52B9] relative">
+                  <ShhAuthScreen
+                    lockedStep="signup"
+                    showStatusBar={true}
+                    onToast={(msg) => console.log(msg)}
+                  />
+                </div>
+              </div>
+
+              {/* Screen 3: Log in to Shh! */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  Screen 3: Log in to Shh!
+                </span>
+                <div className="w-[360px] h-[740px] rounded-[44px] border-[7px] border-[#1C1E2B] shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col bg-[#7B52B9] relative">
+                  <ShhAuthScreen
+                    lockedStep="login"
+                    showStatusBar={true}
+                    onToast={(msg) => console.log(msg)}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </main>

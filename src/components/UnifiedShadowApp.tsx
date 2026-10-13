@@ -47,6 +47,7 @@ import { MyShadowScreen } from './MyShadowScreen';
 import { darkColors, lightColors, shadowGradients, ThemeColors } from '../../expo-code/src/theme';
 import { generateMoreFeedPosts, generateMoreReelData } from '../utils/endlessScrollData';
 import { ReelCircularProgress } from './ReelCircularProgress';
+import { ReelSwipeIndicator } from './ReelSwipeIndicator';
 
 export type UnifiedTab = 'home' | 'explore' | 'reels' | 'create' | 'notifications' | 'profile';
 
@@ -758,6 +759,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
   const [reelSwipeStartY, setReelSwipeStartY] = useState<number | null>(null);
   const [reelSwipeDeltaX, setReelSwipeDeltaX] = useState<number>(0);
   const [isSwipingReels, setIsSwipingReels] = useState(false);
+  const hasThresholdHapticFiredRef = useRef(false);
 
   const handleReelsTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
     if ('button' in e && e.button !== 0) return;
@@ -767,6 +769,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     setReelSwipeStartY(clientY);
     setReelSwipeDeltaX(0);
     setIsSwipingReels(true);
+    hasThresholdHapticFiredRef.current = false;
   };
 
   const handleReelsTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
@@ -779,12 +782,22 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     // Engaged when horizontal movement is greater than vertical movement
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 8) {
       setReelSwipeDeltaX(diffX);
+      const isPastThreshold = Math.abs(diffX) >= 50;
+      if (isPastThreshold && !hasThresholdHapticFiredRef.current) {
+        hasThresholdHapticFiredRef.current = true;
+        if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+          navigator.vibrate(14);
+        }
+      } else if (!isPastThreshold && hasThresholdHapticFiredRef.current && Math.abs(diffX) < 46) {
+        hasThresholdHapticFiredRef.current = false;
+      }
     }
   };
 
   const handleReelsTouchEnd = () => {
     if (!isSwipingReels) return;
     setIsSwipingReels(false);
+    hasThresholdHapticFiredRef.current = false;
 
     // If swipe threshold passed (> 50px)
     if (reelSwipeDeltaX < -50) {
@@ -971,21 +984,14 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 transition: isSwipingReels ? 'none' : 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
               }}
             >
-              {/* Swipe Right Visual Cue: Return to Feed */}
-              {isSwipingReels && reelSwipeDeltaX > 20 && (
-                <div className="fixed left-6 top-1/2 -translate-y-1/2 z-50 bg-black/85 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-2 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
-                  <ChevronLeft size={16} className="text-[#FF0A78]" />
-                  <span>Return to Feed</span>
-                </div>
-              )}
-
-              {/* Swipe Left Visual Cue: View Profile */}
-              {isSwipingReels && reelSwipeDeltaX < -20 && (
-                <div className="fixed right-6 top-1/2 -translate-y-1/2 z-50 bg-black/85 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-2 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
-                  <span>View Profile</span>
-                  <ChevronRight size={16} className="text-[#991BEA]" />
-                </div>
-              )}
+              {/* Enhanced Reel Swipe Gesture Feedback Indicator with 50px Threshold Icon Shift */}
+              <ReelSwipeIndicator
+                isSwiping={isSwipingReels}
+                deltaX={reelSwipeDeltaX}
+                threshold={50}
+                positionMode="fixed"
+                authorUsername="Creator"
+              />
 
               {reels.map((reel) => {
                 const isPaused = !!pausedReels[reel.id];

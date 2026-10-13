@@ -44,6 +44,7 @@ import {
   Clock,
   ArrowUpRight,
   Camera,
+  LogIn,
 } from 'lucide-react';
 import {
   PawnRankBadge,
@@ -93,8 +94,9 @@ import { PullUpRefresh } from './PullUpRefresh';
 import { ReelCard } from './ReelCard';
 import { useReelIntersectionObserver } from '../hooks/useReelIntersectionObserver';
 import { MyShadowScreen } from './MyShadowScreen';
+import { ShhAuthScreen } from './ShhAuthScreen';
 
-export type TabType = 'home' | 'explore' | 'reels' | 'shop' | 'chat' | 'create' | 'notifications' | 'profile';
+export type TabType = 'home' | 'explore' | 'reels' | 'shop' | 'chat' | 'create' | 'notifications' | 'profile' | 'auth';
 
 export interface MockExploreProfile {
   id: string;
@@ -956,36 +958,38 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
       )}
 
       {/* 1. Phone Top Notch & Status Bar (9:41, Icons) */}
-      <div
-        className={`pt-3 pb-1 px-7 flex items-center justify-between text-xs font-semibold ${
-          currentTab === 'reels'
-            ? 'absolute top-0 left-0 right-0 z-30 pointer-events-none text-white drop-shadow-md'
-            : 'relative z-20 shrink-0'
-        }`}
-      >
-        <span className={currentTab === 'reels' ? 'text-white font-bold' : isDark ? 'text-white' : 'text-slate-900'}>
-          9:41
-        </span>
-        <div className="w-24 h-4 bg-black/80 rounded-full flex items-center justify-center">
-          <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
-        </div>
-        <div className={`flex items-center gap-1.5 opacity-80 ${currentTab === 'reels' ? 'text-white' : ''}`}>
-          {/* Signal */}
-          <div className="flex items-end gap-0.5 h-2.5">
-            <span className="w-0.5 h-1 bg-current rounded-xs" />
-            <span className="w-0.5 h-1.5 bg-current rounded-xs" />
-            <span className="w-0.5 h-2 bg-current rounded-xs" />
-            <span className="w-0.5 h-2.5 bg-current rounded-xs" />
+      {currentTab !== 'auth' && (
+        <div
+          className={`pt-3 pb-1 px-7 flex items-center justify-between text-xs font-semibold ${
+            currentTab === 'reels'
+              ? 'absolute top-0 left-0 right-0 z-30 pointer-events-none text-white drop-shadow-md'
+              : 'relative z-20 shrink-0'
+          }`}
+        >
+          <span className={currentTab === 'reels' ? 'text-white font-bold' : isDark ? 'text-white' : 'text-slate-900'}>
+            9:41
+          </span>
+          <div className="w-24 h-4 bg-black/80 rounded-full flex items-center justify-center">
+            <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
           </div>
-          {/* Battery */}
-          <div className="w-5 h-2.5 border border-current rounded-xs p-0.5 flex items-center">
-            <div className="w-3 h-1.5 bg-current rounded-xs" />
+          <div className={`flex items-center gap-1.5 opacity-80 ${currentTab === 'reels' ? 'text-white' : ''}`}>
+            {/* Signal */}
+            <div className="flex items-end gap-0.5 h-2.5">
+              <span className="w-0.5 h-1 bg-current rounded-xs" />
+              <span className="w-0.5 h-1.5 bg-current rounded-xs" />
+              <span className="w-0.5 h-2 bg-current rounded-xs" />
+              <span className="w-0.5 h-2.5 bg-current rounded-xs" />
+            </div>
+            {/* Battery */}
+            <div className="w-5 h-2.5 border border-current rounded-xs p-0.5 flex items-center">
+              <div className="w-3 h-1.5 bg-current rounded-xs" />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* 2. Top Header (Shared between main screens) */}
-      {currentTab !== 'create' && currentTab !== 'reels' && !isViewingMyShadow && (
+      {currentTab !== 'create' && currentTab !== 'reels' && currentTab !== 'auth' && !isViewingMyShadow && (
         <header className="h-13 px-5 flex items-center justify-between shrink-0 z-10">
           {/* Left Action: Dedicated Shadow navigation tab on Home feed, Plus (+) ONLY on Profile */}
           {currentTab === 'home' ? (
@@ -3034,6 +3038,20 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
                   <Plus size={15} strokeWidth={2.6} />
                   <span>Post</span>
                 </button>
+
+                {/* Shh! Login & Auth Screen */}
+                <button
+                  onClick={() => handleTabChange('auth')}
+                  className={`h-10 px-3.5 rounded-full font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer border ${
+                    isDark
+                      ? 'bg-purple-500/15 hover:bg-purple-500/25 border-purple-500/40 text-purple-300'
+                      : 'bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-700'
+                  }`}
+                  title="Open Shh! Login Page"
+                >
+                  <LogIn size={14} />
+                  <span>Login</span>
+                </button>
               </div>
             </div>
 
@@ -3146,12 +3164,29 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
             </div>
           </div>
         )}
+
+        {/* ======================================= */}
+        {/* SCREEN 7: SHH AUTH (Welcome, Sign Up, Log In) */}
+        {/* ======================================= */}
+        {currentTab === 'auth' && (
+          <div className="absolute inset-0 z-30 w-full h-full bg-[#7B52B9]">
+            <ShhAuthScreen
+              onAuthSuccess={(user) => {
+                triggerToast(`Welcome to Shh! Logged in as @${user.username}`, 'sparkles');
+                handleTabChange('home');
+              }}
+              onClose={() => handleTabChange('home')}
+              onToast={triggerToast}
+              showStatusBar={true}
+            />
+          </div>
+        )}
       </>
     )}
   </div>
 
       {/* 4. Modular BottomNavigation with Notification button in place of duplicate profile button */}
-      {(!activeChatUserId || (currentTab !== 'chat' && currentTab !== 'shop')) && (
+      {currentTab !== 'auth' && (!activeChatUserId || (currentTab !== 'chat' && currentTab !== 'shop')) && (
         <BottomNavigation
           currentTab={currentTab === 'shop' ? 'explore' : currentTab}
           onTabChange={(tab) => {

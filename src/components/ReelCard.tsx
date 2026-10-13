@@ -19,6 +19,7 @@ import { ReelItem } from '../data/mockData';
 import { PawnRankBadge } from './PawnRankBadge';
 import { PreloadStatus } from '../utils/reelPreloader';
 import { ReelCircularProgress } from './ReelCircularProgress';
+import { ReelSwipeIndicator } from './ReelSwipeIndicator';
 
 interface ReelCardProps {
   reel: ReelItem;
@@ -124,21 +125,13 @@ export const ReelCard: React.FC<ReelCardProps> = ({
         transition: isSwipingReel ? 'none' : 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
       }}
     >
-      {/* Swipe Right Visual Cue: Return to Feed */}
-      {isSwipingReel && reelSwipeDeltaX > 20 && (
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-[10px] text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
-          <ChevronLeft size={16} className="text-[#FF0A78]" />
-          <span>Return to Feed</span>
-        </div>
-      )}
-
-      {/* Swipe Left Visual Cue: View Creator Profile */}
-      {isSwipingReel && reelSwipeDeltaX < -20 && (
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-[10px] text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
-          <span>@{reel.author.username}</span>
-          <ChevronRight size={16} className="text-[#991BEA]" />
-        </div>
-      )}
+      {/* Enhanced Reel Swipe Gesture Feedback Indicator with 50px Threshold Icon Shift */}
+      <ReelSwipeIndicator
+        isSwiping={isSwipingReel}
+        deltaX={reelSwipeDeltaX}
+        threshold={50}
+        authorUsername={reel.author.username}
+      />
       {/* Background Poster Image if provided */}
       {reel.posterUrl && (
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
