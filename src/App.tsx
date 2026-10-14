@@ -17,16 +17,25 @@ import {
 import { PhoneSimulator, TabType } from './components/PhoneSimulator';
 import { StoryViewerModal } from './components/StoryViewerModal';
 import { ExpoCodeViewer } from './components/ExpoCodeViewer';
-import { ShhAuthScreen } from './components/ShhAuthScreen';
+import { ShadowAuthScreen } from './components/ShadowAuthScreen';
+import { ShadowBackgroundDesign } from './components/ShadowBackgroundDesign';
 import { StoryItem, INITIAL_STORIES } from './data/mockData';
 
-type AppViewMode = 'single' | 'side-by-side' | 'gallery' | 'code' | 'shh-auth';
+type AppViewMode = 'single' | 'side-by-side' | 'gallery' | 'code' | 'shadow-auth';
 
 export default function App() {
-  const [viewMode, setViewMode] = useState<AppViewMode>('single');
+  const [viewMode, setViewMode] = useState<AppViewMode>('shadow-auth');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(true);
   const [activeStory, setActiveStory] = useState<StoryItem | null>(null);
   const [currentTab, setCurrentTab] = useState<TabType>('home');
+
+  const showAppToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((curr) => (curr === msg ? null : curr));
+    }, 3200);
+  };
 
   const toggleTheme = () => {
     setIsDark((prev) => !prev);
@@ -84,6 +93,19 @@ export default function App() {
         {/* View Mode Switcher */}
         <div className="flex items-center p-1 bg-white/5 border border-white/10 rounded-2xl gap-1">
           <button
+            onClick={() => setViewMode('shadow-auth')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+              viewMode === 'shadow-auth'
+                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 text-white shadow-md shadow-purple-500/25'
+                : 'text-purple-300 hover:text-white bg-purple-500/10 hover:bg-purple-500/20'
+            }`}
+          >
+            <Sparkles size={14} className={viewMode === 'shadow-auth' ? 'text-pink-300' : 'text-purple-400'} />
+            <span className="hidden sm:inline">Shadow Auth (3 Screens)</span>
+            <span className="sm:hidden">Auth UI</span>
+          </button>
+
+          <button
             onClick={() => setViewMode('single')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
               viewMode === 'single'
@@ -105,7 +127,7 @@ export default function App() {
             }`}
           >
             <Columns3 size={14} />
-            <span className="hidden sm:inline">3 Mockups Side-by-Side</span>
+            <span className="hidden sm:inline">3 App Mockups</span>
             <span className="sm:hidden">3 Phones</span>
           </button>
 
@@ -131,21 +153,8 @@ export default function App() {
             }`}
           >
             <Code size={14} />
-            <span className="hidden sm:inline">Monorepo & Expo Code</span>
+            <span className="hidden sm:inline">Monorepo Code</span>
             <span className="sm:hidden">Code</span>
-          </button>
-
-          <button
-            onClick={() => setViewMode('shh-auth')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              viewMode === 'shh-auth'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
-                : 'text-purple-400 hover:text-white bg-purple-500/10 hover:bg-purple-500/20'
-            }`}
-          >
-            <LogIn size={14} />
-            <span className="hidden sm:inline">Shadow Login & Auth (3 Screens)</span>
-            <span className="sm:hidden">Shadow Auth</span>
           </button>
         </div>
 
@@ -339,76 +348,110 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 5: SHADOW AUTH EXPERIENCE (EXACT 3 SCREENS MATCHING UPLOADED UI) */}
-        {viewMode === 'shh-auth' && (
-          <div className="flex-1 overflow-x-auto p-4 sm:p-8 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
-            <div className="max-w-4xl mx-auto mb-6 text-center">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-bold shadow-md">
-                <Sparkles size={13} className="text-pink-400" />
-                Shadow Authentication Flow — Exact 3 Screens
+        {/* VIEW 5: SHADOW AUTH EXPERIENCE (EXACT 3 SCREENS MATCHING REFERENCE IMAGE) */}
+        {viewMode === 'shadow-auth' && (
+          <div
+            className="relative flex-1 overflow-x-auto p-4 sm:p-8 min-h-[calc(100vh-4rem)] flex flex-col justify-start"
+            style={{
+              background: 'linear-gradient(180deg, #090616 0%, #120C29 45%, #080514 100%)',
+            }}
+          >
+            {/* Atmospheric Celestial Presentation Backdrop */}
+            <ShadowBackgroundDesign screenType="presentation" />
+
+            <div className="relative z-10 max-w-4xl mx-auto mb-6 text-center">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-purple-500/30 text-white text-xs font-bold shadow-lg">
+                <Sparkles size={13} className="text-purple-300" />
+                Shadow Authentication Experience • 3 Rebuilt Screens
               </span>
-              <h2 className="text-xl sm:text-2xl font-black text-white mt-2 tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-black text-white mt-2 tracking-tight drop-shadow-md">
                 Welcome, Sign Up, and Log In Screens
               </h2>
-              <p className="text-xs text-slate-400 mt-1 max-w-lg mx-auto">
-                Features the exact vibrant purple canvas, Google 4-color sign-in, clean white pill inputs, and black-and-white manga character illustrations.
+              <p className="text-xs text-purple-200/90 mt-1 max-w-lg mx-auto font-medium drop-shadow-sm">
+                Near-black navy-purple canvas, handwritten italic purple Shadow logo, purple gradient buttons with circular arrows, mint-green accents, and pen-and-ink manga illustrations.
               </p>
-              <div className="mt-3 flex items-center justify-center gap-2">
+
+              {/* Controls bar: Navigation and simulator links */}
+              <div className="mt-3.5 flex flex-wrap items-center justify-center gap-2.5">
                 <button
                   onClick={() => {
                     setViewMode('single');
                     setCurrentTab('auth');
+                    showAppToast('Switched to Single Interactive Phone');
                   }}
-                  className="px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-95 active:scale-95 text-white text-xs font-bold shadow-lg shadow-purple-500/25 flex items-center gap-1.5 transition-all cursor-pointer"
+                  className="px-4 py-1.5 rounded-full bg-black hover:bg-neutral-900 active:scale-95 text-white text-xs font-black shadow-xl flex items-center gap-1.5 transition-all cursor-pointer border border-white/15"
                 >
                   <Smartphone size={13} />
-                  <span>Test in Live Interactive Phone</span>
+                  <span>Test Single Interactive Phone</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setViewMode('single');
+                    setCurrentTab('home');
+                    showAppToast('Opening Shadow Feed & Community Mesh');
+                  }}
+                  className="px-3.5 py-1.5 rounded-full bg-purple-900/40 hover:bg-purple-800/50 backdrop-blur-md border border-purple-500/30 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
+                >
+                  <span>Explore Shadow App →</span>
                 </button>
               </div>
             </div>
 
-            <div className="min-w-fit mx-auto flex items-start justify-center gap-6 sm:gap-8 pb-12">
-              {/* Screen 1: Welcome To Shadow! */}
+            <div className="relative z-10 min-w-fit mx-auto flex items-start justify-center gap-6 sm:gap-8 pb-12">
+              {/* Screen 1: Welcome To Shadow */}
               <div className="flex flex-col items-center gap-3">
-                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-black/60 backdrop-blur-md border border-purple-500/30 text-white text-xs font-bold shadow-lg">
                   <span className="w-2 h-2 rounded-full bg-purple-400" />
                   Screen 1: Welcome To Shadow
                 </span>
-                <div className="w-[360px] h-[740px] rounded-[44px] border-[7px] border-[#1C1E2B] shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col bg-[#7B52B9] relative">
-                  <ShhAuthScreen
+                <div className="w-[360px] h-[740px] rounded-[46px] border-[8px] border-[#181924] shadow-[0_30px_70px_rgba(5,3,15,0.9)] overflow-hidden flex flex-col bg-[#0B081A] relative">
+                  <ShadowAuthScreen
                     lockedStep="welcome"
                     showStatusBar={true}
-                    onToast={(msg) => console.log(msg)}
+                    brandName="Shadow"
+                    onToast={showAppToast}
+                    onAuthSuccess={(user) => {
+                      showAppToast(`Welcome to Shadow! Signed in as @${user.username} 🎉`);
+                    }}
                   />
                 </div>
               </div>
 
-              {/* Screen 2: Sign up to Shadow! */}
+              {/* Screen 2: Sign up to Shadow */}
               <div className="flex flex-col items-center gap-3">
-                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-black/60 backdrop-blur-md border border-purple-500/30 text-white text-xs font-bold shadow-lg">
                   <span className="w-2 h-2 rounded-full bg-purple-400" />
-                  Screen 2: Sign up to Shadow!
+                  Screen 2: Sign up to Shadow
                 </span>
-                <div className="w-[360px] h-[740px] rounded-[44px] border-[7px] border-[#1C1E2B] shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col bg-[#7B52B9] relative">
-                  <ShhAuthScreen
+                <div className="w-[360px] h-[740px] rounded-[46px] border-[8px] border-[#181924] shadow-[0_30px_70px_rgba(5,3,15,0.9)] overflow-hidden flex flex-col bg-[#0B081A] relative">
+                  <ShadowAuthScreen
                     lockedStep="signup"
                     showStatusBar={true}
-                    onToast={(msg) => console.log(msg)}
+                    brandName="Shadow"
+                    onToast={showAppToast}
+                    onAuthSuccess={(user) => {
+                      showAppToast(`Account created! Welcome to Shadow, @${user.username} ✨`);
+                    }}
                   />
                 </div>
               </div>
 
-              {/* Screen 3: Log in to Shadow! */}
+              {/* Screen 3: Log in to Shadow */}
               <div className="flex flex-col items-center gap-3">
-                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-black/60 backdrop-blur-md border border-purple-500/30 text-white text-xs font-bold shadow-lg">
                   <span className="w-2 h-2 rounded-full bg-purple-400" />
-                  Screen 3: Log in to Shadow!
+                  Screen 3: Log in to Shadow
                 </span>
-                <div className="w-[360px] h-[740px] rounded-[44px] border-[7px] border-[#1C1E2B] shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col bg-[#7B52B9] relative">
-                  <ShhAuthScreen
+                <div className="w-[360px] h-[740px] rounded-[46px] border-[8px] border-[#181924] shadow-[0_30px_70px_rgba(5,3,15,0.9)] overflow-hidden flex flex-col bg-[#0B081A] relative">
+                  <ShadowAuthScreen
                     lockedStep="login"
                     showStatusBar={true}
-                    onToast={(msg) => console.log(msg)}
+                    brandName="Shadow"
+                    onToast={showAppToast}
+                    onAuthSuccess={(user) => {
+                      showAppToast(`Welcome back to Shadow, @${user.username} 🚀`);
+                    }}
                   />
                 </div>
               </div>
@@ -416,6 +459,14 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-black/90 backdrop-blur-md border border-white/20 text-white text-xs font-bold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <Sparkles size={14} className="text-pink-400 animate-pulse" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
       {/* 3. Interactive Fullscreen Story Viewer Modal */}
       <StoryViewerModal

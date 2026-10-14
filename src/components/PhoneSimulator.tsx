@@ -94,7 +94,7 @@ import { PullUpRefresh } from './PullUpRefresh';
 import { ReelCard } from './ReelCard';
 import { useReelIntersectionObserver } from '../hooks/useReelIntersectionObserver';
 import { MyShadowScreen } from './MyShadowScreen';
-import { ShhAuthScreen } from './ShhAuthScreen';
+import { ShadowAuthScreen } from './ShadowAuthScreen';
 
 export type TabType = 'home' | 'explore' | 'reels' | 'shop' | 'chat' | 'create' | 'notifications' | 'profile' | 'auth';
 
@@ -3166,16 +3166,16 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
         )}
 
         {/* ======================================= */}
-        {/* SCREEN 7: SHH AUTH (Welcome, Sign Up, Log In) */}
+        {/* SCREEN 7: SHADOW AUTH (Welcome, Sign Up, Log In) */}
         {/* ======================================= */}
         {currentTab === 'auth' && (
-          <div className="absolute inset-0 z-30 w-full h-full bg-[#7B52B9]">
-            <ShhAuthScreen
+          <div className="absolute inset-0 z-30 w-full h-full bg-[#0B081A]">
+            <ShadowAuthScreen
+              brandName="Shadow"
               onAuthSuccess={(user) => {
                 triggerToast(`Welcome to Shadow! Logged in as @${user.username}`, 'sparkles');
                 handleTabChange('home');
               }}
-              onClose={() => handleTabChange('home')}
               onToast={triggerToast}
               showStatusBar={true}
             />
