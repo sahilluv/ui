@@ -1392,22 +1392,38 @@ export const PhoneSimulator: React.FC<PhoneSimulatorProps> = ({
 
                         {/* Floating Bottom Engagement Controls */}
                         <div className="mt-auto flex items-center justify-between pt-2">
-                          {/* Purple Heart Like Pill */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleLikePost(post.id);
-                            }}
-                            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-white text-xs font-bold shadow-lg shadow-purple-950/50 active:scale-95 transition-transform cursor-pointer ${
-                              post.isLiked ? 'bg-[#7B52B9] border border-[#D4C4EB]/50' : 'bg-black/70 backdrop-blur-md border border-white/20'
-                            }`}
-                          >
-                            <Heart
-                              size={14}
-                              className={post.isLiked ? 'fill-white text-white scale-110' : 'fill-white text-white'}
-                            />
-                            <span>{post.likesCount.toLocaleString()}</span>
-                          </button>
+                          {/* Like Button & Count Pill matching reference */}
+                          <div className="flex items-center gap-1.5">
+                            {/* Bright pink circular button with a white heart icon */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleLikePost(post.id);
+                              }}
+                              className={`w-7.5 h-7.5 rounded-full bg-[#FF1E62] hover:bg-[#FF0A54] active:scale-90 flex items-center justify-center text-white shadow-md shadow-pink-900/40 transition-all cursor-pointer ${
+                                post.isLiked ? 'scale-105 ring-2 ring-white/70' : ''
+                              }`}
+                              title={post.isLiked ? 'Liked' : 'Like'}
+                              aria-label="Like post"
+                            >
+                              <Heart
+                                size={14}
+                                className="fill-white text-white"
+                              />
+                            </button>
+
+                            {/* Small, light-grey rounded pill immediately to the right, displaying 4,558 */}
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleLikePost(post.id);
+                              }}
+                              className="px-2 py-0.5 rounded-full bg-[#E5E5EA]/95 backdrop-blur-xs text-[#1C1C1E] text-[10.5px] font-bold shadow-xs select-none cursor-pointer leading-none flex items-center justify-center"
+                              title={`${post.likesCount.toLocaleString()} likes`}
+                            >
+                              {post.likesCount.toLocaleString()}
+                            </div>
+                          </div>
 
                           {/* Pagination Dots (Interactive) */}
                           <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full border border-white/10">
