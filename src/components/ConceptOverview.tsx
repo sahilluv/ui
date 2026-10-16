@@ -47,7 +47,7 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
           {/* Left Column: Light Mode Feed */}
           <div className="flex flex-col items-center">
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-slate-800/80 border border-white/10 text-[11px] font-semibold text-slate-300">
-              <span className="w-2 h-2 rounded-full bg-pink-500" />
+              <span className="w-2 h-2 rounded-full bg-[#7B52B9]" />
               Feed / Home (Light Mode)
             </div>
             <div className="transform hover:scale-[1.01] transition-transform duration-300">
@@ -80,8 +80,8 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
 
           {/* Right Column: Light Mode Profile */}
           <div className="flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-pink-950/60 border border-pink-500/30 text-[11px] font-semibold text-pink-200">
-              <span className="w-2 h-2 rounded-full bg-pink-400" />
+            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-[#1C0D36] border border-[#7B52B9]/30 text-[11px] font-semibold text-[#D4C4EB]">
+              <span className="w-2 h-2 rounded-full bg-[#7B52B9]" />
               Profile Mauricio Lopez (Light Mode)
             </div>
             <div className="transform hover:scale-[1.01] transition-transform duration-300">
@@ -98,8 +98,8 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
 
         {/* Row 3: Reels UI (Matching Reference Screenshot - Eliott Johnson & Christian Lue) */}
         <div className="flex flex-col items-center mt-6">
-          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-gradient-to-r from-purple-900/60 to-pink-900/60 border border-pink-500/30 text-[11px] font-semibold text-pink-200">
-            <span className="w-2 h-2 rounded-full bg-pink-400" />
+          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-gradient-to-r from-[#1C0D36] to-[#2B1048] border border-[#7B52B9]/30 text-[11px] font-semibold text-[#D4C4EB]">
+            <span className="w-2 h-2 rounded-full bg-[#7B52B9]" />
             Reels Section (Eliott Johnson & Christian Lue)
           </div>
           <div className="transform hover:scale-[1.01] transition-transform duration-300">

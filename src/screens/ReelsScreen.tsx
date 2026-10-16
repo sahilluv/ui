@@ -174,8 +174,8 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={isDark ? '#FFFFFF' : '#FF0A78'}
-            colors={['#FF0A78', '#7928CA', '#06B6D4']}
+            tintColor={isDark ? '#FFFFFF' : '#7B52B9'}
+            colors={['#7B52B9', '#8456C5', '#D4C4EB']}
             progressBackgroundColor={isDark ? '#1C1D2D' : '#FFFFFF'}
           />
         }

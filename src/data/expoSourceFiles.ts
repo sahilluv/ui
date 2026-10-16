@@ -214,10 +214,10 @@ export const lightColors: ThemeColors = {
   border: 'rgba(0, 0, 0, 0.07)',
   cardBorder: 'rgba(0, 0, 0, 0.05)',
   inputBackground: '#F0F2F7',
-  badgeBackground: '#FF2E63',
-  accent: '#E6007A',
-  accentGradient: ['#FF0A78', '#A811DA', '#7928CA'],
-  storyGradient: ['#FF3366', '#C026D3', '#7928CA'],
+  badgeBackground: '#7B52B9',
+  accent: '#7B52B9',
+  accentGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
+  storyGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
   heartRed: '#FF2A55',
   tabActive: '#12131D',
   tabInactive: '#A4A8B7',
@@ -234,10 +234,10 @@ export const darkColors: ThemeColors = {
   border: 'rgba(255, 255, 255, 0.08)',
   cardBorder: 'rgba(255, 255, 255, 0.06)',
   inputBackground: '#181A28',
-  badgeBackground: '#FF2E63',
-  accent: '#FF0A78',
-  accentGradient: ['#FF0A78', '#991BEA', '#6366F1'],
-  storyGradient: ['#FF2D55', '#B026FF', '#6B11FF'],
+  badgeBackground: '#7B52B9',
+  accent: '#7B52B9',
+  accentGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
+  storyGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
   heartRed: '#FF2A55',
   tabActive: '#FFFFFF',
   tabInactive: '#636779',
@@ -251,7 +251,7 @@ export const shadowGradients = {
   tealCyan: ['#0A3A40', '#0E626B', '#13928E', '#20C997'],
   warmBronze: ['#3A2C27', '#5C3E33', '#855E4E'],
   categoryTV: ['#7928CA', '#A855F7'],
-  categoryShop: ['#EC4899', '#F43F5E'],
+  categoryShop: ['#7B52B9', '#5E3A89'],
   categoryTravel: ['#06B6D4', '#3B82F6'],
   categoryFitness: ['#F97316', '#FB7185'],
 };
@@ -814,7 +814,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   currentTab,
   onTabChange,
   colors,
-  userAvatarGradient = ['#FF0A78', '#991BEA', '#6366F1'],
+  userAvatarGradient = ['#7B52B9', '#8456C5', '#5E3A89'],
   unreadNotifications = false,
 }) => {
   return (
@@ -1035,12 +1035,12 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     <View style={styles.container}>
       <View style={styles.avatarSection}>
         <LinearGradient
-          colors={['#FF0A78', '#991BEA', '#6366F1']}
+          colors={['#7B52B9', '#8456C5', '#5E3A89']}
           style={styles.avatarRing}
         >
           <View style={[styles.avatarGap, { backgroundColor: colors.background }]}>
             <LinearGradient
-              colors={['#FF0A78', '#7928CA', '#4338CA']}
+              colors={['#7B52B9', '#8456C5', '#5E3A89']}
               style={styles.avatarGradient}
             />
           </View>
@@ -1254,7 +1254,7 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.actionItem} onPress={handleShareToStory} activeOpacity={0.8}>
-                  <LinearGradient colors={['#FF0A78', '#991BEA', '#7928CA']} style={styles.actionIconCircle}>
+                  <LinearGradient colors={['#7B52B9', '#8456C5', '#5E3A89']} style={styles.actionIconCircle}>
                     <Ionicons name={sharedToStory ? 'checkmark' : 'add-circle-outline'} size={24} color="#FFFFFF" />
                   </LinearGradient>
                   <Text style={[styles.actionLabel, { color: isDark ? '#E2E8F0' : '#1E293B' }]}>
@@ -1358,7 +1358,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   };
 
   const stories: StoryItem[] = [
-    { id: 'user_story', username: 'Tu historia', gradientColors: ['#FF0A78', '#991BEA', '#7928CA'], isCurrentUser: true },
+    { id: 'user_story', username: 'Tu historia', gradientColors: ['#7B52B9', '#8456C5', '#5E3A89'], isCurrentUser: true },
     { id: 'story_1', username: 'Ezequias', gradientColors: ['#FF6B4A', '#FF3366', '#C026D3'] },
     { id: 'story_2', username: 'Alice_002', gradientColors: ['#C026D3', '#7928CA', '#3B82F6'] },
     { id: 'story_3', username: 'Paulette_R', gradientColors: ['#FF2D55', '#B026FF', '#4F46E5'] },
@@ -1368,7 +1368,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const posts: PostItem[] = [
     {
       id: 'post_1',
-      author: { name: 'Maoo Lopez', username: 'Maoo.lopez', avatarGradient: ['#FF0A78', '#991BEA', '#6366F1'] },
+      author: { name: 'Maoo Lopez', username: 'Maoo.lopez', avatarGradient: ['#7B52B9', '#8456C5', '#5E3A89'] },
       timeAgo: 'Hace 20 min',
       imageGradient: ['#4E137D', '#791DA6', '#C724B1', '#FF3B8A'],
       likesCount: 4558,
@@ -1382,7 +1382,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     },
     {
       id: 'post_2',
-      author: { name: 'Eliott Johnson', username: 'Eliott Johnson', avatarGradient: ['#6366F1', '#8B5CF6', '#EC4899'], location: 'Madrid, Spain' },
+      author: { name: 'Eliott Johnson', username: 'Eliott Johnson', avatarGradient: ['#6366F1', '#8B5CF6', '#7B52B9'], location: 'Madrid, Spain' },
       timeAgo: 'Hace 2 h',
       imageGradient: ['#7A58E6', '#B77DE8', '#F5A7C4', '#FCD5B5'],
       likesCount: 2420,
@@ -1489,7 +1489,7 @@ export const ExploreScreen: React.FC<ExploreScreenProps> = ({
 
   const categories: ExploreCategory[] = [
     { id: 'igtv', title: 'IGTV', iconName: 'tv-outline', gradient: ['#7928CA', '#A855F7', '#C084FC'] },
-    { id: 'tienda', title: 'TIENDA', iconName: 'bag-handle-outline', gradient: ['#EC4899', '#F43F5E', '#FB7185'] },
+    { id: 'tienda', title: 'TIENDA', iconName: 'bag-handle-outline', gradient: ['#7B52B9', '#8456C5', '#5E3A89'] },
     { id: 'viajes', title: 'VIAJES', iconName: 'airplane-outline', gradient: ['#06B6D4', '#0EA5E9', '#3B82F6'] },
     { id: 'fitness', title: 'FITNESS', iconName: 'barbell-outline', gradient: ['#F97316', '#FB923C', '#F43F5E'] },
   ];
@@ -1498,7 +1498,7 @@ export const ExploreScreen: React.FC<ExploreScreenProps> = ({
     { id: 'm_1', height: 210, gradient: ['#283344', '#1A222E', '#0E131A'] },
     { id: 'm_2', height: 140, gradient: ['#581C87', '#7E22CE', '#9333EA'] },
     { id: 'm_3', height: 160, gradient: ['#1E1B4B', '#312E81', '#4338CA'] },
-    { id: 'm_4', height: 190, gradient: ['#4E137D', '#991BEA', '#FF0A78'] },
+    { id: 'm_4', height: 190, gradient: ['#4E137D', '#991BEA', '#7B52B9'] },
     { id: 'm_5', height: 180, gradient: ['#0F766E', '#14B8A6', '#2DD4BF'] },
   ];
 
@@ -1697,8 +1697,8 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={isDark ? '#FFFFFF' : '#FF0A78'}
-            colors={['#FF0A78', '#7928CA', '#06B6D4']}
+            tintColor={isDark ? '#FFFFFF' : '#7B52B9'}
+            colors={['#7B52B9', '#8456C5', '#5E3A89']}
             progressBackgroundColor={isDark ? '#1C1D2D' : '#FFFFFF'}
           />
         }
@@ -2041,7 +2041,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { height: 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16 },
   headerTitle: { fontSize: 16, fontWeight: '700' },
-  publishBtn: { backgroundColor: '#FF0A78', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
+  publishBtn: { backgroundColor: '#7B52B9', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
   publishText: { color: '#FFF', fontWeight: '700', fontSize: 13 },
   body: { padding: 16 },
   previewCard: { width: '100%', height: 280, borderRadius: 24, marginBottom: 16 },

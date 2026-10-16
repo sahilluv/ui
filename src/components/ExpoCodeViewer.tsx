@@ -62,7 +62,7 @@ export const ExpoCodeViewer: React.FC = () => {
                 <GitBranch size={13} />
                 Imported: sahilluv/ui
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 text-xs font-bold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#7B52B9]/15 border border-[#7B52B9]/30 text-[#D4C4EB] text-xs font-bold">
                 <Code size={13} />
                 Monorepo + Expo
               </span>
@@ -72,14 +72,14 @@ export const ExpoCodeViewer: React.FC = () => {
               Shadow Monorepo & Mobile Codebase
             </h2>
             <p className="text-slate-400 text-sm mt-2 max-w-2xl leading-relaxed">
-              Explore the full monorepo imported from <code className="text-pink-400 font-mono text-xs">sahilluv/ui</code> containing <strong className="text-white">apps/mobile</strong> (React Native Expo), <strong className="text-white">apps/api</strong> (NestJS + Prisma), <strong className="text-white">prisma/schema.prisma</strong>, and infrastructure.
+              Explore the full monorepo imported from <code className="text-[#D4C4EB] font-mono text-xs">sahilluv/ui</code> containing <strong className="text-white">apps/mobile</strong> (React Native Expo), <strong className="text-white">apps/api</strong> (NestJS + Prisma), <strong className="text-white">prisma/schema.prisma</strong>, and infrastructure.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={handleCopyAll}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/25 hover:opacity-95 active:scale-95 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white shadow-lg shadow-[#7B52B9]/25 hover:opacity-95 active:scale-95 transition-all"
             >
               {copiedAll ? <Check size={16} /> : <Copy size={16} />}
               <span>{copiedAll ? 'Copied All!' : 'Copy Entire Suite'}</span>
@@ -105,7 +105,7 @@ export const ExpoCodeViewer: React.FC = () => {
               onClick={() => setSelectedSuite('expo')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 selectedSuite === 'expo'
-                  ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white shadow-md'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -115,7 +115,7 @@ export const ExpoCodeViewer: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 font-mono text-xs text-slate-300">
-            <Terminal size={14} className="text-pink-400" />
+            <Terminal size={14} className="text-[#D4C4EB]" />
             <span>npm run start --workspace apps/mobile</span>
           </div>
         </div>
@@ -128,7 +128,7 @@ export const ExpoCodeViewer: React.FC = () => {
           <div className="space-y-6">
             <div className="px-2 pt-2">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                <Folder size={14} className="text-pink-400" />
+                <Folder size={14} className="text-[#D4C4EB]" />
                 {selectedSuite === 'monorepo' ? 'Monorepo Files (sahilluv/shadow0.1)' : 'Expo UI Prototype'}
               </h3>
             </div>
@@ -195,18 +195,18 @@ export const ExpoCodeViewer: React.FC = () => {
                               onClick={() => setExpoIndex(globalIdx)}
                               className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono text-left transition-colors ${
                                 isActive
-                                  ? 'bg-pink-500/15 text-pink-300 font-bold border border-pink-500/30'
+                                  ? 'bg-[#7B52B9]/15 text-[#D4C4EB] font-bold border border-[#7B52B9]/30'
                                   : 'text-slate-400 hover:text-white hover:bg-white/5'
                               }`}
                             >
                               <div className="flex items-center gap-2 truncate">
                                 <FileCode
                                   size={14}
-                                  className={isActive ? 'text-pink-400' : 'text-slate-500'}
+                                  className={isActive ? 'text-[#D4C4EB]' : 'text-slate-500'}
                                 />
                                 <span className="truncate">{file.path}</span>
                               </div>
-                              {isActive && <ChevronRight size={13} className="text-pink-400 shrink-0" />}
+                              {isActive && <ChevronRight size={13} className="text-[#D4C4EB] shrink-0" />}
                             </button>
                           );
                         })}
@@ -235,7 +235,7 @@ export const ExpoCodeViewer: React.FC = () => {
           <div className="h-14 px-6 border-b border-white/10 flex items-center justify-between bg-[#0F101C]/80 backdrop-blur-md">
             <div>
               <div className="flex items-center gap-2 text-xs font-mono text-slate-300">
-                <FileCode size={15} className={selectedSuite === 'monorepo' ? 'text-emerald-400' : 'text-pink-400'} />
+                <FileCode size={15} className={selectedSuite === 'monorepo' ? 'text-emerald-400' : 'text-[#D4C4EB]'} />
                 <span className="font-bold text-white">{currentPath}</span>
               </div>
               <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">

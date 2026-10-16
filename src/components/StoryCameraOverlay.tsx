@@ -34,7 +34,7 @@ const GRADIENT_PRESETS = [
   {
     id: 'cyber_noir',
     name: 'Cyber Noir',
-    gradient: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 50%, #4338CA 100%)',
+    gradient: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
   },
   {
     id: 'neon_sunset',
@@ -316,7 +316,7 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
               }}
               className={`px-3 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 ${
                 mode === 'camera'
-                  ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-xs'
+                  ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white shadow-xs'
                   : 'text-white/70 hover:text-white'
               }`}
             >
@@ -330,7 +330,7 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
               }}
               className={`px-3 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 ${
                 mode === 'gradient'
-                  ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-xs'
+                  ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white shadow-xs'
                   : 'text-white/70 hover:text-white'
               }`}
             >
@@ -359,7 +359,7 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
               <button
                 onClick={() => setShowGrid((prev) => !prev)}
                 className={`w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center transition-all cursor-pointer ${
-                  showGrid ? 'text-pink-400 border-pink-500/50' : 'text-white/80'
+                  showGrid ? 'text-[#D4C4EB] border-[#7B52B9]/50' : 'text-white/80'
                 }`}
                 title="Toggle Rule-of-Thirds Grid"
               >
@@ -416,7 +416,7 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
               <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                 {/* Simulated Lens Focal Center */}
                 <div className="w-24 h-24 rounded-full border border-white/25 flex items-center justify-center">
-                  <div className="w-2 h-2 rounded-full bg-pink-500/80 animate-ping" />
+                  <div className="w-2 h-2 rounded-full bg-[#7B52B9]/80 animate-ping" />
                   <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
                 </div>
 
@@ -472,7 +472,7 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
                   }}
                   className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/25 text-white text-xs font-bold shadow-xl flex items-center gap-1.5 cursor-pointer active:scale-95 transition-transform"
                 >
-                  <IconComp size={13} className="text-pink-400" />
+                  <IconComp size={13} className="text-[#D4C4EB]" />
                   <span>{stk.label}</span>
                 </div>
               );
@@ -506,7 +506,7 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
               </span>
               <button
                 onClick={() => setIsEditingCaption(false)}
-                className="px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold cursor-pointer"
+                className="px-4 py-1.5 rounded-full bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] hover:opacity-90 text-white text-xs font-bold cursor-pointer"
               >
                 Done
               </button>
@@ -526,12 +526,12 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
 
             {/* Color Palette for Text */}
             <div className="flex items-center justify-center gap-3 pb-6">
-              {['#FFFFFF', '#FF0A78', '#06B6D4', '#FACC15', '#A855F7', '#10B981'].map((c) => (
+              {['#FFFFFF', '#7B52B9', '#06B6D4', '#FACC15', '#A855F7', '#10B981'].map((c) => (
                 <button
                   key={c}
                   onClick={() => setCaptionColor(c)}
                   className={`w-7 h-7 rounded-full border-2 transition-transform ${
-                    captionColor === c ? 'scale-125 border-white ring-2 ring-pink-500' : 'border-transparent'
+                    captionColor === c ? 'scale-125 border-white ring-2 ring-[#7B52B9]' : 'border-transparent'
                   }`}
                   style={{ background: c }}
                 />
@@ -596,7 +596,7 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
                   background:
                     mode === 'gradient'
                       ? currentGradient
-                      : 'linear-gradient(135deg, #FF0A78 0%, #FFFFFF 100%)',
+                      : 'linear-gradient(135deg, #7B52B9 0%, #FFFFFF 100%)',
                 }}
               />
             </button>
@@ -644,12 +644,12 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
               {/* Share to 24-Hour Story Button */}
               <button
                 onClick={handlePublish}
-                className="flex-1 py-2.5 px-4 rounded-full bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white text-xs font-extrabold shadow-xl hover:opacity-95 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 py-2.5 px-4 rounded-full bg-gradient-to-r from-[#7B52B9] via-[#8456C5] to-[#5E3A89] text-white text-xs font-extrabold shadow-xl hover:opacity-95 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <div
                   className="w-5 h-5 rounded-full p-[1px] shrink-0"
                   style={{
-                    background: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 100%)',
+                    background: 'linear-gradient(135deg, #7B52B9 0%, #5E3A89 100%)',
                   }}
                 >
                   <div className="w-full h-full rounded-full bg-white/30" />

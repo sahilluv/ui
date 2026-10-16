@@ -129,11 +129,11 @@ export const ReelCircularProgress: React.FC<ReelCircularProgressProps> = ({
       {(showTooltip || isHovered) && (
         <div className="absolute bottom-full right-0 mb-2 pointer-events-none z-40 animate-in fade-in zoom-in-95 duration-150">
           <div className="px-2.5 py-1 rounded-[10px] bg-black/90 backdrop-blur-md border border-white/20 shadow-2xl text-[10px] font-bold text-white whitespace-nowrap flex items-center gap-1.5">
-            <span className="text-[#FF0A78] font-black">{formattedCurrent}</span>
+            <span className="text-[#D4C4EB] font-black">{formattedCurrent}</span>
             <span className="text-white/40">/</span>
             <span className="text-white/70">{formattedTotal}</span>
             <span className="w-1 h-1 rounded-full bg-white/30" />
-            <span className="text-purple-300">{percentComplete}%</span>
+            <span className="text-[#D4C4EB]">{percentComplete}%</span>
           </div>
         </div>
       )}
@@ -141,8 +141,8 @@ export const ReelCircularProgress: React.FC<ReelCircularProgressProps> = ({
       {/* Near End Swipe Prompt Pill */}
       {isActive && isNearEnd && isPlaying && !isHovered && (
         <div className="absolute bottom-full right-0 mb-2 pointer-events-none z-30 animate-in fade-in slide-in-from-bottom-1 duration-200">
-          <div className="px-2 py-0.5 rounded-[8px] bg-gradient-to-r from-pink-600/90 to-purple-600/90 backdrop-blur-md text-[9px] font-black text-white shadow-lg flex items-center gap-1 border border-white/20 whitespace-nowrap">
-            <ChevronUp size={11} className="animate-bounce" />
+          <div className="px-2 py-0.5 rounded-[8px] bg-black/90 backdrop-blur-md text-[9px] font-black text-white shadow-lg flex items-center gap-1 border border-[#D4C4EB]/40 whitespace-nowrap">
+            <ChevronUp size={11} className="animate-bounce text-[#D4C4EB]" />
             <span>Next Reel</span>
           </div>
         </div>
@@ -163,13 +163,13 @@ export const ReelCircularProgress: React.FC<ReelCircularProgressProps> = ({
       >
         {/* Glow halo on loop or near end */}
         {hasLooped && (
-          <div className="absolute inset-0 rounded-full bg-pink-500/40 animate-ping pointer-events-none" />
+          <div className="absolute inset-0 rounded-full bg-[#7B52B9]/40 animate-ping pointer-events-none" />
         )}
 
         {/* Circular Card Container */}
         <div
-          className={`w-[46px] h-[46px] rounded-full bg-black/75 backdrop-blur-md border border-white/20 flex items-center justify-center relative shadow-[0_4px_16px_rgba(0,0,0,0.55)] transition-all ${
-            isNearEnd ? 'shadow-[0_0_16px_rgba(255,10,120,0.45)] border-pink-500/40' : ''
+          className={`w-[46px] h-[46px] rounded-full bg-black/85 backdrop-blur-md border border-white/20 flex items-center justify-center relative shadow-[0_4px_16px_rgba(0,0,0,0.55)] transition-all ${
+            isNearEnd ? 'shadow-[0_0_16px_rgba(123,82,185,0.65)] border-[#D4C4EB]/60' : ''
           }`}
         >
           {/* SVG Progress Ring */}
@@ -181,12 +181,12 @@ export const ReelCircularProgress: React.FC<ReelCircularProgressProps> = ({
           >
             <defs>
               <linearGradient id={`grad-${gradientId}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FF0A78" />
-                <stop offset="60%" stopColor="#991BEA" />
-                <stop offset="100%" stopColor="#4F46E5" />
+                <stop offset="0%" stopColor="#7B52B9" />
+                <stop offset="60%" stopColor="#9C6FE4" />
+                <stop offset="100%" stopColor="#D4C4EB" />
               </linearGradient>
               <filter id={`glow-${gradientId}`} x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="0" stdDeviation="1.5" floodColor="#FF0A78" floodOpacity="0.8" />
+                <feDropShadow dx="0" dy="0" stdDeviation="1.5" floodColor="#7B52B9" floodOpacity="0.8" />
               </filter>
             </defs>
 
@@ -246,15 +246,15 @@ export const ReelCircularProgress: React.FC<ReelCircularProgressProps> = ({
                 </span>
                 <div className="flex items-center gap-[1.5px] mt-0.5 h-[5px]">
                   <span
-                    className="w-[1.5px] bg-pink-400 rounded-full animate-pulse"
+                    className="w-[1.5px] bg-[#D4C4EB] rounded-full animate-pulse"
                     style={{ height: `${3 + (currentSeconds % 3) * 2}px` }}
                   />
                   <span
-                    className="w-[1.5px] bg-purple-400 rounded-full animate-pulse delay-75"
+                    className="w-[1.5px] bg-[#9C6FE4] rounded-full animate-pulse delay-75"
                     style={{ height: `${2 + ((currentSeconds + 1) % 4) * 2}px` }}
                   />
                   <span
-                    className="w-[1.5px] bg-pink-300 rounded-full animate-pulse delay-150"
+                    className="w-[1.5px] bg-[#D4C4EB] rounded-full animate-pulse delay-150"
                     style={{ height: `${4 + (currentSeconds % 2) * 2}px` }}
                   />
                 </div>

@@ -47,7 +47,6 @@ import { MyShadowScreen } from './MyShadowScreen';
 import { darkColors, lightColors, shadowGradients, ThemeColors } from '../../expo-code/src/theme';
 import { generateMoreFeedPosts, generateMoreReelData } from '../utils/endlessScrollData';
 import { ReelCircularProgress } from './ReelCircularProgress';
-import { ReelSwipeIndicator } from './ReelSwipeIndicator';
 
 export type UnifiedTab = 'home' | 'explore' | 'reels' | 'create' | 'notifications' | 'profile';
 
@@ -98,10 +97,10 @@ export interface FeedPost {
 }
 
 const INITIAL_STORIES = [
-  { id: 'user_story', username: 'Your story', isCurrentUser: true, gradient: ['#FF0A78', '#991BEA', '#7928CA'] },
-  { id: 's1', username: 'Ezequias', gradient: ['#FF6B4A', '#FF3366', '#C026D3'] },
-  { id: 's2', username: 'Alice_002', gradient: ['#C026D3', '#7928CA', '#3B82F6'] },
-  { id: 's3', username: 'Paulette_R', gradient: ['#FF2D55', '#B026FF', '#4F46E5'] },
+  { id: 'user_story', username: 'Your story', isCurrentUser: true, gradient: ['#7B52B9', '#8456C5', '#5E3A89'] },
+  { id: 's1', username: 'Ezequias', gradient: ['#7B52B9', '#9B6EE2', '#D4C4EB'] },
+  { id: 's2', username: 'Alice_002', gradient: ['#8456C5', '#5E3A89', '#3B82F6'] },
+  { id: 's3', username: 'Paulette_R', gradient: ['#7B52B9', '#8456C5', '#4F46E5'] },
   { id: 's4', username: 'Carlos_v', gradient: ['#06B6D4', '#3B82F6', '#6366F1'] },
 ];
 
@@ -110,9 +109,9 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     id: 'post_1',
     authorName: 'Maoo Lopez',
     username: 'maoo.lopez',
-    avatarGradient: ['#FF0A78', '#991BEA', '#6366F1'],
+    avatarGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
     timeAgo: '20m ago',
-    imageGradient: ['#4E137D', '#791DA6', '#C724B1', '#FF3B8A'],
+    imageGradient: ['#4E137D', '#7B52B9', '#8456C5', '#D4C4EB'],
     content: 'This photomanipulation inspired by generative biology and organic surrealism. What do you think of this color palette?',
     captionTitle: 'SACRIFICE | VIRUS',
     likesCount: 4558,
@@ -124,7 +123,7 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     id: 'post_2',
     authorName: 'Eliott Johnson',
     username: 'eliott.j',
-    avatarGradient: ['#6366F1', '#8B5CF6', '#EC4899'],
+    avatarGradient: ['#6366F1', '#8B5CF6', '#7B52B9'],
     timeAgo: '2h ago',
     imageGradient: ['#7A58E6', '#B77DE8', '#F5A7C4', '#FCD5B5'],
     content: 'Central campus library west wing is open 24/7 during finals sprint. Plenty of charging stations on the 3rd floor!',
@@ -184,9 +183,9 @@ const NEW_FEED_POSTS_POOL: FeedPost[] = [
     id: 'post_fresh_elena',
     authorName: 'Elena Rostova',
     username: 'elena.art',
-    avatarGradient: ['#EC4899', '#F43F5E', '#FB7185'],
+    avatarGradient: ['#7B52B9', '#8456C5', '#D4C4EB'],
     timeAgo: 'Just now',
-    imageGradient: ['#5B1CE6', '#991BEA', '#FF0A78', '#FF7F50'],
+    imageGradient: ['#5B1CE6', '#8456C5', '#7B52B9', '#D4C4EB'],
     content: 'Generative bio-crystal forms rendered with chromatic aberration. Testing our new shadow depth shaders!',
     captionTitle: 'CHROMA RESONANCE',
     likesCount: 512,
@@ -226,7 +225,7 @@ const NEW_FEED_POSTS_POOL: FeedPost[] = [
 
 const EXPLORE_CATEGORIES = [
   { id: 'igtv', title: 'IGTV', icon: Tv, gradient: ['#7928CA', '#A855F7', '#C084FC'] },
-  { id: 'campus', title: 'CAMPUS', icon: ShoppingBag, gradient: ['#EC4899', '#F43F5E', '#FB7185'] },
+  { id: 'campus', title: 'CAMPUS', icon: ShoppingBag, gradient: ['#7B52B9', '#8456C5', '#5E3A89'] },
   { id: 'viajes', title: 'TRAVEL', icon: Sparkles, gradient: ['#06B6D4', '#0EA5E9', '#3B82F6'] },
   { id: 'wellness', title: 'WELLNESS', icon: Heart, gradient: ['#F97316', '#FB923C', '#F43F5E'] },
 ];
@@ -335,7 +334,7 @@ const REELS_DATA: ReelData[] = [
     caption: 'Shadow Dynamic Lighting & Concept Component System preview 🔮🎨',
     tags: ['#shadowcampus', '#uidesign', '#minimalism'],
     audioTrack: 'Mauricio Lopez • Shadow Pulse',
-    avatarGradient: ['#FF0A78', '#991BEA', '#6366F1'],
+    avatarGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
   },
 ];
 
@@ -344,7 +343,7 @@ const NOTIFICATIONS_DATA = [
     id: 'n1',
     user: 'Elena Rostova',
     username: 'elena.art',
-    gradient: ['#EC4899', '#F43F5E', '#FB7185'],
+    gradient: ['#7B52B9', '#8456C5', '#D4C4EB'],
     action: 'liked your post "SACRIFICE | VIRUS"',
     time: '5m ago',
     unread: true,
@@ -759,7 +758,6 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
   const [reelSwipeStartY, setReelSwipeStartY] = useState<number | null>(null);
   const [reelSwipeDeltaX, setReelSwipeDeltaX] = useState<number>(0);
   const [isSwipingReels, setIsSwipingReels] = useState(false);
-  const hasThresholdHapticFiredRef = useRef(false);
 
   const handleReelsTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
     if ('button' in e && e.button !== 0) return;
@@ -769,7 +767,6 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     setReelSwipeStartY(clientY);
     setReelSwipeDeltaX(0);
     setIsSwipingReels(true);
-    hasThresholdHapticFiredRef.current = false;
   };
 
   const handleReelsTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
@@ -782,22 +779,12 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     // Engaged when horizontal movement is greater than vertical movement
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 8) {
       setReelSwipeDeltaX(diffX);
-      const isPastThreshold = Math.abs(diffX) >= 50;
-      if (isPastThreshold && !hasThresholdHapticFiredRef.current) {
-        hasThresholdHapticFiredRef.current = true;
-        if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-          navigator.vibrate(14);
-        }
-      } else if (!isPastThreshold && hasThresholdHapticFiredRef.current && Math.abs(diffX) < 46) {
-        hasThresholdHapticFiredRef.current = false;
-      }
     }
   };
 
   const handleReelsTouchEnd = () => {
     if (!isSwipingReels) return;
     setIsSwipingReels(false);
-    hasThresholdHapticFiredRef.current = false;
 
     // If swipe threshold passed (> 50px)
     if (reelSwipeDeltaX < -50) {
@@ -890,7 +877,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
       id: `post_${Date.now()}`,
       authorName: currentUser.name,
       username: currentUser.name.toLowerCase().replace(/\s+/g, '.'),
-      avatarGradient: ['#FF0A78', '#991BEA', '#6366F1'],
+      avatarGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
       timeAgo: 'Just now',
       imageGradient: gradientPresets[selectedGradientIndex] as any,
       content: createBody.trim() || 'Shared via Shadow Mobile',
@@ -915,7 +902,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     <div className="w-full flex justify-center py-4 px-2 sm:px-4">
       {/* Toast Notification */}
       {toastMsg && (
-        <div className="fixed top-20 z-50 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold rounded-full shadow-2xl animate-fade-in flex items-center gap-2">
+        <div className="fixed top-20 z-50 px-4 py-2 bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white text-xs font-bold rounded-full shadow-2xl animate-fade-in flex items-center gap-2">
           <Sparkles size={14} />
           {toastMsg}
         </div>
@@ -984,14 +971,21 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 transition: isSwipingReels ? 'none' : 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
               }}
             >
-              {/* Enhanced Reel Swipe Gesture Feedback Indicator with 50px Threshold Icon Shift */}
-              <ReelSwipeIndicator
-                isSwiping={isSwipingReels}
-                deltaX={reelSwipeDeltaX}
-                threshold={50}
-                positionMode="fixed"
-                authorUsername="Creator"
-              />
+              {/* Swipe Right Visual Cue: Return to Feed */}
+              {isSwipingReels && reelSwipeDeltaX > 20 && (
+                <div className="fixed left-6 top-1/2 -translate-y-1/2 z-50 bg-black/85 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-2 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
+                  <ChevronLeft size={16} className="text-[#D4C4EB]" />
+                  <span>Return to Feed</span>
+                </div>
+              )}
+
+              {/* Swipe Left Visual Cue: View Profile */}
+              {isSwipingReels && reelSwipeDeltaX < -20 && (
+                <div className="fixed right-6 top-1/2 -translate-y-1/2 z-50 bg-black/85 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-2 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
+                  <span>View Profile</span>
+                  <ChevronRight size={16} className="text-[#991BEA]" />
+                </div>
+              )}
 
               {reels.map((reel) => {
                 const isPaused = !!pausedReels[reel.id];
@@ -1070,7 +1064,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           <div
                             className="w-9 h-9 rounded-[11px] p-0.5 flex items-center justify-center shadow-lg"
                             style={{
-                              background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                              background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
                             }}
                           >
                             <div
@@ -1096,14 +1090,14 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                                 className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all ${
                                   reel.isFollowing
                                     ? 'bg-white/20 border-white/30 text-white'
-                                    : 'bg-pink-500/90 border-pink-400 text-white shadow-sm'
+                                    : 'bg-black text-white hover:bg-neutral-800 shadow-sm border-white/20'
                                 }`}
                               >
                                 {reel.isFollowing ? 'Following' : 'Follow'}
                               </button>
                             </div>
                             <div className="flex items-center gap-1 text-[11px] text-white/80">
-                              <MapPin size={10} className="text-pink-400" />
+                              <MapPin size={10} className="text-[#D4C4EB]" />
                               <span>{reel.location}</span>
                             </div>
                           </div>
@@ -1121,7 +1115,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                                 e.stopPropagation();
                                 showToast(`Explore tag ${tag}`);
                               }}
-                              className="text-[10px] font-semibold text-pink-300 hover:text-pink-200 cursor-pointer drop-shadow-sm"
+                              className="text-[10px] font-semibold text-[#D4C4EB] hover:text-white cursor-pointer drop-shadow-sm"
                             >
                               {tag}
                             </span>
@@ -1130,7 +1124,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
                         {/* Music Audio Ticker */}
                         <div className="flex items-center gap-2 mt-0.5 py-1 px-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 self-start text-[10px] text-white/90">
-                          <Music size={11} className="text-pink-400 animate-pulse shrink-0" />
+                          <Music size={11} className="text-[#D4C4EB] animate-pulse shrink-0" />
                           <span className="truncate max-w-[190px] font-medium">
                             {reel.audioTrack}
                           </span>
@@ -1150,7 +1144,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           <div
                             className={`w-11 h-11 rounded-[14px] backdrop-blur-md border flex items-center justify-center transition-all group-active:scale-90 ${
                               reel.isLiked
-                                ? 'bg-pink-500/30 border-pink-400/50 shadow-lg shadow-pink-500/20'
+                                ? 'bg-[#7B52B9]/30 border-[#7B52B9]/50 shadow-lg shadow-[#7B52B9]/20'
                                 : 'bg-black/45 border-white/15 hover:bg-black/60'
                             }`}
                           >
@@ -1246,7 +1240,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
                     {/* Progress Bar at bottom */}
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-20">
-                      <div className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 w-2/3 animate-pulse" />
+                      <div className="h-full bg-gradient-to-r from-[#7B52B9] via-[#8456C5] to-[#5E3A89] w-2/3 animate-pulse" />
                     </div>
                   </div>
                 );
@@ -1256,17 +1250,17 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               {isLoadingMoreReels && (
                 <div className="w-full h-full snap-start snap-always relative shrink-0 overflow-hidden flex flex-col items-center justify-center bg-black gap-3 text-white select-none">
                   <div
-                    className="w-12 h-12 rounded-2xl p-0.5 shadow-lg shadow-pink-500/30 flex items-center justify-center animate-pulse"
+                    className="w-12 h-12 rounded-2xl p-0.5 shadow-lg shadow-[#7B52B9]/30 flex items-center justify-center animate-pulse"
                     style={{
-                      background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                      background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
                     }}
                   >
                     <div className="w-full h-full rounded-[14px] bg-[#0F111D] flex items-center justify-center">
-                      <span className="font-shadow-script text-2xl text-pink-400">S</span>
+                      <span className="font-shadow-script text-2xl text-[#D4C4EB]">S</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                    <span className="w-4 h-4 rounded-full border-2 border-pink-500 border-t-transparent animate-spin" />
+                    <span className="w-4 h-4 rounded-full border-2 border-[#7B52B9] border-t-transparent animate-spin" />
                     Loading next Reel...
                   </div>
                 </div>
@@ -1298,7 +1292,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   shadowId: currentUser.shadowId,
                   rank: currentUser.shadowRank,
                   isVerified: currentUser.verification === 'VERIFIED',
-                  avatarGradient: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                  avatarGradient: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
                 }}
                 onToast={(msg) => showToast(msg)}
               />
@@ -1320,16 +1314,16 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     aria-label="Open My Shadow directly from Home Feed"
                   >
                     <div
-                      className="w-9 h-9 rounded-full p-[1.5px] shadow-md shadow-pink-500/25 flex items-center justify-center transition-all group-hover:scale-105"
+                      className="w-9 h-9 rounded-full p-[1.5px] shadow-md shadow-[#7B52B9]/25 flex items-center justify-center transition-all group-hover:scale-105"
                       style={{
-                        background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                        background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
                       }}
                     >
                       <div
                         className="w-full h-full rounded-full flex items-center justify-center transition-colors"
                         style={{ backgroundColor: colors.background }}
                       >
-                        <span className="text-sm font-bold text-pink-400">♙</span>
+                        <span className="text-sm font-bold text-[#7B52B9]">♙</span>
                       </div>
                     </div>
                     <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#0B0C14] shadow-xs" />
@@ -1354,7 +1348,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     >
                       <RotateCw
                         size={14}
-                        className={`text-pink-500 transition-all ${isPullRefreshing ? 'animate-spin' : ''}`}
+                        className={`text-[#7B52B9] transition-all ${isPullRefreshing ? 'animate-spin' : ''}`}
                       />
                     </button>
 
@@ -1366,7 +1360,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       {isDark ? (
                         <Sun size={15} className="text-yellow-400" />
                       ) : (
-                        <Moon size={15} className="text-purple-400" />
+                        <Moon size={15} className="text-[#7B52B9]" />
                       )}
                     </button>
 
@@ -1398,17 +1392,17 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border shadow-md backdrop-blur-md transition-transform"
                     style={{
                       backgroundColor: isDark ? 'rgba(24, 26, 38, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                      borderColor: isPullRefreshing ? '#FF0A78' : colors.border,
-                      boxShadow: isPullRefreshing ? '0 0 16px rgba(255, 10, 120, 0.35)' : undefined,
+                      borderColor: isPullRefreshing ? '#7B52B9' : colors.border,
+                      boxShadow: isPullRefreshing ? '0 0 16px rgba(123, 82, 185, 0.35)' : undefined,
                       transform: `scale(${Math.min(0.7 + (pullDownDistance / PULL_THRESHOLD) * 0.3, 1)})`,
                     }}
                   >
                     {isPullRefreshing ? (
-                      <RotateCw size={15} className="animate-spin text-pink-500" />
+                      <RotateCw size={15} className="animate-spin text-[#7B52B9]" />
                     ) : (
                       <ArrowDown
                         size={15}
-                        className="text-pink-500 transition-transform duration-200"
+                        className="text-[#7B52B9] transition-transform duration-200"
                         style={{
                           transform: `rotate(${pullDownDistance >= PULL_THRESHOLD ? 180 : (pullDownDistance / PULL_THRESHOLD) * 180}deg)`,
                         }}
@@ -1465,14 +1459,23 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 {/* Real Feed Posts Styled with Concept Cards */}
                 <div className="p-4 space-y-5">
                   {feedPosts.map((post) => (
-                    <div
-                      key={post.id}
-                      className="rounded-3xl overflow-hidden shadow-lg border transition-all"
-                      style={{
-                        backgroundColor: colors.surface,
-                        borderColor: colors.cardBorder,
-                      }}
-                    >
+                    <div key={post.id} className="relative">
+                      {/* Middle Layer — Card Behind the Feed (exact same card background colour token) */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 translate-y-2 scale-[0.97] rounded-3xl pointer-events-none shadow-md"
+                        style={{
+                          backgroundColor: colors.surface,
+                          borderColor: colors.cardBorder,
+                        }}
+                      />
+                      <div
+                        className="relative z-10 rounded-3xl overflow-hidden shadow-lg border transition-all"
+                        style={{
+                          backgroundColor: colors.surface,
+                          borderColor: colors.cardBorder,
+                        }}
+                      >
                       {/* Post Header */}
                       <div className="p-3.5 flex items-center justify-between">
                         <div
@@ -1538,7 +1541,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         >
                           <div className="bg-black/40 backdrop-blur-sm rounded-xl p-3 border border-white/10">
                             {post.captionTitle && (
-                              <span className="text-[10px] font-extrabold uppercase tracking-wider text-pink-300 block mb-1">
+                              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#D4C4EB] block mb-1">
                                 {post.captionTitle}
                               </span>
                             )}
@@ -1558,8 +1561,8 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           >
                             <Heart
                               size={20}
-                              className={post.isLiked ? 'fill-[#DB2828] text-[#DB2828]' : ''}
-                              style={{ color: post.isLiked ? '#DB2828' : colors.text }}
+                              className={post.isLiked ? 'fill-[#7B52B9] text-[#7B52B9]' : ''}
+                              style={{ color: post.isLiked ? '#7B52B9' : colors.text }}
                             />
                           </button>
 
@@ -1604,13 +1607,14 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         </span>
                       </div>
                     </div>
+                  </div>
                   ))}
                 </div>
 
                 {/* Endless Feed Dynamic Loading Indicator */}
                 {isLoadingMoreFeed && (
                   <div className="py-6 flex flex-col items-center justify-center gap-2 animate-in fade-in duration-200">
-                    <div className="w-6 h-6 rounded-full border-2 border-pink-500/30 border-t-pink-500 animate-spin" />
+                    <div className="w-6 h-6 rounded-full border-2 border-[#7B52B9]/30 border-t-[#7B52B9] animate-spin" />
                     <span className="text-[11px] font-semibold" style={{ color: colors.secondaryText }}>
                       Loading more Shadow moments...
                     </span>
@@ -1767,7 +1771,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           onClick={() => setSelectedGradientIndex(i)}
                           className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                             selectedGradientIndex === i
-                              ? 'border-[#E1306C] bg-pink-500/20 text-[#E1306C]'
+                              ? 'border-[#7B52B9] bg-[#7B52B9]/20 text-[#7B52B9]'
                               : isDark
                               ? 'border-white/10 text-[#8E92A0] hover:text-white'
                               : 'border-[#E0E1E2] text-[#767676] bg-[#F7F8FA] hover:text-[#1B1C1D]'
@@ -1832,7 +1836,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
                       showToast('All marked as read');
                     }}
-                    className="text-xs font-bold text-pink-400 hover:underline"
+                    className="text-xs font-bold text-[#7B52B9] hover:underline cursor-pointer"
                   >
                     Mark as read
                   </button>
@@ -1928,7 +1932,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   <div
                     className="w-20 h-20 rounded-[26px] p-1 shadow-xl flex items-center justify-center mb-3"
                     style={{
-                      background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+                      background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
                     }}
                   >
                     <div
@@ -1938,7 +1942,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       <div
                         className="w-full h-full rounded-[19px] flex items-center justify-center text-white text-xl font-extrabold"
                         style={{
-                          background: 'linear-gradient(135deg, #FF0A78 0%, #7928CA 100%)',
+                          background: 'linear-gradient(135deg, #7B52B9 0%, #5E3A89 100%)',
                         }}
                       >
                         {currentUser.name
@@ -1952,7 +1956,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   <h3 className="text-lg font-bold" style={{ color: colors.text }}>
                     {currentUser.name}
                   </h3>
-                  <span className="text-xs font-semibold text-pink-400 mt-0.5">
+                  <span className="text-xs font-semibold text-[#D4C4EB] mt-0.5">
                     {currentUser.email}
                   </span>
                   <p className="text-xs mt-1 max-w-xs" style={{ color: colors.secondaryText }}>
@@ -1966,7 +1970,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   >
                     <div className="flex items-center justify-between pb-2 mb-2.5 border-b" style={{ borderColor: colors.border }}>
                       <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#7B52B9] animate-pulse" />
                         <span className="text-[10px] font-extrabold tracking-wider uppercase" style={{ color: colors.secondaryText }}>
                           Shadow Identity
                         </span>
@@ -1977,7 +1981,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         }`}
                         style={{ color: colors.text }}
                       >
-                        <span className="text-[#E1306C] font-bold">ID:</span>
+                        <span className="text-[#7B52B9] font-bold">ID:</span>
                         <span>{currentUser.shadowId}</span>
                       </div>
                     </div>
@@ -2004,12 +2008,12 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                               ? 'bg-purple-500/15 border-purple-500/35 text-purple-300'
                               : 'bg-purple-50 border-purple-200 text-[#6435C9]'
                             : isDark
-                              ? 'bg-pink-500/15 border-pink-500/35 text-pink-300'
-                              : 'bg-pink-50 border-pink-200 text-[#E1306C]'
-                        } ${isPromotingRank ? 'scale-105 ring-2 ring-pink-500/40 shadow-sm' : ''}`}
+                              ? 'bg-[#7B52B9]/20 border-[#7B52B9]/40 text-[#D4C4EB]'
+                              : 'bg-[#F2EDFA] border-[#D4C4EB] text-[#7B52B9]'
+                        } ${isPromotingRank ? 'scale-105 ring-2 ring-[#7B52B9]/50 shadow-sm' : ''}`}
                         title="Simulate Shadow Rank Progression: PAWN ↔ KNIGHT"
                       >
-                        <Sparkles size={11} className={isPromotingRank ? 'animate-spin text-pink-400' : currentUser.shadowRank === 'PAWN' ? (isDark ? 'text-cyan-400' : 'text-[#00B5AD]') : (isDark ? 'text-pink-400' : 'text-[#E1306C]')} />
+                        <Sparkles size={11} className={isPromotingRank ? 'animate-spin text-[#D4C4EB]' : currentUser.shadowRank === 'PAWN' ? (isDark ? 'text-cyan-400' : 'text-[#00B5AD]') : (isDark ? 'text-[#D4C4EB]' : 'text-[#7B52B9]')} />
                         <span>{currentUser.shadowRank === 'PAWN' ? 'Elevate to KNIGHT' : 'Revert to PAWN'}</span>
                       </button>
 
@@ -2074,16 +2078,13 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   <div className="flex items-center gap-2 w-full mt-3">
                     <button
                       onClick={() => showToast('Profile updated')}
-                      className="flex-1 py-2.5 rounded-full font-bold text-xs text-white shadow-lg transition-transform active:scale-95 cursor-pointer"
-                      style={{
-                        background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
-                      }}
+                      className="flex-1 py-2.5 rounded-full font-bold text-xs bg-black text-white hover:bg-neutral-800 shadow-md transition-transform active:scale-95 cursor-pointer"
                     >
                       Edit Profile
                     </button>
                     <button
                       onClick={() => handleTabChange('create')}
-                      className="px-4 py-2.5 rounded-full font-bold text-xs border border-pink-500/40 text-pink-400 bg-pink-500/10 hover:bg-pink-500/20 transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                      className="px-4 py-2.5 rounded-full font-bold text-xs border border-[#7B52B9]/40 text-[#D4C4EB] bg-[#7B52B9]/15 hover:bg-[#7B52B9]/25 transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer"
                       title="Create Post (+)"
                     >
                       <Plus size={14} strokeWidth={2.5} />

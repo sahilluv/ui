@@ -60,7 +60,7 @@ const DEFAULT_COMMENTS: ReelComment[] = [
         author: {
           name: 'Eliott Johnson',
           username: 'eliott.j',
-          avatarGradient: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 100%)',
+          avatarGradient: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 100%)',
         },
         text: 'Thanks Marco! Golden hour around Gran Vía never misses 🙌',
         timeAgo: '10m',
@@ -75,7 +75,7 @@ const DEFAULT_COMMENTS: ReelComment[] = [
     author: {
       name: 'Clara Design',
       username: 'clara_design',
-      avatarGradient: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)',
+      avatarGradient: 'linear-gradient(135deg, #7B52B9 0%, #D4C4EB 100%)',
     },
     text: 'What lens and camera did you use for that smooth transition? Looks cinematic.',
     timeAgo: '42m',
@@ -88,7 +88,7 @@ const DEFAULT_COMMENTS: ReelComment[] = [
         author: {
           name: 'Eliott Johnson',
           username: 'eliott.j',
-          avatarGradient: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 100%)',
+          avatarGradient: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 100%)',
         },
         text: 'Shot on 35mm f/1.4 prime with a 1/8 black mist filter!',
         timeAgo: '30m',
@@ -267,7 +267,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
         author: {
           name: 'You',
           username: 'your.profile',
-          avatarGradient: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #7928CA 100%)',
+          avatarGradient: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
         },
         text: trimmed,
         timeAgo: 'Just now',
@@ -308,7 +308,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
       author: {
         name: 'You',
         username: 'your.profile',
-        avatarGradient: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #7928CA 100%)',
+        avatarGradient: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
       },
       text: trimmed,
       timeAgo: 'Just now',
@@ -335,8 +335,8 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
     <div className="absolute inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
       {/* Toast Alert */}
       {toastMsg && (
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-60 px-4 py-2 rounded-full bg-[#12131D]/90 backdrop-blur-md text-white text-xs font-semibold shadow-2xl border border-white/10 flex items-center gap-2 animate-in slide-in-from-top duration-200">
-          <Sparkles size={14} className="text-[#FF0A78]" />
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-60 px-4 py-2 rounded-full bg-[#12131D]/90 backdrop-blur-md text-white text-xs font-semibold shadow-2xl border border-[#7B52B9]/30 flex items-center gap-2 animate-in slide-in-from-top duration-200">
+          <Sparkles size={14} className="text-[#7B52B9]" />
           <span>{toastMsg}</span>
         </div>
       )}
@@ -348,21 +348,21 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
       <div
         className={`relative w-full max-h-[82%] rounded-t-[32px] p-5 shadow-2xl flex flex-col z-10 animate-in slide-in-from-bottom duration-300 ${
           isDark
-            ? 'bg-[#121422] text-white border-t border-white/10'
-            : 'bg-white text-slate-900 border-t border-black/5'
+            ? 'bg-[#150A29] text-white border-t border-[#7B52B9]/30'
+            : 'bg-white text-slate-900 border-t border-[#7B52B9]/20'
         }`}
       >
         {/* Drag handle */}
         <div className="w-10 h-1 rounded-full bg-slate-400/40 self-center mb-3" />
 
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-2">
+        <div className="flex items-center justify-between pb-3 border-b border-[#7B52B9]/20 mb-2">
           <div className="flex items-center gap-2.5">
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
               style={{
                 background:
-                  'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #7928CA 100%)',
+                  'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
               }}
             >
               <MessageCircle size={15} />
@@ -408,8 +408,8 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
                         onClick={() => handleToggleFollow(item.author.username)}
                         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-all active:scale-90 cursor-pointer ${
                           followingUsers[item.author.username]
-                            ? 'border border-emerald-500/30 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20'
-                            : 'bg-gradient-to-r from-[#FF0A78] to-[#991BEA] text-white shadow-xs hover:opacity-95'
+                            ? 'border border-[#7B52B9]/30 text-[#D4C4EB] bg-[#7B52B9]/15 hover:bg-[#7B52B9]/25'
+                            : 'bg-black text-white hover:bg-neutral-800 shadow-xs'
                         }`}
                       >
                         {followingUsers[item.author.username] ? (
@@ -441,7 +441,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
                   <div className="flex items-center gap-3.5 mt-1.5">
                     <button
                       onClick={() => handleStartReply(item)}
-                      className="text-[11px] font-bold text-slate-400 hover:text-[#FF0A78] transition-colors cursor-pointer active:scale-95"
+                      className="text-[11px] font-bold text-slate-400 hover:text-[#7B52B9] transition-colors cursor-pointer active:scale-95"
                     >
                       Reply
                     </button>
@@ -524,7 +524,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
                         <div className="flex items-center gap-2 mt-1">
                           <button
                             onClick={() => handleStartReply(item, reply.author.username)}
-                            className="text-[10px] font-bold text-slate-400 hover:text-[#FF0A78] transition-colors cursor-pointer active:scale-95"
+                            className="text-[10px] font-bold text-slate-400 hover:text-[#7B52B9] transition-colors cursor-pointer active:scale-95"
                           >
                             Reply
                           </button>
@@ -594,8 +594,8 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
           <div
             className={`flex items-center justify-between px-3 py-1.5 mb-1.5 rounded-xl text-xs transition-all animate-in fade-in duration-150 ${
               isDark
-                ? 'bg-pink-500/15 border border-pink-500/30 text-pink-300'
-                : 'bg-pink-50 border border-pink-200 text-pink-700'
+                ? 'bg-[#7B52B9]/15 border border-[#7B52B9]/30 text-[#D4C4EB]'
+                : 'bg-[#F2EDFA] border border-[#D4C4EB] text-[#7B52B9]'
             }`}
           >
             <div className="flex items-center gap-1.5 font-semibold truncate">
@@ -624,7 +624,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
             className="w-7 h-7 rounded-full shrink-0 shadow-sm"
             style={{
               background:
-                'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #7928CA 100%)',
+                'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
             }}
           />
           <input
@@ -634,8 +634,8 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
             placeholder={replyingTo ? `Reply to @${replyingTo.username}...` : "Add a comment..."}
             className={`flex-1 h-9 px-3.5 rounded-full text-xs focus:outline-none border transition-colors ${
               isDark
-                ? 'bg-black/30 border-white/10 text-white placeholder-slate-500 focus:border-[#FF0A78]'
-                : 'bg-slate-100 border-black/5 text-[#12131D] placeholder-slate-400 focus:border-[#FF0A78]'
+                ? 'bg-black/30 border-white/10 text-white placeholder-slate-500 focus:border-[#7B52B9] focus:ring-1 focus:ring-[#7B52B9]'
+                : 'bg-slate-100 border-black/5 text-[#12131D] placeholder-slate-400 focus:border-[#7B52B9] focus:ring-1 focus:ring-[#7B52B9]'
             }`}
           />
           <button
@@ -643,7 +643,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
             disabled={!commentText.trim()}
             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
               commentText.trim()
-                ? 'bg-gradient-to-r from-[#FF0A78] to-[#7928CA] text-white shadow-md active:scale-90 cursor-pointer'
+                ? 'bg-black text-white hover:bg-neutral-800 shadow-md active:scale-90 cursor-pointer'
                 : isDark
                 ? 'bg-white/10 text-slate-500 cursor-not-allowed'
                 : 'bg-slate-200 text-slate-400 cursor-not-allowed'

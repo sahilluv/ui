@@ -30,11 +30,34 @@ export const semUiPalette = {
   white: '#FFFFFF',
 
   // Signature Brand & Social Accents
-  brandRose: '#E1306C',
-  brandGradient: ['#E1306C', '#C13584', '#833AB4'],
+  brandRose: '#7B52B9',
+  brandGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
   fireStreak: '#F2711C',
   verifiedBadge: '#21BA45',
   shadowBlue: '#2185D0',
+} as const;
+
+/**
+ * Authentic Shadow Brand Design Tokens
+ * Harmonized to the purple & orchid visual identity
+ */
+export const SHADOW_BRAND = {
+  primary: '#7B52B9',
+  orchidStart: '#8456C5',
+  orchidEnd: '#5E3A89',
+  lilac: '#D4C4EB',
+  deepInk: '#1F1F2E',
+  deepObsidian: '#0E091C',
+  richBlack: '#08080C',
+  canvasStart: '#090616',
+  canvasEnd: '#120C29',
+  headline: '#FFFFFF',
+  inputBg: '#FFFFFF',
+  inputText: '#1F1F2E',
+  feedCardBgLight: '#FFFFFF',
+  feedCardBgDark: '#12121A',
+  orchidGradient: 'linear-gradient(135deg, #8456C5 0%, #5E3A89 100%)',
+  canvasGradient: 'linear-gradient(180deg, #090616 0%, #120C29 100%)',
 } as const;
 
 export interface SemUiThemeTokens {
@@ -72,7 +95,7 @@ export const semUiLightTokens: SemUiThemeTokens = {
   cardBorder: '#D4D4D5',
   divider: '#EDEDED',
   inputBackground: '#F4F5F7',
-  accent: '#E1306C',
+  accent: '#7B52B9',
   accentText: '#FFFFFF',
   positive: '#21BA45',
   negative: '#DB2828',
@@ -80,14 +103,14 @@ export const semUiLightTokens: SemUiThemeTokens = {
   info: '#00B5AD',
   tabActive: '#1B1C1D',
   tabInactive: '#767676',
-  tabActiveIndicator: '#E1306C',
+  tabActiveIndicator: '#7B52B9',
 };
 
 export const semUiDarkTokens: SemUiThemeTokens = {
-  background: '#12131A',
-  surface: '#1A1B24',
-  elevatedSurface: '#222430',
-  surfaceHover: '#262836',
+  background: '#08080C', // Rich black
+  surface: '#12121A',
+  elevatedSurface: '#181822',
+  surfaceHover: '#20202C',
   textPrimary: '#FFFFFF',
   textSecondary: '#D4D4D5',
   textMuted: '#8E92A0',
@@ -95,7 +118,7 @@ export const semUiDarkTokens: SemUiThemeTokens = {
   cardBorder: 'rgba(255, 255, 255, 0.08)',
   divider: 'rgba(255, 255, 255, 0.08)',
   inputBackground: '#161720',
-  accent: '#E1306C',
+  accent: '#7B52B9',
   accentText: '#FFFFFF',
   positive: '#2ECC71',
   negative: '#FF4D4D',
@@ -103,7 +126,7 @@ export const semUiDarkTokens: SemUiThemeTokens = {
   info: '#00B5AD',
   tabActive: '#FFFFFF',
   tabInactive: '#8E92A0',
-  tabActiveIndicator: '#E1306C',
+  tabActiveIndicator: '#7B52B9',
 };
 
 export function getSemUiTokens(isDark: boolean): SemUiThemeTokens {

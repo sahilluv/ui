@@ -2,19 +2,7 @@
 
 @layer utilities {
   .font-shadow-script {
-    font-family: 'Caveat', 'Pacifico', 'Satisfy', 'Kaushan Script', cursive;
-  }
-  
-  .font-shadow-caveat {
-    font-family: 'Caveat', cursive;
-  }
-
-  .font-shadow-pacifico {
-    font-family: 'Pacifico', cursive;
-  }
-  
-  .font-shadow-handwritten {
-    font-family: 'Caveat', 'Kaushan Script', 'Satisfy', cursive;
+    font-family: 'Satisfy', 'Dancing Script', cursive;
   }
   
   .font-display {

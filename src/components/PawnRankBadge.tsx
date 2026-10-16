@@ -47,11 +47,11 @@ export const triggerRankConfetti = (
   try {
     const paletteMap: Record<ShadowRankType, string[]> = {
       KING: ['#F59E0B', '#FBBF24', '#D97706', '#FEF08A', '#FFFFFF'],
-      QUEEN: ['#E1306C', '#EC4899', '#A855F7', '#C084FC', '#FFFFFF'],
+      QUEEN: ['#7B52B9', '#8456C5', '#A855F7', '#C084FC', '#FFFFFF'],
       ROOK: ['#0284C7', '#38BDF8', '#6366F1', '#93C5FD', '#FFFFFF'],
       BISHOP: ['#7C3AED', '#A855F7', '#818CF8', '#C084FC', '#FFFFFF'],
-      KNIGHT: ['#A855F7', '#C026D3', '#06B6D4', '#E1306C', '#38BDF8', '#F59E0B'],
-      PAWN: ['#E1306C', '#F472B6', '#A855F7', '#FDA4AF', '#FFFFFF'],
+      KNIGHT: ['#A855F7', '#C026D3', '#06B6D4', '#7B52B9', '#38BDF8', '#F59E0B'],
+      PAWN: ['#7B52B9', '#8456C5', '#A855F7', '#D4C4EB', '#FFFFFF'],
     };
 
     const colors = paletteMap[rank] || paletteMap.KNIGHT;
@@ -139,12 +139,12 @@ export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
         status: 'Sovereign Status',
         tier: 'Tier 05',
         symbol: '♕',
-        glowColor: 'rgba(225, 48, 108, 0.7)',
-        glowColorSecondary: 'rgba(168, 85, 247, 0.45)',
-        borderGrad: 'from-rose-500 via-pink-500 to-purple-600',
-        textGrad: 'from-rose-300 via-pink-200 to-purple-300',
-        bgTint: 'rgba(225, 48, 108, 0.16)',
-        badgeBg: 'bg-rose-500/20 text-rose-300 border-rose-400/40',
+        glowColor: 'rgba(132, 86, 197, 0.7)',
+        glowColorSecondary: 'rgba(123, 82, 185, 0.45)',
+        borderGrad: 'from-purple-500 via-[#8456C5] to-[#5E3A89]',
+        textGrad: 'from-purple-300 via-purple-200 to-indigo-300',
+        bgTint: 'rgba(123, 82, 185, 0.16)',
+        badgeBg: 'bg-purple-500/20 text-purple-300 border-purple-400/40',
       };
     case 'ROOK':
       return {
@@ -192,12 +192,12 @@ export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
         status: 'Foundation Status',
         tier: 'Tier 01',
         symbol: '♙',
-        glowColor: 'rgba(225, 48, 108, 0.6)',
-        glowColorSecondary: 'rgba(153, 27, 234, 0.35)',
-        borderGrad: 'from-pink-500 via-rose-500 to-purple-600',
-        textGrad: 'from-pink-300 via-rose-200 to-white',
-        bgTint: 'rgba(225, 48, 108, 0.14)',
-        badgeBg: 'bg-pink-500/20 text-pink-200 border-pink-500/35',
+        glowColor: 'rgba(123, 82, 185, 0.6)',
+        glowColorSecondary: 'rgba(94, 58, 137, 0.35)',
+        borderGrad: 'from-[#7B52B9] via-[#8456C5] to-[#5E3A89]',
+        textGrad: 'from-[#D4C4EB] via-purple-200 to-white',
+        bgTint: 'rgba(123, 82, 185, 0.14)',
+        badgeBg: 'bg-[#7B52B9]/20 text-[#D4C4EB] border-[#7B52B9]/35',
       };
   }
 };
@@ -255,7 +255,7 @@ export const ChessCoin: React.FC<{
               </>
             ) : rank === 'QUEEN' ? (
               <>
-                <stop offset="0%" stopColor="#E1306C" />
+                <stop offset="0%" stopColor="#7B52B9" />
                 <stop offset="100%" stopColor="#7C3AED" />
               </>
             ) : rank === 'ROOK' ? (
@@ -276,7 +276,7 @@ export const ChessCoin: React.FC<{
               </>
             ) : (
               <>
-                <stop offset="0%" stopColor="#E1306C" />
+                <stop offset="0%" stopColor="#7B52B9" />
                 <stop offset="50%" stopColor="#C026D3" />
                 <stop offset="100%" stopColor="#7C3AED" />
               </>
@@ -312,8 +312,8 @@ export const ChessCoin: React.FC<{
               </>
             ) : (
               <>
-                <stop offset="0%" stopColor="#FF94C8" />
-                <stop offset="45%" stopColor="#E1306C" />
+                <stop offset="0%" stopColor="#D4C4EB" />
+                <stop offset="45%" stopColor="#7B52B9" />
                 <stop offset="100%" stopColor="#A855F7" />
               </>
             )}
@@ -402,18 +402,18 @@ export const PremiumPawnInsignia: React.FC<{
         viewBox="0 0 48 48"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="relative drop-shadow-[0_2px_8px_rgba(225,48,108,0.4)]"
+        className="relative drop-shadow-[0_2px_8px_rgba(123,82,185,0.4)]"
       >
         <defs>
           <linearGradient id={gradId} x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#E1306C" />
+            <stop offset="0%" stopColor="#7B52B9" />
             <stop offset="50%" stopColor="#C026D3" />
             <stop offset="100%" stopColor="#7C3AED" />
           </linearGradient>
 
           <linearGradient id={rimGradId} x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#FF94C8" />
-            <stop offset="50%" stopColor="#E1306C" />
+            <stop offset="0%" stopColor="#D4C4EB" />
+            <stop offset="50%" stopColor="#7B52B9" />
             <stop offset="100%" stopColor="#A855F7" />
           </linearGradient>
         </defs>
@@ -653,7 +653,7 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
           onClick={onClick}
           className={`relative inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-500 overflow-hidden ${
             onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-95' : ''
-          } ${isElevating ? 'animate-rank-elevation ring-2 ring-pink-400/80 shadow-[0_0_28px_rgba(225,48,108,0.5)]' : ''} ${className}`}
+          } ${isElevating ? 'animate-rank-elevation ring-2 ring-[#8456C5]/80 shadow-[0_0_28px_rgba(123,82,185,0.5)]' : ''} ${className}`}
           style={{
             background: isDark ? 'rgba(24, 26, 38, 0.95)' : 'rgba(255, 255, 255, 0.95)',
             borderColor: isElevating ? meta.glowColor : isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)',
@@ -832,7 +832,7 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping [animation-delay:0.1s]" />
             <span className="w-2 h-2 rounded-full bg-amber-300 animate-ping [animation-delay:0.25s]" />
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-300 animate-ping [animation-delay:0.35s]" />
-            <span className="w-1 h-1 rounded-full bg-pink-300 animate-ping [animation-delay:0.45s]" />
+            <span className="w-1 h-1 rounded-full bg-[#D4C4EB] animate-ping [animation-delay:0.45s]" />
           </div>
         )}
 

@@ -195,7 +195,7 @@ export default function HomeScreen({ navigation, route }: any) {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={() => loadFeed(true)} tintColor={colors.accent} />}
       >
-        <StoryRow stories={[{ id: 'me', username: 'Tu historia', isCurrentUser: true, gradientColors: ['#FF0A78', '#991BEA', '#7928CA'] }]} colors={colors} />
+        <StoryRow stories={[{ id: 'me', username: 'Tu historia', isCurrentUser: true, gradientColors: ['#7B52B9', '#8456C5', '#5E3A89'] }]} colors={colors} />
         {isLoading ? <ActivityIndicator color={colors.accent} style={{ marginTop: 40 }} /> : (
           posts.map(post => (
             <PostCard

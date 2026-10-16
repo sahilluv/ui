@@ -39,7 +39,7 @@ const RECENT_CONTACTS: Contact[] = [
     id: 'c2',
     name: 'Elena Rostova',
     username: 'elena.art',
-    avatarGradient: 'linear-gradient(135deg, #EC4899 0%, #F43F5E 50%, #FB7185 100%)',
+    avatarGradient: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
     online: true,
   },
   {
@@ -153,8 +153,8 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
     <div className="absolute inset-0 z-50 flex items-end justify-center bg-black/65 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
       {/* Toast Notification Alert */}
       {toastMessage && (
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-60 px-4 py-2 rounded-full bg-[#12131D]/95 backdrop-blur-md text-white text-xs font-semibold shadow-2xl border border-white/15 flex items-center gap-2 animate-in slide-in-from-top duration-200">
-          <Sparkles size={14} className="text-[#FF0A78]" />
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-60 px-4 py-2 rounded-full bg-[#12131D]/95 backdrop-blur-md text-white text-xs font-semibold shadow-2xl border border-[#7B52B9]/30 flex items-center gap-2 animate-in slide-in-from-top duration-200">
+          <Sparkles size={14} className="text-[#7B52B9]" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -166,14 +166,14 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
       <div
         className={`relative w-full max-h-[90%] rounded-t-[32px] p-5 shadow-2xl flex flex-col z-10 transition-transform transform translate-y-0 duration-300 backdrop-blur-md overflow-hidden ${
           isDark
-            ? 'bg-[#101222]/95 text-white border-t border-white/15 shadow-[0_-12px_40px_rgba(0,0,0,0.6)]'
-            : 'bg-white/95 text-slate-900 border-t border-black/10 shadow-[0_-12px_36px_rgba(0,0,0,0.15)]'
+            ? 'bg-[#150A29]/95 text-white border-t border-[#7B52B9]/30 shadow-[0_-12px_40px_rgba(0,0,0,0.6)]'
+            : 'bg-white/95 text-slate-900 border-t border-[#7B52B9]/20 shadow-[0_-12px_36px_rgba(0,0,0,0.15)]'
         }`}
       >
         {/* Subtle Specular Top Rim Line */}
         <div
           aria-hidden="true"
-          className="absolute inset-x-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none rounded-full"
+          className="absolute inset-x-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#7B52B9]/30 to-transparent pointer-events-none rounded-full"
         />
 
         {/* Top Drag Indicator Handle */}
@@ -182,7 +182,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
         {/* Sheet Header */}
         <div className="flex items-center justify-between mb-3.5 shrink-0">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-xl bg-pink-500/20 border border-pink-500/35 text-pink-400 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-xl bg-[#7B52B9]/20 border border-[#7B52B9]/35 text-[#D4C4EB] flex items-center justify-center">
               <Share2 size={15} />
             </div>
             <div>
@@ -277,7 +277,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
               onClick={handleShareToStory}
               className={`flex flex-col items-center gap-1.5 p-2.5 rounded-2xl transition-all active:scale-95 group cursor-pointer border ${
                 isPublishingStory
-                  ? 'bg-pink-500/15 border-pink-500/40 text-pink-300'
+                  ? 'bg-[#7B52B9]/15 border-[#7B52B9]/40 text-[#D4C4EB]'
                   : isDark
                   ? 'bg-white/[0.04] hover:bg-white/[0.08] border-white/5 text-slate-200'
                   : 'bg-slate-100 hover:bg-slate-200 border-black/5 text-slate-700'
@@ -285,10 +285,10 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
             >
               <div
                 className={`w-11 h-11 rounded-full flex items-center justify-center text-white shadow-md transition-all ${
-                  isPublishingStory ? 'scale-105 ring-2 ring-pink-400 ring-offset-2 ring-offset-[#101222]' : 'group-hover:scale-105'
+                  isPublishingStory ? 'scale-105 ring-2 ring-[#7B52B9] ring-offset-2 ring-offset-[#150A29]' : 'group-hover:scale-105'
                 }`}
                 style={{
-                  background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #7928CA 100%)',
+                  background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
                 }}
               >
                 {isPublishingStory ? <Check size={18} /> : <PlusCircle size={20} />}
@@ -368,9 +368,9 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
                 title="Share to Shadow"
               >
                 <div
-                  className="w-11 h-11 rounded-2xl text-white flex items-center justify-center shadow-md shadow-pink-500/20 group-hover:scale-105 group-active:scale-95 transition-all"
+                  className="w-11 h-11 rounded-2xl text-white flex items-center justify-center shadow-md shadow-purple-500/25 group-hover:scale-105 group-active:scale-95 transition-all"
                   style={{
-                    background: 'linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #FCB045 100%)',
+                    background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
                   }}
                 >
                   <svg className="w-5 h-5 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
@@ -486,7 +486,7 @@ export const ShareSheetModal: React.FC<ShareSheetModalProps> = ({
                         isSent
                           ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30'
                           : isDark
-                          ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white shadow-xs'
+                          ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] hover:opacity-90 text-white shadow-xs'
                           : 'bg-slate-200 hover:bg-slate-300 text-slate-800'
                       }`}
                     >

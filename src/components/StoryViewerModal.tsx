@@ -172,8 +172,8 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
     >
       {/* Toast Alert */}
       {toastMessage && (
-        <div className="absolute top-8 left-1/2 -translate-x-1/2 z-60 px-4 py-2 rounded-full bg-[#121422]/95 backdrop-blur-md text-white text-xs font-semibold shadow-2xl border border-white/15 flex items-center gap-2 animate-in fade-in slide-in-from-top-3 duration-200">
-          <Sparkles size={14} className="text-[#FF0A78]" />
+        <div className="absolute top-8 left-1/2 -translate-x-1/2 z-60 px-4 py-2 rounded-full bg-[#121422]/95 backdrop-blur-md text-white text-xs font-semibold shadow-2xl border border-[#7B52B9]/30 flex items-center gap-2 animate-in fade-in slide-in-from-top-3 duration-200">
+          <Sparkles size={14} className="text-[#7B52B9]" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -261,7 +261,7 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
                     {story.username}
                   </p>
                   {story.isCurrentUser && (
-                    <span className="text-[8.5px] font-black bg-gradient-to-r from-pink-500 to-purple-600 text-white px-1.5 py-0.2 rounded-full uppercase tracking-wider shrink-0 shadow-xs">
+                    <span className="text-[8.5px] font-black bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white px-1.5 py-0.2 rounded-full uppercase tracking-wider shrink-0 shadow-xs">
                       24h
                     </span>
                   )}
@@ -385,7 +385,7 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
               onClick={handleToggleLike}
               className={`w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-85 border ${
                 isLiked
-                  ? 'bg-pink-500/90 text-white border-pink-400 shadow-md shadow-pink-500/40'
+                  ? 'bg-[#7B52B9]/90 text-white border-[#7B52B9] shadow-md shadow-[#7B52B9]/40'
                   : 'bg-black/40 hover:bg-black/60 text-white border-white/20'
               }`}
               title="Like Story"
@@ -404,7 +404,7 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
               disabled={!replyText.trim()}
               className={`w-9 h-9 rounded-full flex items-center justify-center transition-all cursor-pointer active:scale-85 border ${
                 replyText.trim()
-                  ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white border-pink-400 shadow-md shadow-pink-500/30'
+                  ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white border-[#7B52B9] shadow-md shadow-[#7B52B9]/30'
                   : 'bg-black/40 text-white/50 border-white/10 cursor-default'
               }`}
               title="Send reply"

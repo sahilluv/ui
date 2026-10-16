@@ -62,27 +62,27 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0D0F17] text-white">
+    <div className="min-h-screen flex flex-col bg-[#090616] text-white">
       {/* 1. Global Navigation Bar */}
-      <header className="h-16 px-4 sm:px-8 border-b border-white/10 bg-[#0F111D]/95 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between">
+      <header className="h-16 px-4 sm:px-8 border-b border-white/10 bg-[#0E091C]/95 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between">
         {/* Brand Lockup */}
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-2xl p-0.5 shadow-md shadow-pink-500/30 flex items-center justify-center shrink-0"
+            className="w-9 h-9 rounded-2xl p-0.5 shadow-md shadow-[#7B52B9]/30 flex items-center justify-center shrink-0"
             style={{
-              background: 'linear-gradient(135deg, #FF0A78 0%, #991BEA 50%, #6366F1 100%)',
+              background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
             }}
           >
-            <div className="w-full h-full rounded-[14px] bg-[#0F111D] flex items-center justify-center">
-              <span className="font-shadow-script text-xl text-pink-400">S</span>
+            <div className="w-full h-full rounded-[14px] bg-[#0E091C] flex items-center justify-center">
+              <span className="font-shadow-script text-xl text-[#D4C4EB]">S</span>
             </div>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-shadow-script text-2xl text-white tracking-wide">
+              <span className="font-shadow-script text-2xl text-white tracking-wide drop-shadow-[0_2px_8px_rgba(255,255,255,0.4)]">
                 Shadow
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30 uppercase tracking-wider hidden sm:inline-flex items-center gap-1">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#7B52B9]/20 text-[#D4C4EB] border border-[#7B52B9]/30 uppercase tracking-wider hidden sm:inline-flex items-center gap-1">
                 <Sparkles size={10} />
                 Pixel-Perfect UI
               </span>
@@ -96,11 +96,11 @@ export default function App() {
             onClick={() => setViewMode('shadow-auth')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
               viewMode === 'shadow-auth'
-                ? 'bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 text-white shadow-md shadow-purple-500/25'
+                ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white shadow-md shadow-purple-500/25'
                 : 'text-purple-300 hover:text-white bg-purple-500/10 hover:bg-purple-500/20'
             }`}
           >
-            <Sparkles size={14} className={viewMode === 'shadow-auth' ? 'text-pink-300' : 'text-purple-400'} />
+            <Sparkles size={14} className={viewMode === 'shadow-auth' ? 'text-[#D4C4EB]' : 'text-purple-400'} />
             <span className="hidden sm:inline">Shadow Auth (3 Screens)</span>
             <span className="sm:hidden">Auth UI</span>
           </button>
@@ -109,7 +109,7 @@ export default function App() {
             onClick={() => setViewMode('single')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
               viewMode === 'single'
-                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
+                ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -122,7 +122,7 @@ export default function App() {
             onClick={() => setViewMode('side-by-side')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
               viewMode === 'side-by-side'
-                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
+                ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -135,7 +135,7 @@ export default function App() {
             onClick={() => setViewMode('gallery')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
               viewMode === 'gallery'
-                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
+                ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -148,7 +148,7 @@ export default function App() {
             onClick={() => setViewMode('code')}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
               viewMode === 'code'
-                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md'
+                ? 'bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white shadow-md'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -170,9 +170,9 @@ export default function App() {
       <main className="flex-1 flex flex-col">
         {/* VIEW 1: SINGLE INTERACTIVE PHONE */}
         {viewMode === 'single' && (
-          <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
+          <div className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 bg-[#08080C]">
             <div className="max-w-md w-full mb-3 text-center">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/25 text-pink-400 text-xs font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#7B52B9]/15 border border-[#7B52B9]/30 text-[#D4C4EB] text-xs font-semibold">
                 <Sparkles size={12} />
                 Live Interactive Shadow Experience
               </span>
@@ -195,7 +195,7 @@ export default function App() {
                     onClick={() => setCurrentTab(tab.id as any)}
                     className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
                       currentTab === tab.id
-                        ? 'bg-gradient-to-r from-[#FF0A78] to-[#9900FF] text-white shadow-lg shadow-pink-500/25 scale-105'
+                        ? 'bg-gradient-to-r from-[#7B52B9] to-[#8456C5] text-white shadow-lg shadow-purple-900/40 scale-105'
                         : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 border border-white/5'
                     }`}
                   >
@@ -217,7 +217,7 @@ export default function App() {
 
         {/* VIEW 2: 3 DEVICES SIDE-BY-SIDE (MATCHING SCREENSHOT 1) */}
         {viewMode === 'side-by-side' && (
-          <div className="flex-1 overflow-x-auto p-4 sm:p-8 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
+          <div className="flex-1 overflow-x-auto p-4 sm:p-8 bg-gradient-to-b from-[#090616] via-[#0E091C] to-[#08080C]">
             <div className="min-w-fit mx-auto flex items-start justify-center gap-6 sm:gap-10 pb-12">
               {/* Phone 1: Feed / Home (Light Mode) */}
               <div className="flex flex-col items-center gap-3">
@@ -250,7 +250,7 @@ export default function App() {
               {/* Phone 3: Profile Mauricio Lopez (Light Mode) */}
               <div className="flex flex-col items-center gap-3">
                 <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
-                  <span className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-[#D4C4EB] animate-pulse" />
                   Profile Mauricio Lopez (Light Mode)
                 </span>
                 <PhoneSimulator
@@ -266,7 +266,7 @@ export default function App() {
 
         {/* VIEW 3: ALL 5 SCREENS GALLERY (MATCHING SCREENSHOTS 1, 2, 3) */}
         {viewMode === 'gallery' && (
-          <div className="flex-1 overflow-x-auto p-4 sm:p-8 bg-gradient-to-b from-[#111320] via-[#0E0F1A] to-[#0A0B12]">
+          <div className="flex-1 overflow-x-auto p-4 sm:p-8 bg-gradient-to-b from-[#090616] via-[#0E091C] to-[#08080C]">
             <div className="min-w-fit mx-auto flex items-start justify-center gap-6 sm:gap-8 pb-12">
               {/* Screen 1: Feed Light */}
               <div className="flex flex-col items-center gap-3">
@@ -313,7 +313,7 @@ export default function App() {
               {/* Screen 4: TV Videos Light (Screenshot 3) */}
               <div className="flex flex-col items-center gap-3">
                 <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
-                  <span className="w-2 h-2 rounded-full bg-pink-400" />
+                  <span className="w-2 h-2 rounded-full bg-[#D4C4EB]" />
                   TV / Videos (Light Mode)
                 </span>
                 <PhoneSimulator
@@ -327,7 +327,7 @@ export default function App() {
               {/* Screen 5: Profile Mauricio Lopez Light */}
               <div className="flex flex-col items-center gap-3">
                 <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-900/60 border border-purple-500/40 text-purple-300 text-xs font-bold shadow-md">
-                  <span className="w-2 h-2 rounded-full bg-pink-400" />
+                  <span className="w-2 h-2 rounded-full bg-[#D4C4EB]" />
                   Profile Mauricio Lopez (Light Mode)
                 </span>
                 <PhoneSimulator
@@ -353,22 +353,22 @@ export default function App() {
           <div
             className="relative flex-1 overflow-x-auto p-4 sm:p-8 min-h-[calc(100vh-4rem)] flex flex-col justify-start"
             style={{
-              background: 'linear-gradient(180deg, #090616 0%, #120C29 45%, #080514 100%)',
+              background: 'linear-gradient(180deg, #090616 0%, #120C29 100%)',
             }}
           >
             {/* Atmospheric Celestial Presentation Backdrop */}
             <ShadowBackgroundDesign screenType="presentation" />
 
             <div className="relative z-10 max-w-4xl mx-auto mb-6 text-center">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-purple-500/30 text-white text-xs font-bold shadow-lg">
-                <Sparkles size={13} className="text-purple-300" />
-                Shadow Authentication Experience • 3 Rebuilt Screens
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-[#7B52B9]/40 text-white text-xs font-bold shadow-lg">
+                <Sparkles size={13} className="text-[#D4C4EB]" />
+                Shadow Authentication Experience • 3 Side-by-Side Screens
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-white mt-2 tracking-tight drop-shadow-md">
                 Welcome, Sign Up, and Log In Screens
               </h2>
-              <p className="text-xs text-purple-200/90 mt-1 max-w-lg mx-auto font-medium drop-shadow-sm">
-                Near-black navy-purple canvas, handwritten italic purple Shadow logo, purple gradient buttons with circular arrows, mint-green accents, and pen-and-ink manga illustrations.
+              <p className="text-xs text-[#D4C4EB] mt-1 max-w-lg mx-auto font-medium drop-shadow-sm">
+                Primary purple canvas (#7B52B9), handwritten cursive Shadow wordmark, atmospheric lilac clouds, white input surfaces, and pen-and-ink manga illustrations.
               </p>
 
               {/* Controls bar: Navigation and simulator links */}
@@ -391,7 +391,7 @@ export default function App() {
                     setCurrentTab('home');
                     showAppToast('Opening Shadow Feed & Community Mesh');
                   }}
-                  className="px-3.5 py-1.5 rounded-full bg-purple-900/40 hover:bg-purple-800/50 backdrop-blur-md border border-purple-500/30 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
+                  className="px-3.5 py-1.5 rounded-full bg-[#7B52B9]/30 hover:bg-[#7B52B9]/50 backdrop-blur-md border border-[#7B52B9]/50 active:scale-95 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
                 >
                   <span>Explore Shadow App →</span>
                 </button>
@@ -401,9 +401,9 @@ export default function App() {
             <div className="relative z-10 min-w-fit mx-auto flex items-start justify-center gap-6 sm:gap-8 pb-12">
               {/* Screen 1: Welcome To Shadow */}
               <div className="flex flex-col items-center gap-3">
-                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-black/60 backdrop-blur-md border border-purple-500/30 text-white text-xs font-bold shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-purple-400" />
-                  Screen 1: Welcome To Shadow
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-black/60 backdrop-blur-md border border-[#7B52B9]/40 text-white text-xs font-bold shadow-lg">
+                  <span className="w-2 h-2 rounded-full bg-[#D4C4EB]" />
+                  Screen 1: Welcome to Shadow
                 </span>
                 <div className="w-[360px] h-[740px] rounded-[46px] border-[8px] border-[#181924] shadow-[0_30px_70px_rgba(5,3,15,0.9)] overflow-hidden flex flex-col bg-[#0B081A] relative">
                   <ShadowAuthScreen
@@ -420,9 +420,9 @@ export default function App() {
 
               {/* Screen 2: Sign up to Shadow */}
               <div className="flex flex-col items-center gap-3">
-                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-black/60 backdrop-blur-md border border-purple-500/30 text-white text-xs font-bold shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-purple-400" />
-                  Screen 2: Sign up to Shadow
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-black/60 backdrop-blur-md border border-[#7B52B9]/40 text-white text-xs font-bold shadow-lg">
+                  <span className="w-2 h-2 rounded-full bg-[#D4C4EB]" />
+                  Screen 2: Sign up to Shadow!
                 </span>
                 <div className="w-[360px] h-[740px] rounded-[46px] border-[8px] border-[#181924] shadow-[0_30px_70px_rgba(5,3,15,0.9)] overflow-hidden flex flex-col bg-[#0B081A] relative">
                   <ShadowAuthScreen
@@ -439,9 +439,9 @@ export default function App() {
 
               {/* Screen 3: Log in to Shadow */}
               <div className="flex flex-col items-center gap-3">
-                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-black/60 backdrop-blur-md border border-purple-500/30 text-white text-xs font-bold shadow-lg">
-                  <span className="w-2 h-2 rounded-full bg-purple-400" />
-                  Screen 3: Log in to Shadow
+                <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-black/60 backdrop-blur-md border border-[#7B52B9]/40 text-white text-xs font-bold shadow-lg">
+                  <span className="w-2 h-2 rounded-full bg-[#D4C4EB]" />
+                  Screen 3: Log in to Shadow!
                 </span>
                 <div className="w-[360px] h-[740px] rounded-[46px] border-[8px] border-[#181924] shadow-[0_30px_70px_rgba(5,3,15,0.9)] overflow-hidden flex flex-col bg-[#0B081A] relative">
                   <ShadowAuthScreen
@@ -463,7 +463,7 @@ export default function App() {
       {/* Floating Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-black/90 backdrop-blur-md border border-white/20 text-white text-xs font-bold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <Sparkles size={14} className="text-pink-400 animate-pulse" />
+          <Sparkles size={14} className="text-[#D4C4EB] animate-pulse" />
           <span>{toastMessage}</span>
         </div>
       )}

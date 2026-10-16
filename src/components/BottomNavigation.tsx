@@ -55,23 +55,19 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       id: 'reels',
       label: 'Reels',
       icon: (active, shrunk) => (
-        <div className="relative flex items-center justify-center">
-          <div
-            className={`${
-              shrunk ? 'w-5 h-4 rounded-[4px]' : 'w-6 h-5 rounded-[5px]'
-            } border-2 flex items-center justify-center border-current transition-all duration-300`}
-          >
-            <div
-              className={`w-0 h-0 ${
-                shrunk ? 'border-y-[2.5px] border-l-[4px]' : 'border-y-[3px] border-l-[5px]'
-              } border-y-transparent border-l-current ml-0.5 transition-all duration-300`}
-            />
+        <div
+          className={`${
+            shrunk ? 'w-8 h-8' : 'w-10 h-10'
+          } rounded-full flex items-center justify-center text-white shadow-lg transition-transform duration-300 ${
+            active ? 'scale-110 shadow-[0_4px_16px_rgba(123,82,185,0.65)]' : 'shadow-[0_2px_10px_rgba(123,82,185,0.4)] hover:scale-105'
+          }`}
+          style={{
+            background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
+          }}
+        >
+          <div className="w-5 h-5 rounded-[6px] border-2 border-white flex items-center justify-center p-0.5">
+            <div className="w-2 h-2 rounded-full border border-white" />
           </div>
-          <div
-            className={`absolute ${
-              shrunk ? '-bottom-0.5 w-2 h-[1px]' : '-bottom-1 w-2.5 h-[1.5px]'
-            } bg-current rounded-full transition-all duration-300`}
-          />
         </div>
       ),
     },
@@ -85,7 +81,13 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             size={shrunk ? 18 : 22}
             strokeWidth={active ? 2.5 : 2}
             className={`transition-all duration-300 ${
-              active ? 'fill-current text-[#FF0A78] scale-105 drop-shadow-[0_0_8px_rgba(255,10,120,0.4)]' : ''
+              active
+                ? isDark
+                  ? 'fill-current text-white'
+                  : 'fill-current text-[#111827]'
+                : isDark
+                ? 'text-[#8E92A4]'
+                : 'text-[#8A909E]'
             }`}
           />
         </div>
@@ -100,7 +102,15 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <MessageCircle
             size={shrunk ? 18 : 22}
             strokeWidth={active ? 2.5 : 2}
-            className="transition-all duration-300"
+            className={`transition-all duration-300 ${
+              active
+                ? isDark
+                  ? 'fill-current text-white'
+                  : 'fill-current text-[#111827]'
+                : isDark
+                ? 'text-[#8E92A4]'
+                : 'text-[#8A909E]'
+            }`}
           />
         </div>
       ),
@@ -120,21 +130,22 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             : 'h-14 px-2.5 w-full max-w-[350px] shadow-2xl'
         } ${
           isDark
-            ? 'bg-[#12131A]/85 border border-white/15 shadow-[0_12px_36px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.22)] text-[#D4D4D5]'
-            : 'bg-white/90 border border-[#E0E1E2] shadow-[0_10px_30px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] text-[#1B1C1D]'
+            ? 'bg-[#08080C]/95 border border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.15)] text-white'
+            : 'bg-white/95 border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.9)] text-[#111827]'
         }`}
       >
-        {/* Top Rim Specular Glare (iPhone Dynamic Glass refraction) */}
+        {/* Top Rim Specular Glare */}
         <div
           aria-hidden="true"
           className="absolute inset-x-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/35 to-transparent pointer-events-none rounded-full"
         />
 
         {/* ======================================================== */}
-        {/* FLUID GLASS TAB BUTTONS (iPhone Liquid Glass Morphic)     */}
+        {/* TAB BUTTONS                                              */}
         {/* ======================================================== */}
         {tabs.map((tab) => {
           const isActive = tab.id === currentTab;
+          const isCenterTab = tab.id === 'reels';
 
           return (
             <button
@@ -143,26 +154,20 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               className={`flex-1 relative flex items-center justify-center cursor-pointer transition-all duration-200 active:scale-[0.88] select-none ${
                 isShrunk ? 'h-8 rounded-full' : 'h-11 rounded-[20px]'
               } ${
-                isActive
+                isCenterTab
+                  ? 'bg-transparent'
+                  : isActive
                   ? isDark
-                    ? 'bg-white/16 border border-white/25 text-white shadow-[0_4px_14px_rgba(0,0,0,0.35),inset_0_1px_0.5px_rgba(255,255,255,0.45),inset_0_-1px_0.5px_rgba(0,0,0,0.25)] backdrop-blur-xl'
-                    : 'bg-white/90 border border-white/80 text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_1px_0.5px_rgba(255,255,255,1),inset_0_-1px_0.5px_rgba(0,0,0,0.04)] backdrop-blur-xl'
+                    ? 'text-white'
+                    : 'text-[#111827]'
                   : isDark
-                  ? 'hover:bg-white/8 hover:text-slate-200 text-slate-400 border border-transparent'
-                  : 'hover:bg-black/5 hover:text-slate-800 text-slate-500 border border-transparent'
+                  ? 'hover:text-white text-[#8E92A4]'
+                  : 'hover:text-[#111827] text-[#8A909E]'
               }`}
               title={tab.label}
               aria-label={tab.label}
               aria-selected={isActive}
             >
-              {/* Fluid Glass Top Specular Glare Reflection on Active Button */}
-              {isActive && (
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-x-2.5 top-[1px] h-[1px] bg-gradient-to-r from-transparent via-white/55 to-transparent rounded-full pointer-events-none"
-                />
-              )}
-
               {/* Icon Container */}
               <div
                 className={`relative flex items-center justify-center transition-transform duration-200 ${
@@ -171,15 +176,15 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               >
                 {tab.icon(isActive, isShrunk)}
 
-                {/* Badge (e.g. Chat Unread Count) */}
+                {/* Badge (Brand purple badge with white text) */}
                 {tab.badge && tab.badge > 0 && (
                   <span
                     className={`absolute ${
                       isShrunk
                         ? '-top-1 -right-1 min-w-3.5 h-3.5 px-0.5 text-[8px]'
                         : '-top-1 -right-2 min-w-4 h-4 px-1 text-[9px]'
-                    } rounded-full bg-gradient-to-r from-[#FF0A78] to-[#E11D48] text-white font-black flex items-center justify-center shadow-md shadow-pink-500/50 leading-none border-2 ${
-                      isDark ? 'border-[#151726]' : 'border-white'
+                    } rounded-full bg-[#7B52B9] text-white font-black flex items-center justify-center shadow-md leading-none border-2 ${
+                      isDark ? 'border-[#161722]' : 'border-white'
                     } transition-transform duration-300 ${
                       isActive ? 'scale-90' : 'animate-pulse'
                     }`}

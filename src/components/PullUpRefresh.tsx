@@ -61,7 +61,7 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
       <div
         className={`w-full max-w-[320px] rounded-2xl p-3 border flex items-center justify-between gap-3 transition-all duration-200 ${
           activeRefreshing
-            ? 'border-pink-500/50 shadow-lg shadow-pink-500/20'
+            ? 'border-[#7B52B9]/50 shadow-lg shadow-[#7B52B9]/20'
             : isTriggered
             ? 'border-purple-500/60 shadow-md shadow-purple-500/20 scale-[1.02]'
             : isDark
@@ -79,16 +79,16 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
           <div
             className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 ${
               activeRefreshing
-                ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30'
+                ? 'bg-[#7B52B9]/20 text-[#D4C4EB] border border-[#7B52B9]/30'
                 : justCompleted
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                 : isTriggered
                 ? 'bg-purple-500/25 text-purple-300 border border-purple-500/40 rotate-180'
-                : 'bg-white/5 text-slate-400 border border-white/10 group-hover:text-pink-400 group-hover:border-pink-500/30'
+                : 'bg-white/5 text-slate-400 border border-white/10 group-hover:text-[#D4C4EB] group-hover:border-[#7B52B9]/30'
             }`}
           >
             {activeRefreshing ? (
-              <RotateCw size={15} className="animate-spin text-pink-400" />
+              <RotateCw size={15} className="animate-spin text-[#D4C4EB]" />
             ) : justCompleted ? (
               <Check size={16} className="text-emerald-400" />
             ) : (
@@ -106,7 +106,7 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
             <span
               className={`text-xs font-bold leading-tight transition-colors ${
                 activeRefreshing
-                  ? 'text-pink-400'
+                  ? 'text-[#D4C4EB]'
                   : justCompleted
                   ? 'text-emerald-400'
                   : isTriggered
@@ -139,15 +139,15 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
           <div
             className={`px-2.5 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-wider transition-all ${
               activeRefreshing
-                ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
+                ? 'bg-[#7B52B9]/20 text-[#D4C4EB] border border-[#7B52B9]/30'
                 : justCompleted
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                : 'bg-gradient-to-r from-pink-500/15 to-purple-600/15 text-pink-400 border border-pink-500/25 group-hover:scale-105'
+                : 'bg-gradient-to-r from-[#7B52B9]/15 to-[#5E3A89]/15 text-[#D4C4EB] border border-[#7B52B9]/25 group-hover:scale-105'
             }`}
           >
             {activeRefreshing ? (
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-ping" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#7B52B9] animate-ping" />
                 SYNC
               </span>
             ) : justCompleted ? (
@@ -166,7 +166,7 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
       {pullDistance > 10 && !activeRefreshing && (
         <div className="w-full max-w-[200px] mt-2 h-1 rounded-full bg-white/10 overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full transition-all duration-75"
+            className="h-full bg-gradient-to-r from-[#8456C5] to-[#7B52B9] rounded-full transition-all duration-75"
             style={{ width: `${progressRatio * 100}%` }}
           />
         </div>
