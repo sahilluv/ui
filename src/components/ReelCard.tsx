@@ -127,7 +127,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
       {/* Swipe Right Visual Cue: Return to Feed */}
       {isSwipingReel && reelSwipeDeltaX > 20 && (
         <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-[10px] text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
-          <ChevronLeft size={16} className="text-[#D4C4EB]" />
+          <ChevronLeft size={16} className="text-white" />
           <span>Return to Feed</span>
         </div>
       )}
@@ -136,7 +136,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
       {isSwipingReel && reelSwipeDeltaX < -20 && (
         <div className="absolute right-4 top-1/2 -translate-y-1/2 z-40 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-[10px] text-white text-xs font-bold border border-white/20 flex items-center gap-1.5 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
           <span>@{reel.author.username}</span>
-          <ChevronRight size={16} className="text-[#7B52B9]" />
+          <ChevronRight size={16} className="text-white" />
         </div>
       )}
       {/* Background Poster Image if provided */}
@@ -167,7 +167,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
           <Heart
             size={110}
-            className="fill-[#FF2A55] text-white animate-heart-burst drop-shadow-[0_0_28px_rgba(255,42,85,0.85)]"
+            className="fill-white text-white animate-heart-burst drop-shadow-[0_0_28px_rgba(255,255,255,0.85)]"
           />
         </div>
       )}
@@ -212,8 +212,8 @@ export const ReelCard: React.FC<ReelCardProps> = ({
                 }}
                 className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[8px] text-[10px] font-bold transition-all active:scale-90 cursor-pointer ${
                   isFollowing
-                    ? 'bg-black/50 text-[#D4C4EB] border border-[#7B52B9]/40 backdrop-blur-md'
-                    : 'bg-[#7B52B9] text-white shadow-md hover:bg-[#6C42AA]'
+                    ? 'bg-black/50 text-neutral-300 border border-white/20 backdrop-blur-md'
+                    : 'bg-neutral-900 border border-neutral-700 text-white shadow-md hover:bg-neutral-800'
                 }`}
               >
                 {isFollowing ? (
@@ -273,7 +273,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
         {/* Audio Track Ticker */}
         {reel.audioTrack && (
           <div className="flex items-center gap-2 py-1 px-3 rounded-[10px] bg-black/45 backdrop-blur-md border border-white/15 self-start text-[10px] text-white/90 shadow-md">
-            <Music size={11} className="text-[#D4C4EB] shrink-0 animate-pulse" />
+            <Music size={11} className="text-white shrink-0 animate-pulse" />
             <span className="truncate max-w-[210px] font-medium">
               {reel.audioTrack}
             </span>
@@ -281,13 +281,13 @@ export const ReelCard: React.FC<ReelCardProps> = ({
         )}
       </div>
 
-      {/* Floating Engagement Capsule Pill: Centered white pill directly above bottom navigation bar */}
+      {/* Floating Engagement Capsule Pill: Centered matt black / white pill */}
       <div
         className={`absolute ${
           isNavShrunk ? 'bottom-16' : 'bottom-22'
         } left-0 right-0 flex justify-center z-20 pointer-events-auto select-none transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]`}
       >
-        <div className="bg-white rounded-[18px] px-5 py-2.5 shadow-2xl flex items-center gap-3.5 border border-black/5 select-none">
+        <div className="bg-[#121212] rounded-[18px] px-5 py-2.5 shadow-2xl flex items-center gap-3.5 border border-white/10 select-none text-white">
           {/* Heart Like Button */}
           <button
             onClick={(e) => {
@@ -300,17 +300,17 @@ export const ReelCard: React.FC<ReelCardProps> = ({
               size={18}
               className={
                 reel.isLiked
-                  ? 'fill-[#FF2A55] text-[#FF2A55]'
-                  : 'text-[#12131D] group-hover:text-[#FF2A55]'
+                  ? 'fill-white text-white'
+                  : 'text-neutral-400 group-hover:text-white'
               }
             />
-            <span className="text-xs font-black text-[#12131D]">
+            <span className="text-xs font-black text-white">
               {reel.likes}
             </span>
           </button>
 
           {/* Divider 1 */}
-          <span className="w-[1px] h-4 bg-slate-200" />
+          <span className="w-[1px] h-4 bg-white/20" />
 
           {/* Comment Button */}
           <button
@@ -322,15 +322,15 @@ export const ReelCard: React.FC<ReelCardProps> = ({
           >
             <MessageCircle
               size={17}
-              className="text-[#12131D] group-hover:text-purple-600"
+              className="text-neutral-400 group-hover:text-white"
             />
-            <span className="text-xs font-black text-[#12131D]">
+            <span className="text-xs font-black text-white">
               {reel.comments}
             </span>
           </button>
 
           {/* Divider 2 */}
-          <span className="w-[1px] h-4 bg-slate-200" />
+          <span className="w-[1px] h-4 bg-white/20" />
 
           {/* Bookmark Button with Pop Animation */}
           <div className="relative flex items-center justify-center">
@@ -338,7 +338,7 @@ export const ReelCard: React.FC<ReelCardProps> = ({
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 pointer-events-none z-30">
                 <Bookmark
                   size={22}
-                  className="fill-[#991BEA] text-white animate-bookmark-pop drop-shadow-[0_4px_12px_rgba(153,27,234,0.7)]"
+                  className="fill-white text-white animate-bookmark-pop drop-shadow-[0_4px_12px_rgba(255,255,255,0.7)]"
                 />
               </div>
             )}
@@ -355,8 +355,8 @@ export const ReelCard: React.FC<ReelCardProps> = ({
                 size={18}
                 className={`transition-all duration-200 ${
                   reel.isSaved
-                    ? 'fill-[#991BEA] text-[#991BEA] scale-110 drop-shadow-[0_2px_8px_rgba(153,27,234,0.4)]'
-                    : 'text-[#12131D] hover:text-[#991BEA]'
+                    ? 'fill-white text-white scale-110 drop-shadow-[0_2px_8px_rgba(255,255,255,0.4)]'
+                    : 'text-neutral-400 hover:text-white'
                 }`}
               />
             </button>

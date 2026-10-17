@@ -32,39 +32,29 @@ export interface StoryCameraOverlayProps {
 
 const GRADIENT_PRESETS = [
   {
-    id: 'cyber_noir',
-    name: 'Cyber Noir',
-    gradient: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
+    id: 'stealth_black',
+    name: 'Stealth Black',
+    gradient: 'linear-gradient(135deg, #2A2A2A 0%, #161616 50%, #0A0A0A 100%)',
   },
   {
-    id: 'neon_sunset',
-    name: 'Neon Sunset',
-    gradient: 'linear-gradient(135deg, #FF5E62 0%, #FF7F50 50%, #FFA07A 100%)',
+    id: 'matte_obsidian',
+    name: 'Matte Obsidian',
+    gradient: 'linear-gradient(135deg, #222222 0%, #141414 50%, #000000 100%)',
   },
   {
-    id: 'prismatic_aurora',
-    name: 'Prism Aurora',
-    gradient: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 50%, #8B5CF6 100%)',
+    id: 'charcoal_noir',
+    name: 'Charcoal Noir',
+    gradient: 'linear-gradient(145deg, #282828 0%, #1A1A1A 50%, #0F0F0F 100%)',
   },
   {
-    id: 'solar_flare',
-    name: 'Solar Flare',
-    gradient: 'linear-gradient(135deg, #F97316 0%, #FB7185 50%, #E11D48 100%)',
+    id: 'pure_noir',
+    name: 'Pure Noir',
+    gradient: 'linear-gradient(180deg, #181818 0%, #101010 50%, #050505 100%)',
   },
   {
-    id: 'dark_obsidian',
-    name: 'Dark Obsidian',
-    gradient: 'linear-gradient(145deg, #181A26 0%, #0F101A 50%, #06070B 100%)',
-  },
-  {
-    id: 'acid_emerald',
-    name: 'Acid Emerald',
-    gradient: 'linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%)',
-  },
-  {
-    id: 'ultraviolet',
-    name: 'Ultraviolet',
-    gradient: 'linear-gradient(135deg, #7928CA 0%, #A855F7 50%, #C084FC 100%)',
+    id: 'dark_graphite',
+    name: 'Dark Graphite',
+    gradient: 'linear-gradient(145deg, #303030 0%, #1F1F1F 50%, #121212 100%)',
   },
 ];
 
@@ -524,14 +514,14 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
               />
             </div>
 
-            {/* Color Palette for Text */}
+            {/* Color Palette for Text (Monochrome Black & Matt Black) */}
             <div className="flex items-center justify-center gap-3 pb-6">
-              {['#FFFFFF', '#7B52B9', '#06B6D4', '#FACC15', '#A855F7', '#10B981'].map((c) => (
+              {['#FFFFFF', '#D4D4D4', '#888888', '#333333', '#1A1A1A', '#000000'].map((c) => (
                 <button
                   key={c}
                   onClick={() => setCaptionColor(c)}
                   className={`w-7 h-7 rounded-full border-2 transition-transform ${
-                    captionColor === c ? 'scale-125 border-white ring-2 ring-[#7B52B9]' : 'border-transparent'
+                    captionColor === c ? 'scale-125 border-white ring-2 ring-neutral-400' : 'border-neutral-700'
                   }`}
                   style={{ background: c }}
                 />
@@ -559,7 +549,7 @@ export const StoryCameraOverlay: React.FC<StoryCameraOverlayProps> = ({
                   }}
                   className={`w-9 h-9 rounded-[10px] shrink-0 border-2 transition-all cursor-pointer flex items-center justify-center ${
                     isSelected
-                      ? 'scale-110 border-white shadow-[0_0_12px_rgba(255,10,120,0.7)]'
+                      ? 'scale-110 border-white shadow-[0_0_12px_rgba(255,255,255,0.5)]'
                       : 'border-white/30 opacity-70 hover:opacity-100'
                   }`}
                   style={{ background: preset.gradient }}

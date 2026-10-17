@@ -46,12 +46,12 @@ export const triggerRankConfetti = (
 ) => {
   try {
     const paletteMap: Record<ShadowRankType, string[]> = {
-      KING: ['#F59E0B', '#FBBF24', '#D97706', '#FEF08A', '#FFFFFF'],
-      QUEEN: ['#7B52B9', '#8456C5', '#A855F7', '#C084FC', '#FFFFFF'],
-      ROOK: ['#0284C7', '#38BDF8', '#6366F1', '#93C5FD', '#FFFFFF'],
-      BISHOP: ['#7C3AED', '#A855F7', '#818CF8', '#C084FC', '#FFFFFF'],
-      KNIGHT: ['#A855F7', '#C026D3', '#06B6D4', '#7B52B9', '#38BDF8', '#F59E0B'],
-      PAWN: ['#7B52B9', '#8456C5', '#A855F7', '#D4C4EB', '#FFFFFF'],
+      KING: ['#FFFFFF', '#E0E0E0', '#A0A0A0', '#404040', '#121212'],
+      QUEEN: ['#FFFFFF', '#D0D0D0', '#888888', '#333333', '#121212'],
+      ROOK: ['#FFFFFF', '#C0C0C0', '#777777', '#2A2A2A', '#121212'],
+      BISHOP: ['#FFFFFF', '#B0B0B0', '#666666', '#222222', '#121212'],
+      KNIGHT: ['#FFFFFF', '#A0A0A0', '#555555', '#1A1A1A', '#000000'],
+      PAWN: ['#FFFFFF', '#909090', '#444444', '#161616', '#000000'],
     };
 
     const colors = paletteMap[rank] || paletteMap.KNIGHT;
@@ -126,12 +126,12 @@ export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
         status: 'Apex Status',
         tier: 'Tier 06',
         symbol: '♔',
-        glowColor: 'rgba(217, 119, 6, 0.7)',
-        glowColorSecondary: 'rgba(245, 158, 11, 0.4)',
-        borderGrad: 'from-amber-400 via-yellow-500 to-orange-500',
-        textGrad: 'from-amber-300 via-yellow-200 to-amber-400',
-        bgTint: 'rgba(217, 119, 6, 0.16)',
-        badgeBg: 'bg-amber-500/20 text-amber-300 border-amber-400/40',
+        glowColor: 'rgba(255, 255, 255, 0.4)',
+        glowColorSecondary: 'rgba(0, 0, 0, 0.6)',
+        borderGrad: 'from-neutral-400 via-neutral-600 to-neutral-800',
+        textGrad: 'from-white via-neutral-200 to-neutral-400',
+        bgTint: 'rgba(255, 255, 255, 0.08)',
+        badgeBg: 'bg-neutral-800 text-white border-neutral-600',
       };
     case 'QUEEN':
       return {
@@ -139,12 +139,12 @@ export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
         status: 'Sovereign Status',
         tier: 'Tier 05',
         symbol: '♕',
-        glowColor: 'rgba(132, 86, 197, 0.7)',
-        glowColorSecondary: 'rgba(123, 82, 185, 0.45)',
-        borderGrad: 'from-purple-500 via-[#8456C5] to-[#5E3A89]',
-        textGrad: 'from-purple-300 via-purple-200 to-indigo-300',
-        bgTint: 'rgba(123, 82, 185, 0.16)',
-        badgeBg: 'bg-purple-500/20 text-purple-300 border-purple-400/40',
+        glowColor: 'rgba(255, 255, 255, 0.35)',
+        glowColorSecondary: 'rgba(0, 0, 0, 0.55)',
+        borderGrad: 'from-neutral-500 via-neutral-700 to-neutral-900',
+        textGrad: 'from-white via-neutral-200 to-neutral-400',
+        bgTint: 'rgba(255, 255, 255, 0.06)',
+        badgeBg: 'bg-neutral-800 text-white border-neutral-600',
       };
     case 'ROOK':
       return {
@@ -152,12 +152,12 @@ export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
         status: 'Fortress Status',
         tier: 'Tier 04',
         symbol: '♖',
-        glowColor: 'rgba(2, 132, 199, 0.7)',
-        glowColorSecondary: 'rgba(56, 189, 248, 0.45)',
-        borderGrad: 'from-cyan-500 via-blue-500 to-indigo-600',
-        textGrad: 'from-cyan-300 via-sky-200 to-blue-300',
-        bgTint: 'rgba(2, 132, 199, 0.16)',
-        badgeBg: 'bg-sky-500/20 text-sky-300 border-sky-400/40',
+        glowColor: 'rgba(255, 255, 255, 0.3)',
+        glowColorSecondary: 'rgba(0, 0, 0, 0.5)',
+        borderGrad: 'from-neutral-500 via-neutral-700 to-neutral-900',
+        textGrad: 'from-white via-neutral-200 to-neutral-400',
+        bgTint: 'rgba(255, 255, 255, 0.06)',
+        badgeBg: 'bg-neutral-800 text-white border-neutral-600',
       };
     case 'BISHOP':
       return {
@@ -165,12 +165,12 @@ export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
         status: 'Strategic Status',
         tier: 'Tier 03',
         symbol: '♗',
-        glowColor: 'rgba(124, 58, 237, 0.7)',
-        glowColorSecondary: 'rgba(168, 85, 247, 0.45)',
-        borderGrad: 'from-purple-500 via-violet-500 to-indigo-600',
-        textGrad: 'from-purple-300 via-violet-200 to-indigo-300',
-        bgTint: 'rgba(124, 58, 237, 0.16)',
-        badgeBg: 'bg-purple-500/20 text-purple-300 border-purple-400/40',
+        glowColor: 'rgba(255, 255, 255, 0.3)',
+        glowColorSecondary: 'rgba(0, 0, 0, 0.5)',
+        borderGrad: 'from-neutral-500 via-neutral-700 to-neutral-900',
+        textGrad: 'from-white via-neutral-200 to-neutral-400',
+        bgTint: 'rgba(255, 255, 255, 0.06)',
+        badgeBg: 'bg-neutral-800 text-white border-neutral-600',
       };
     case 'KNIGHT':
       return {
@@ -178,12 +178,12 @@ export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
         status: 'Vanguard Status',
         tier: 'Tier 02',
         symbol: '♘',
-        glowColor: 'rgba(168, 85, 247, 0.7)',
-        glowColorSecondary: 'rgba(6, 182, 212, 0.45)',
-        borderGrad: 'from-purple-500 via-fuchsia-500 to-cyan-500',
-        textGrad: 'from-fuchsia-300 via-purple-200 to-cyan-300',
-        bgTint: 'rgba(168, 85, 247, 0.16)',
-        badgeBg: 'bg-purple-500/20 text-purple-200 border-purple-400/40',
+        glowColor: 'rgba(255, 255, 255, 0.3)',
+        glowColorSecondary: 'rgba(0, 0, 0, 0.5)',
+        borderGrad: 'from-neutral-500 via-neutral-700 to-neutral-900',
+        textGrad: 'from-white via-neutral-200 to-neutral-400',
+        bgTint: 'rgba(255, 255, 255, 0.06)',
+        badgeBg: 'bg-neutral-800 text-white border-neutral-600',
       };
     case 'PAWN':
     default:
@@ -192,12 +192,12 @@ export const getRankMeta = (rank: ShadowRankType = 'PAWN') => {
         status: 'Foundation Status',
         tier: 'Tier 01',
         symbol: '♙',
-        glowColor: 'rgba(123, 82, 185, 0.6)',
-        glowColorSecondary: 'rgba(94, 58, 137, 0.35)',
-        borderGrad: 'from-[#7B52B9] via-[#8456C5] to-[#5E3A89]',
-        textGrad: 'from-[#D4C4EB] via-purple-200 to-white',
-        bgTint: 'rgba(123, 82, 185, 0.14)',
-        badgeBg: 'bg-[#7B52B9]/20 text-[#D4C4EB] border-[#7B52B9]/35',
+        glowColor: 'rgba(255, 255, 255, 0.25)',
+        glowColorSecondary: 'rgba(0, 0, 0, 0.5)',
+        borderGrad: 'from-neutral-600 via-neutral-800 to-neutral-950',
+        textGrad: 'from-white via-neutral-300 to-neutral-400',
+        bgTint: 'rgba(255, 255, 255, 0.05)',
+        badgeBg: 'bg-neutral-900 text-neutral-300 border-neutral-700',
       };
   }
 };
@@ -232,7 +232,7 @@ export const ChessCoin: React.FC<{
       onClick={onClick}
       title={title || defaultTitle}
       className={`inline-flex items-center justify-center shrink-0 align-middle select-none transition-all duration-500 ${
-        isElevating ? 'scale-125 drop-shadow-[0_0_12px_rgba(225,48,108,0.7)]' : ''
+        isElevating ? 'scale-125 drop-shadow-[0_0_12px_rgba(255,255,255,0.7)]' : ''
       } ${onClick ? 'cursor-pointer hover:scale-125 active:scale-90' : 'cursor-default'} ${className}`}
       style={{ width: size, height: size }}
       role={onClick ? 'button' : undefined}
@@ -248,75 +248,15 @@ export const ChessCoin: React.FC<{
       >
         <defs>
           <linearGradient id={coinGradId} x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-            {rank === 'KING' ? (
-              <>
-                <stop offset="0%" stopColor="#F59E0B" />
-                <stop offset="100%" stopColor="#D97706" />
-              </>
-            ) : rank === 'QUEEN' ? (
-              <>
-                <stop offset="0%" stopColor="#7B52B9" />
-                <stop offset="100%" stopColor="#7C3AED" />
-              </>
-            ) : rank === 'ROOK' ? (
-              <>
-                <stop offset="0%" stopColor="#0284C7" />
-                <stop offset="100%" stopColor="#2563EB" />
-              </>
-            ) : rank === 'BISHOP' ? (
-              <>
-                <stop offset="0%" stopColor="#7C3AED" />
-                <stop offset="100%" stopColor="#4338CA" />
-              </>
-            ) : rank === 'KNIGHT' ? (
-              <>
-                <stop offset="0%" stopColor="#C026D3" />
-                <stop offset="50%" stopColor="#7C3AED" />
-                <stop offset="100%" stopColor="#06B6D4" />
-              </>
-            ) : (
-              <>
-                <stop offset="0%" stopColor="#7B52B9" />
-                <stop offset="50%" stopColor="#C026D3" />
-                <stop offset="100%" stopColor="#7C3AED" />
-              </>
-            )}
+            <stop offset="0%" stopColor="#2A2A2A" />
+            <stop offset="50%" stopColor="#1A1A1A" />
+            <stop offset="100%" stopColor="#0A0A0A" />
           </linearGradient>
 
           <linearGradient id={rimGradId} x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-            {rank === 'KING' ? (
-              <>
-                <stop offset="0%" stopColor="#FDE68A" />
-                <stop offset="100%" stopColor="#F59E0B" />
-              </>
-            ) : rank === 'QUEEN' ? (
-              <>
-                <stop offset="0%" stopColor="#FDA4AF" />
-                <stop offset="100%" stopColor="#C084FC" />
-              </>
-            ) : rank === 'ROOK' ? (
-              <>
-                <stop offset="0%" stopColor="#7DD3FC" />
-                <stop offset="100%" stopColor="#38BDF8" />
-              </>
-            ) : rank === 'BISHOP' ? (
-              <>
-                <stop offset="0%" stopColor="#C084FC" />
-                <stop offset="100%" stopColor="#818CF8" />
-              </>
-            ) : rank === 'KNIGHT' ? (
-              <>
-                <stop offset="0%" stopColor="#E879F9" />
-                <stop offset="50%" stopColor="#A855F7" />
-                <stop offset="100%" stopColor="#38BDF8" />
-              </>
-            ) : (
-              <>
-                <stop offset="0%" stopColor="#D4C4EB" />
-                <stop offset="45%" stopColor="#7B52B9" />
-                <stop offset="100%" stopColor="#A855F7" />
-              </>
-            )}
+            <stop offset="0%" stopColor="#E0E0E0" />
+            <stop offset="50%" stopColor="#888888" />
+            <stop offset="100%" stopColor="#444444" />
           </linearGradient>
         </defs>
 
@@ -391,7 +331,7 @@ export const PremiumPawnInsignia: React.FC<{
         <div
           className="absolute inset-0 rounded-full blur-md opacity-50 pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(225,48,108,0.7) 0%, rgba(124,58,237,0.35) 60%, transparent 100%)',
+            background: 'radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(124,58,237,0.35) 60%, transparent 100%)',
           }}
         />
       )}
@@ -402,23 +342,23 @@ export const PremiumPawnInsignia: React.FC<{
         viewBox="0 0 48 48"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="relative drop-shadow-[0_2px_8px_rgba(123,82,185,0.4)]"
+        className="relative drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
       >
         <defs>
           <linearGradient id={gradId} x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#7B52B9" />
-            <stop offset="50%" stopColor="#C026D3" />
-            <stop offset="100%" stopColor="#7C3AED" />
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="50%" stopColor="#CCCCCC" />
+            <stop offset="100%" stopColor="#888888" />
           </linearGradient>
 
           <linearGradient id={rimGradId} x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#D4C4EB" />
-            <stop offset="50%" stopColor="#7B52B9" />
-            <stop offset="100%" stopColor="#A855F7" />
+            <stop offset="0%" stopColor="#E0E0E0" />
+            <stop offset="50%" stopColor="#FFFFFF" />
+            <stop offset="100%" stopColor="#AAAAAA" />
           </linearGradient>
         </defs>
 
-        <circle cx="24" cy="24" r="21" fill="#12131D" stroke={`url(#${rimGradId})`} strokeWidth="1.5" />
+        <circle cx="24" cy="24" r="21" fill="#121212" stroke={`url(#${rimGradId})`} strokeWidth="1.5" />
         <circle cx="24" cy="24" r="17" stroke="rgba(255,255,255,0.15)" strokeDasharray="2 3" />
         <circle cx="24" cy="14" r="5" fill={`url(#${gradId})`} />
         <ellipse cx="24" cy="20.5" rx="5.5" ry="1.6" fill={`url(#${gradId})`} />
@@ -451,7 +391,7 @@ export const PremiumKnightInsignia: React.FC<{
         <div
           className="absolute inset-0 rounded-full blur-md opacity-60 pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(168,85,247,0.8) 0%, rgba(6,182,212,0.4) 60%, transparent 100%)',
+            background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(200,200,200,0.1) 60%, transparent 100%)',
           }}
         />
       )}
@@ -462,27 +402,27 @@ export const PremiumKnightInsignia: React.FC<{
         viewBox="0 0 48 48"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="relative drop-shadow-[0_2px_10px_rgba(168,85,247,0.5)]"
+        className="relative drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
       >
         <defs>
           <linearGradient id={gradId} x1="6" y1="4" x2="42" y2="44" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#C026D3" />
-            <stop offset="40%" stopColor="#7C3AED" />
-            <stop offset="80%" stopColor="#3B82F6" />
-            <stop offset="100%" stopColor="#06B6D4" />
+            <stop offset="0%" stopColor="#CCCCCC" />
+            <stop offset="40%" stopColor="#888888" />
+            <stop offset="80%" stopColor="#888888" />
+            <stop offset="100%" stopColor="#666666" />
           </linearGradient>
 
           <linearGradient id={rimGradId} x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#F472B6" />
-            <stop offset="30%" stopColor="#A855F7" />
-            <stop offset="70%" stopColor="#38BDF8" />
-            <stop offset="100%" stopColor="#2DD4BF" />
+            <stop offset="0%" stopColor="#EAEAEA" />
+            <stop offset="30%" stopColor="#AAAAAA" />
+            <stop offset="70%" stopColor="#CCCCCC" />
+            <stop offset="100%" stopColor="#AAAAAA" />
           </linearGradient>
         </defs>
 
         <path
           d="M24 2.5L39.5 9L46 24.5L39.5 40L24 46.5L8.5 40L2 24.5L8.5 9L24 2.5Z"
-          fill="#12131D"
+          fill="#121212"
           stroke={`url(#${rimGradId})`}
           strokeWidth="1.5"
           strokeLinejoin="round"
@@ -494,7 +434,7 @@ export const PremiumKnightInsignia: React.FC<{
           d="M17.5 32.5C17.5 32.5 17 28 19 25C19.5 24.2 20.5 23.5 21 22.5C21.5 21.5 21.2 20 20 18.5L18.5 16.5C18 15.8 18.2 14.8 19 14.2L21 12.8C21.8 12.2 22.8 12.4 23.5 13.1L24.5 14.1C25.2 13 26.5 11.5 27.5 10C28.2 8.8 29.8 8.5 30.8 9.5L31.5 10.2C32.2 10.9 32.3 12 31.8 12.8C31 14.2 30.2 16 30.5 17.5C30.8 19 32 20.2 32.5 21.8C33.2 24.5 32.5 28.5 30.5 32.5H17.5Z"
           fill={`url(#${gradId})`}
         />
-        <circle cx="23" cy="16.5" r="1.3" fill="#38BDF8" />
+        <circle cx="23" cy="16.5" r="1.3" fill="#FFFFFF" />
       </svg>
     </div>
   );
@@ -616,21 +556,21 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
 
   // DOM Confetti / Sparkle particle definitions (16 multi-directional particles)
   const particles = [
-    { glyph: '✦', angle: 0, dist: 52, delay: 0, color: '#F472B6', size: '13px' },
-    { glyph: '★', angle: 25, dist: 68, delay: 60, color: '#A855F7', size: '12px' },
-    { glyph: '✧', angle: 50, dist: 48, delay: 120, color: '#38BDF8', size: '11px' },
-    { glyph: '●', angle: 75, dist: 60, delay: 40, color: '#FBBF24', size: '7px' },
-    { glyph: '✦', angle: 100, dist: 50, delay: 90, color: '#C026D3', size: '13px' },
-    { glyph: '◆', angle: 130, dist: 70, delay: 140, color: '#06B6D4', size: '9px' },
-    { glyph: '✧', angle: 155, dist: 46, delay: 30, color: '#FDA4AF', size: '11px' },
-    { glyph: '★', angle: 180, dist: 58, delay: 80, color: '#E879F9', size: '12px' },
-    { glyph: '●', angle: 205, dist: 64, delay: 110, color: '#F59E0B', size: '8px' },
-    { glyph: '✦', angle: 230, dist: 52, delay: 50, color: '#A855F7', size: '13px' },
-    { glyph: '✧', angle: 255, dist: 48, delay: 100, color: '#38BDF8', size: '11px' },
-    { glyph: '◆', angle: 280, dist: 66, delay: 70, color: '#F472B6', size: '9px' },
-    { glyph: '★', angle: 305, dist: 54, delay: 130, color: '#FDE047', size: '12px' },
-    { glyph: '✦', angle: 330, dist: 62, delay: 40, color: '#C084FC', size: '13px' },
-    { glyph: '●', angle: 350, dist: 44, delay: 90, color: '#67E8F9', size: '7px' },
+    { glyph: '✦', angle: 0, dist: 52, delay: 0, color: '#FFFFFF', size: '13px' },
+    { glyph: '★', angle: 25, dist: 68, delay: 60, color: '#FFFFFF', size: '12px' },
+    { glyph: '✧', angle: 50, dist: 48, delay: 120, color: '#FFFFFF', size: '11px' },
+    { glyph: '●', angle: 75, dist: 60, delay: 40, color: '#FFFFFF', size: '7px' },
+    { glyph: '✦', angle: 100, dist: 50, delay: 90, color: '#FFFFFF', size: '13px' },
+    { glyph: '◆', angle: 130, dist: 70, delay: 140, color: '#FFFFFF', size: '9px' },
+    { glyph: '✧', angle: 155, dist: 46, delay: 30, color: '#FFFFFF', size: '11px' },
+    { glyph: '★', angle: 180, dist: 58, delay: 80, color: '#FFFFFF', size: '12px' },
+    { glyph: '●', angle: 205, dist: 64, delay: 110, color: '#FFFFFF', size: '8px' },
+    { glyph: '✦', angle: 230, dist: 52, delay: 50, color: '#FFFFFF', size: '13px' },
+    { glyph: '✧', angle: 255, dist: 48, delay: 100, color: '#FFFFFF', size: '11px' },
+    { glyph: '◆', angle: 280, dist: 66, delay: 70, color: '#FFFFFF', size: '9px' },
+    { glyph: '★', angle: 305, dist: 54, delay: 130, color: '#FFFFFF', size: '12px' },
+    { glyph: '✦', angle: 330, dist: 62, delay: 40, color: '#FFFFFF', size: '13px' },
+    { glyph: '●', angle: 350, dist: 44, delay: 90, color: '#FFFFFF', size: '7px' },
   ];
 
   // Simple Badge Variant with smooth scale & glow
@@ -643,7 +583,7 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
             aria-hidden="true"
             className="absolute -inset-1.5 rounded-2xl pointer-events-none z-30 animate-rank-glow-bloom"
             style={{
-              background: 'radial-gradient(circle, rgba(168, 85, 247, 0.85) 0%, rgba(6, 182, 212, 0.45) 50%, transparent 80%)',
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(180, 180, 180, 0.2) 50%, transparent 80%)',
               filter: 'blur(8px)',
             }}
           />
@@ -653,7 +593,7 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
           onClick={onClick}
           className={`relative inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-all duration-500 overflow-hidden ${
             onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-95' : ''
-          } ${isElevating ? 'animate-rank-elevation ring-2 ring-[#8456C5]/80 shadow-[0_0_28px_rgba(123,82,185,0.5)]' : ''} ${className}`}
+          } ${isElevating ? 'animate-rank-elevation ring-2 ring-white/60 shadow-[0_0_28px_rgba(255,255,255,0.3)]' : ''} ${className}`}
           style={{
             background: isDark ? 'rgba(24, 26, 38, 0.95)' : 'rgba(255, 255, 255, 0.95)',
             borderColor: isElevating ? meta.glowColor : isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)',
@@ -830,9 +770,9 @@ export const PawnRankBadge: React.FC<PawnRankBadgeProps> = ({
         {isElevating && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-around z-20">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping [animation-delay:0.1s]" />
-            <span className="w-2 h-2 rounded-full bg-amber-300 animate-ping [animation-delay:0.25s]" />
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-300 animate-ping [animation-delay:0.35s]" />
-            <span className="w-1 h-1 rounded-full bg-[#D4C4EB] animate-ping [animation-delay:0.45s]" />
+            <span className="w-2 h-2 rounded-full bg-white animate-ping [animation-delay:0.25s]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-neutral-300 animate-ping [animation-delay:0.35s]" />
+            <span className="w-1 h-1 rounded-full bg-neutral-500 animate-ping [animation-delay:0.45s]" />
           </div>
         )}
 

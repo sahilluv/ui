@@ -58,11 +58,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <div
           className={`${
             shrunk ? 'w-8 h-8' : 'w-10 h-10'
-          } rounded-full flex items-center justify-center text-white shadow-lg transition-transform duration-300 ${
-            active ? 'scale-110 shadow-[0_4px_16px_rgba(123,82,185,0.65)]' : 'shadow-[0_2px_10px_rgba(123,82,185,0.4)] hover:scale-105'
+          } rounded-full flex items-center justify-center text-white shadow-lg transition-transform duration-300 border border-white/20 ${
+            active ? 'scale-110 shadow-[0_4px_16px_rgba(0,0,0,0.8)]' : 'shadow-[0_2px_10px_rgba(0,0,0,0.5)] hover:scale-105'
           }`}
           style={{
-            background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
+            background: 'linear-gradient(135deg, #2A2A2A 0%, #161616 50%, #0A0A0A 100%)',
           }}
         >
           <div className="w-5 h-5 rounded-[6px] border-2 border-white flex items-center justify-center p-0.5">
@@ -183,8 +183,8 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
                       isShrunk
                         ? '-top-1 -right-1 min-w-3.5 h-3.5 px-0.5 text-[8px]'
                         : '-top-1 -right-2 min-w-4 h-4 px-1 text-[9px]'
-                    } rounded-full bg-[#7B52B9] text-white font-black flex items-center justify-center shadow-md leading-none border-2 ${
-                      isDark ? 'border-[#161722]' : 'border-white'
+                    } rounded-full bg-[#1A1A1A] text-white font-black flex items-center justify-center shadow-md leading-none border ${
+                      isDark ? 'border-white/20' : 'border-neutral-400'
                     } transition-transform duration-300 ${
                       isActive ? 'scale-90' : 'animate-pulse'
                     }`}

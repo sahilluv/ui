@@ -68,11 +68,11 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
         } ${
           isPastThreshold
             ? isSwipingRight
-              ? 'w-3 bg-gradient-to-r from-[#7B52B9]/60 via-[#7B52B9]/25 to-transparent shadow-[0_0_24px_rgba(123,82,185,0.8)]'
-              : 'w-3 bg-gradient-to-l from-[#991BEA]/60 via-[#991BEA]/25 to-transparent shadow-[0_0_24px_rgba(153,27,234,0.8)]'
+              ? 'w-3 bg-gradient-to-r from-white/40 via-white/15 to-transparent shadow-[0_0_24px_rgba(255,255,255,0.4)]'
+              : 'w-3 bg-gradient-to-l from-white/40 via-white/15 to-transparent shadow-[0_0_24px_rgba(255,255,255,0.4)]'
             : isSwipingRight
-            ? 'w-1 bg-gradient-to-r from-[#7B52B9]/30 to-transparent'
-            : 'w-1 bg-gradient-to-l from-[#991BEA]/30 to-transparent'
+            ? 'w-1 bg-gradient-to-r from-white/20 to-transparent'
+            : 'w-1 bg-gradient-to-l from-white/20 to-transparent'
         }`}
       />
 
@@ -92,9 +92,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
         <div
           className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-[14px] backdrop-blur-xl transition-all duration-200 ease-out shadow-2xl border ${
             isPastThreshold
-              ? isSwipingRight
-                ? 'bg-black/92 border-[#7B52B9] shadow-[0_0_25px_rgba(123,82,185,0.55),0_10px_25px_rgba(0,0,0,0.7)] scale-[1.04]'
-                : 'bg-black/92 border-[#991BEA] shadow-[0_0_25px_rgba(153,27,234,0.55),0_10px_25px_rgba(0,0,0,0.7)] scale-[1.04]'
+              ? 'bg-black/92 border-white/50 shadow-[0_0_25px_rgba(255,255,255,0.25),0_10px_25px_rgba(0,0,0,0.7)] scale-[1.04]'
               : 'bg-black/82 border-white/20 text-white/90 shadow-xl scale-100'
           }`}
         >
@@ -103,7 +101,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
             <div className="relative flex items-center justify-center">
               {/* Threshold Met Ring / Shockwave */}
               {isPastThreshold && (
-                <span className="absolute -inset-1 rounded-full bg-[#7B52B9]/30 animate-ping pointer-events-none" />
+                <span className="absolute -inset-1 rounded-full bg-white/20 animate-ping pointer-events-none" />
               )}
               
               {/* The Shifting Icon with Spring Transition */}
@@ -117,7 +115,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
                   size={18}
                   className={`transition-colors duration-200 ${
                     isPastThreshold
-                      ? 'text-[#7B52B9] drop-shadow-[0_0_8px_rgba(123,82,185,0.8)]'
+                      ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]'
                       : 'text-white/80'
                   }`}
                 />
@@ -125,7 +123,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
                 {isPastThreshold && (
                   <ChevronLeft
                     size={14}
-                    className="absolute -left-2 text-[#7B52B9]/70 animate-in fade-in zoom-in-75 duration-150"
+                    className="absolute -left-2 text-white/70 animate-in fade-in zoom-in-75 duration-150"
                   />
                 )}
               </div>
@@ -137,7 +135,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
             <div className="flex items-center gap-1.5">
               {isSwipingRight ? (
                 <>
-                  <Compass size={13} className={isPastThreshold ? 'text-[#7B52B9]' : 'text-zinc-400'} />
+                  <Compass size={13} className={isPastThreshold ? 'text-white' : 'text-zinc-400'} />
                   <span className={`text-xs font-bold tracking-tight transition-colors duration-150 ${
                     isPastThreshold ? 'text-white' : 'text-zinc-200'
                   }`}>
@@ -146,7 +144,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
                 </>
               ) : (
                 <>
-                  <User size={13} className={isPastThreshold ? 'text-[#991BEA]' : 'text-zinc-400'} />
+                  <User size={13} className={isPastThreshold ? 'text-white' : 'text-zinc-400'} />
                   <span className={`text-xs font-bold tracking-tight transition-colors duration-150 ${
                     isPastThreshold ? 'text-white' : 'text-zinc-200'
                   }`}>
@@ -158,11 +156,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
               {/* Threshold Met State Chip */}
               {isPastThreshold ? (
                 <span
-                  className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider animate-in zoom-in-90 duration-150 ${
-                    isSwipingRight
-                      ? 'bg-[#7B52B9]/25 text-[#D4C4EB] border border-[#7B52B9]/40'
-                      : 'bg-[#991BEA]/25 text-[#D4C4EB] border border-[#991BEA]/40'
-                  }`}
+                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider animate-in zoom-in-90 duration-150 bg-neutral-800 text-white border border-neutral-600"
                 >
                   <Check size={10} strokeWidth={3} />
                   <span>Ready</span>
@@ -199,7 +193,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
                 cy="12"
                 r={ringRadius}
                 fill="none"
-                stroke={isPastThreshold ? (isSwipingRight ? '#7B52B9' : '#991BEA') : '#FFFFFF'}
+                stroke={isPastThreshold ? '#FFFFFF' : 'rgba(255,255,255,0.7)'}
                 strokeWidth="2.5"
                 strokeDasharray={circumference}
                 strokeDashoffset={strokeDashoffset}
@@ -209,9 +203,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
             </svg>
             {isPastThreshold && (
               <span
-                className={`absolute w-1.5 h-1.5 rounded-full ${
-                  isSwipingRight ? 'bg-[#7B52B9]' : 'bg-[#991BEA]'
-                } animate-ping`}
+                className="absolute w-1.5 h-1.5 rounded-full bg-white animate-ping"
               />
             )}
           </div>
@@ -221,7 +213,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
             <div className="relative flex items-center justify-center">
               {/* Threshold Met Ring / Shockwave */}
               {isPastThreshold && (
-                <span className="absolute -inset-1 rounded-full bg-[#991BEA]/30 animate-ping pointer-events-none" />
+                <span className="absolute -inset-1 rounded-full bg-white/20 animate-ping pointer-events-none" />
               )}
               
               {/* The Shifting Icon with Spring Transition */}
@@ -235,7 +227,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
                   size={18}
                   className={`transition-colors duration-200 ${
                     isPastThreshold
-                      ? 'text-[#991BEA] drop-shadow-[0_0_8px_rgba(153,27,234,0.8)]'
+                      ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]'
                       : 'text-white/80'
                   }`}
                 />
@@ -243,7 +235,7 @@ export const ReelSwipeIndicator: React.FC<ReelSwipeIndicatorProps> = ({
                 {isPastThreshold && (
                   <ChevronRight
                     size={14}
-                    className="absolute -right-2 text-[#991BEA]/70 animate-in fade-in zoom-in-75 duration-150"
+                    className="absolute -right-2 text-white/70 animate-in fade-in zoom-in-75 duration-150"
                   />
                 )}
               </div>

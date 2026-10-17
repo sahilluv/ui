@@ -45,7 +45,7 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
         location: 'Madrid, Spain',
         avatarGradient: ['#3A3B4D', '#2B2C3B', '#1E1F2A'],
       },
-      gradient: ['#796A9E', '#AA86B7', '#DCAABF', '#F4CCD8'],
+      gradient: ['#2A2A2A', '#1E1E1E', '#141414', '#0A0A0A'],
       likes: '2,4k',
       likesCount: 2400,
       comments: '175',
@@ -77,7 +77,7 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
         location: 'Tokyo, Japan',
         avatarGradient: ['#1A2536', '#131C2A', '#0D1420'],
       },
-      gradient: ['#1A365D', '#2B6CB0', '#4299E1', '#90CDF4'],
+      gradient: ['#262626', '#1A1A1A', '#121212', '#080808'],
       likes: '3,9k',
       likesCount: 3900,
       comments: '340',
@@ -122,9 +122,9 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
           name: 'Elena Rostova',
           username: 'elena.lens',
           location: 'Reykjavik, Iceland',
-          avatarGradient: ['#065F46', '#047857', '#10B981'],
+          avatarGradient: ['#242424', '#181818', '#101010'],
         },
-        gradient: ['#042F2E', '#0D9488', '#2DD4BF', '#99F6E4'],
+        gradient: ['#222222', '#161616', '#101010', '#080808'],
         likes: '5,2k',
         likesCount: 5200,
         comments: '412',
@@ -174,8 +174,8 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={isDark ? '#FFFFFF' : '#7B52B9'}
-            colors={['#7B52B9', '#8456C5', '#D4C4EB']}
+            tintColor={isDark ? '#FFFFFF' : '#FFFFFF'}
+            colors={['#FFFFFF', '#888888', '#333333']}
             progressBackgroundColor={isDark ? '#1C1D2D' : '#FFFFFF'}
           />
         }
@@ -221,7 +221,7 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
                   <Ionicons
                     name={reel.isLiked ? 'heart' : 'heart-outline'}
                     size={20}
-                    color={reel.isLiked ? '#FF2A55' : '#12131D'}
+                    color={reel.isLiked ? '#FFFFFF' : '#12131D'}
                   />
                   <Text style={styles.pillText}>{reel.likes}</Text>
                 </TouchableOpacity>
@@ -254,7 +254,7 @@ export const ReelsScreen: React.FC<ReelsScreenProps> = ({
                   <Ionicons
                     name={reel.isSaved ? 'bookmark' : 'bookmark-outline'}
                     size={19}
-                    color={reel.isSaved ? '#7928CA' : '#12131D'}
+                    color={reel.isSaved ? '#FFFFFF' : '#12131D'}
                   />
                 </TouchableOpacity>
               </View>

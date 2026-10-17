@@ -187,7 +187,7 @@ export const ShadowAuthScreen: React.FC<ShadowAuthScreenProps> = ({
     <div
       className={`relative w-full h-full min-h-[720px] max-h-[844px] overflow-hidden flex flex-col justify-between select-none ${className}`}
       style={{
-        backgroundColor: '#7B52B9', // Exact purple hue from uploaded UI
+        backgroundColor: '#121212', // Matt black stealth background
       }}
     >
       {/* Optional Close / Back button for interactive simulator */}
@@ -229,21 +229,21 @@ export const ShadowAuthScreen: React.FC<ShadowAuthScreenProps> = ({
             {/* Left Cloud */}
             <div
               className="absolute -left-12 top-24 w-44 h-24 rounded-full opacity-40 blur-[1px]"
-              style={{ backgroundColor: '#D4C4EB' }}
+              style={{ backgroundColor: '#222222' }}
             />
             <div
               className="absolute -left-6 top-32 w-32 h-20 rounded-full opacity-40 blur-[1px]"
-              style={{ backgroundColor: '#D4C4EB' }}
+              style={{ backgroundColor: '#222222' }}
             />
 
             {/* Right Cloud */}
             <div
               className="absolute -right-14 top-40 w-52 h-28 rounded-full opacity-35 blur-[1px]"
-              style={{ backgroundColor: '#D4C4EB' }}
+              style={{ backgroundColor: '#222222' }}
             />
             <div
               className="absolute -right-6 top-48 w-40 h-24 rounded-full opacity-35 blur-[1px]"
-              style={{ backgroundColor: '#D4C4EB' }}
+              style={{ backgroundColor: '#222222' }}
             />
           </div>
 
@@ -313,11 +313,11 @@ export const ShadowAuthScreen: React.FC<ShadowAuthScreenProps> = ({
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
             <div
               className="absolute -left-12 top-20 w-44 h-24 rounded-full opacity-25 blur-[1px]"
-              style={{ backgroundColor: '#D4C4EB' }}
+              style={{ backgroundColor: '#222222' }}
             />
             <div
               className="absolute -right-14 top-36 w-52 h-28 rounded-full opacity-20 blur-[1px]"
-              style={{ backgroundColor: '#D4C4EB' }}
+              style={{ backgroundColor: '#222222' }}
             />
           </div>
 
@@ -467,11 +467,11 @@ export const ShadowAuthScreen: React.FC<ShadowAuthScreenProps> = ({
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
             <div
               className="absolute -left-12 top-20 w-44 h-24 rounded-full opacity-25 blur-[1px]"
-              style={{ backgroundColor: '#D4C4EB' }}
+              style={{ backgroundColor: '#222222' }}
             />
             <div
               className="absolute -right-14 top-36 w-52 h-28 rounded-full opacity-20 blur-[1px]"
-              style={{ backgroundColor: '#D4C4EB' }}
+              style={{ backgroundColor: '#222222' }}
             />
           </div>
 

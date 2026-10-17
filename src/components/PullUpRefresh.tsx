@@ -61,16 +61,16 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
       <div
         className={`w-full max-w-[320px] rounded-2xl p-3 border flex items-center justify-between gap-3 transition-all duration-200 ${
           activeRefreshing
-            ? 'border-[#7B52B9]/50 shadow-lg shadow-[#7B52B9]/20'
+            ? 'border-white/40 shadow-lg shadow-black/80'
             : isTriggered
-            ? 'border-purple-500/60 shadow-md shadow-purple-500/20 scale-[1.02]'
+            ? 'border-white/50 shadow-md shadow-black/60 scale-[1.02]'
             : isDark
             ? 'border-white/10 hover:border-white/20 hover:bg-white/[0.04]'
             : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
         }`}
         style={{
           background: isDark
-            ? 'linear-gradient(135deg, rgba(21, 23, 38, 0.95) 0%, rgba(27, 21, 40, 0.95) 100%)'
+            ? 'linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(12, 12, 12, 0.95) 100%)'
             : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
         }}
       >
@@ -79,18 +79,18 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
           <div
             className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 ${
               activeRefreshing
-                ? 'bg-[#7B52B9]/20 text-[#D4C4EB] border border-[#7B52B9]/30'
+                ? 'bg-neutral-800 text-white border border-neutral-700'
                 : justCompleted
-                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                ? 'bg-neutral-800 text-white border border-neutral-700'
                 : isTriggered
-                ? 'bg-purple-500/25 text-purple-300 border border-purple-500/40 rotate-180'
-                : 'bg-white/5 text-slate-400 border border-white/10 group-hover:text-[#D4C4EB] group-hover:border-[#7B52B9]/30'
+                ? 'bg-neutral-800 text-white border border-neutral-600 rotate-180'
+                : 'bg-white/5 text-slate-400 border border-white/10 group-hover:text-white group-hover:border-white/30'
             }`}
           >
             {activeRefreshing ? (
-              <RotateCw size={15} className="animate-spin text-[#D4C4EB]" />
+              <RotateCw size={15} className="animate-spin text-white" />
             ) : justCompleted ? (
-              <Check size={16} className="text-emerald-400" />
+              <Check size={16} className="text-white" />
             ) : (
               <ArrowUp
                 size={15}
@@ -106,11 +106,11 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
             <span
               className={`text-xs font-bold leading-tight transition-colors ${
                 activeRefreshing
-                  ? 'text-[#D4C4EB]'
+                  ? 'text-white'
                   : justCompleted
-                  ? 'text-emerald-400'
+                  ? 'text-white'
                   : isTriggered
-                  ? 'text-purple-300'
+                  ? 'text-white'
                   : isDark
                   ? 'text-slate-200 group-hover:text-white'
                   : 'text-slate-800'
@@ -139,15 +139,15 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
           <div
             className={`px-2.5 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-wider transition-all ${
               activeRefreshing
-                ? 'bg-[#7B52B9]/20 text-[#D4C4EB] border border-[#7B52B9]/30'
+                ? 'bg-neutral-800 text-white border border-neutral-700'
                 : justCompleted
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                : 'bg-gradient-to-r from-[#7B52B9]/15 to-[#5E3A89]/15 text-[#D4C4EB] border border-[#7B52B9]/25 group-hover:scale-105'
+                ? 'bg-neutral-800 text-white border border-neutral-700'
+                : 'bg-neutral-900 text-neutral-300 border border-neutral-700 group-hover:scale-105'
             }`}
           >
             {activeRefreshing ? (
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#7B52B9] animate-ping" />
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
                 SYNC
               </span>
             ) : justCompleted ? (
@@ -166,7 +166,7 @@ export const PullUpRefresh: React.FC<PullUpRefreshProps> = ({
       {pullDistance > 10 && !activeRefreshing && (
         <div className="w-full max-w-[200px] mt-2 h-1 rounded-full bg-white/10 overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-[#8456C5] to-[#7B52B9] rounded-full transition-all duration-75"
+            className="h-full bg-gradient-to-r from-neutral-600 to-white rounded-full transition-all duration-75"
             style={{ width: `${progressRatio * 100}%` }}
           />
         </div>

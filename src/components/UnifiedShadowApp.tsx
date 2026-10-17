@@ -97,11 +97,11 @@ export interface FeedPost {
 }
 
 const INITIAL_STORIES = [
-  { id: 'user_story', username: 'Your story', isCurrentUser: true, gradient: ['#7B52B9', '#8456C5', '#5E3A89'] },
-  { id: 's1', username: 'Ezequias', gradient: ['#7B52B9', '#9B6EE2', '#D4C4EB'] },
-  { id: 's2', username: 'Alice_002', gradient: ['#8456C5', '#5E3A89', '#3B82F6'] },
-  { id: 's3', username: 'Paulette_R', gradient: ['#7B52B9', '#8456C5', '#4F46E5'] },
-  { id: 's4', username: 'Carlos_v', gradient: ['#06B6D4', '#3B82F6', '#6366F1'] },
+  { id: 'user_story', username: 'Your story', isCurrentUser: true, gradient: ['#2A2A2A', '#161616', '#0A0A0A'] },
+  { id: 's1', username: 'Ezequias', gradient: ['#2A2A2A', '#161616', '#0A0A0A'] },
+  { id: 's2', username: 'Alice_002', gradient: ['#2A2A2A', '#161616', '#0A0A0A'] },
+  { id: 's3', username: 'Paulette_R', gradient: ['#2A2A2A', '#161616', '#0A0A0A'] },
+  { id: 's4', username: 'Carlos_v', gradient: ['#2A2A2A', '#161616', '#0A0A0A'] },
 ];
 
 const INITIAL_FEED_POSTS: FeedPost[] = [
@@ -109,9 +109,9 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     id: 'post_1',
     authorName: 'Maoo Lopez',
     username: 'maoo.lopez',
-    avatarGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
+    avatarGradient: ['#242424', '#141414'],
     timeAgo: '20m ago',
-    imageGradient: ['#4E137D', '#7B52B9', '#8456C5', '#D4C4EB'],
+    imageGradient: ['#262626', '#1A1A1A', '#101010'],
     content: 'This photomanipulation inspired by generative biology and organic surrealism. What do you think of this color palette?',
     captionTitle: 'SACRIFICE | VIRUS',
     likesCount: 4558,
@@ -123,9 +123,9 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     id: 'post_2',
     authorName: 'Eliott Johnson',
     username: 'eliott.j',
-    avatarGradient: ['#6366F1', '#8B5CF6', '#7B52B9'],
+    avatarGradient: ['#242424', '#141414'],
     timeAgo: '2h ago',
-    imageGradient: ['#7A58E6', '#B77DE8', '#F5A7C4', '#FCD5B5'],
+    imageGradient: ['#262626', '#1A1A1A', '#101010'],
     content: 'Central campus library west wing is open 24/7 during finals sprint. Plenty of charging stations on the 3rd floor!',
     captionTitle: 'CAMPUS SPACES',
     likesCount: 2420,
@@ -137,9 +137,9 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     id: 'post_3',
     authorName: 'Sofia Reyes',
     username: 'sofia.design',
-    avatarGradient: ['#06B6D4', '#3B82F6', '#6366F1'],
+    avatarGradient: ['#242424', '#141414'],
     timeAgo: '4h ago',
-    imageGradient: ['#0A3A40', '#0E626B', '#13928E', '#20C997'],
+    imageGradient: ['#262626', '#1A1A1A', '#101010'],
     content: 'Looking for 2 UI developers for our upcoming inter-college hackathon build. Drop a comment if interested!',
     captionTitle: 'HACKATHON COLLAB',
     likesCount: 1890,
@@ -151,9 +151,9 @@ const INITIAL_FEED_POSTS: FeedPost[] = [
     id: 'post_encounter_1',
     authorName: 'Kenji Sato',
     username: 'kenji.tokyo',
-    avatarGradient: ['#2185D0', '#00B5AD', '#21BA45'],
+    avatarGradient: ['#242424', '#141414'],
     timeAgo: '5h ago',
-    imageGradient: ['#0A3A40', '#0E626B', '#13928E', '#20C997'],
+    imageGradient: ['#262626', '#1A1A1A', '#101010'],
     content: 'Physical node encounter captured at Shibuya Crossing node beacon. Chain extended +450 REP.',
     captionTitle: 'SHADOW ENCOUNTER #882',
     likesCount: 3120,
@@ -183,9 +183,9 @@ const NEW_FEED_POSTS_POOL: FeedPost[] = [
     id: 'post_fresh_elena',
     authorName: 'Elena Rostova',
     username: 'elena.art',
-    avatarGradient: ['#7B52B9', '#8456C5', '#D4C4EB'],
+    avatarGradient: ['#242424', '#141414'],
     timeAgo: 'Just now',
-    imageGradient: ['#5B1CE6', '#8456C5', '#7B52B9', '#D4C4EB'],
+    imageGradient: ['#262626', '#1A1A1A', '#101010'],
     content: 'Generative bio-crystal forms rendered with chromatic aberration. Testing our new shadow depth shaders!',
     captionTitle: 'CHROMA RESONANCE',
     likesCount: 512,
@@ -197,9 +197,9 @@ const NEW_FEED_POSTS_POOL: FeedPost[] = [
     id: 'post_fresh_marcus',
     authorName: 'Marcus Chen',
     username: 'marcus.vfx',
-    avatarGradient: ['#06B6D4', '#3B82F6', '#6366F1'],
+    avatarGradient: ['#242424', '#141414'],
     timeAgo: 'Just now',
-    imageGradient: ['#09203F', '#537895', '#0E626B', '#13928E'],
+    imageGradient: ['#262626', '#1A1A1A', '#101010'],
     content: 'Interactive fluid simulation running in real-time WebGL on mobile GPU! Drop feedback on framerate below.',
     captionTitle: 'FLUID DYNAMICS',
     likesCount: 388,
@@ -211,9 +211,9 @@ const NEW_FEED_POSTS_POOL: FeedPost[] = [
     id: 'post_fresh_kai',
     authorName: 'Kai Tanaka',
     username: 'kai.sound',
-    avatarGradient: ['#F59E0B', '#D97706', '#78350F'],
+    avatarGradient: ['#242424', '#141414'],
     timeAgo: 'Just now',
-    imageGradient: ['#2E0854', '#662D8C', '#ED1E79', '#FFA07A'],
+    imageGradient: ['#262626', '#1A1A1A', '#101010'],
     content: 'Spatial ambient score for the upcoming Shadow exhibition. Best experienced with studio headphones 🎧',
     captionTitle: 'SPATIAL AUDIO',
     likesCount: 674,
@@ -224,19 +224,19 @@ const NEW_FEED_POSTS_POOL: FeedPost[] = [
 ];
 
 const EXPLORE_CATEGORIES = [
-  { id: 'igtv', title: 'IGTV', icon: Tv, gradient: ['#7928CA', '#A855F7', '#C084FC'] },
-  { id: 'campus', title: 'CAMPUS', icon: ShoppingBag, gradient: ['#7B52B9', '#8456C5', '#5E3A89'] },
-  { id: 'viajes', title: 'TRAVEL', icon: Sparkles, gradient: ['#06B6D4', '#0EA5E9', '#3B82F6'] },
-  { id: 'wellness', title: 'WELLNESS', icon: Heart, gradient: ['#F97316', '#FB923C', '#F43F5E'] },
+  { id: 'igtv', title: 'IGTV', icon: Tv, gradient: ['#2A2A2A', '#161616', '#0A0A0A'] },
+  { id: 'campus', title: 'CAMPUS', icon: ShoppingBag, gradient: ['#2A2A2A', '#161616', '#0A0A0A'] },
+  { id: 'viajes', title: 'TRAVEL', icon: Sparkles, gradient: ['#2A2A2A', '#161616', '#0A0A0A'] },
+  { id: 'wellness', title: 'WELLNESS', icon: Heart, gradient: ['#2A2A2A', '#161616', '#0A0A0A'] },
 ];
 
 const EXPLORE_CARDS = [
-  { id: 'm1', height: 210, gradient: ['#283344', '#1A222E', '#0E131A'], title: 'Deep Obsidian' },
-  { id: 'm2', height: 140, gradient: ['#581C87', '#7E22CE', '#9333EA'], title: 'Midnight Ultraviolet' },
-  { id: 'm3', height: 160, gradient: ['#1E1B4B', '#312E81', '#4338CA'], title: 'Electric Indigo' },
-  { id: 'm4', height: 230, gradient: ['#0E7490', '#155E75', '#083344'], title: 'Teal Study #04' },
-  { id: 'm5', height: 150, gradient: ['#7A58E6', '#B77DE8', '#F5A7C4'], title: 'Pastel Sunrise' },
-  { id: 'm6', height: 180, gradient: ['#4E137D', '#791DA6', '#C724B1'], title: 'Neon Bloom' },
+  { id: 'm1', height: 210, gradient: ['#2A2A2A', '#161616', '#0A0A0A'], title: 'Deep Obsidian' },
+  { id: 'm2', height: 140, gradient: ['#2A2A2A', '#161616', '#0A0A0A'], title: 'Midnight Ultraviolet' },
+  { id: 'm3', height: 160, gradient: ['#2A2A2A', '#161616', '#0A0A0A'], title: 'Electric Indigo' },
+  { id: 'm4', height: 230, gradient: ['#2A2A2A', '#161616', '#0A0A0A'], title: 'Teal Study #04' },
+  { id: 'm5', height: 150, gradient: ['#2A2A2A', '#161616', '#0A0A0A'], title: 'Pastel Sunrise' },
+  { id: 'm6', height: 180, gradient: ['#2A2A2A', '#161616', '#0A0A0A'], title: 'Neon Bloom' },
 ];
 
 export interface ReelData {
@@ -265,7 +265,7 @@ const REELS_DATA: ReelData[] = [
     author: 'Eliott Johnson',
     username: 'eliott.j',
     location: 'Madrid, Spain',
-    gradient: ['#796A9E', '#AA86B7', '#DCAABF', '#F4CCD8'],
+    gradient: ['#2A2A2A', '#161616', '#0A0A0A'],
     likes: '2.4k',
     likesCount: 2400,
     comments: '175',
@@ -277,14 +277,14 @@ const REELS_DATA: ReelData[] = [
     caption: 'Architectural Brutalism & sunset reflections across Madrid 🏛️✨',
     tags: ['#campus', '#architecture', '#design', '#madrid'],
     audioTrack: 'Eliott Johnson • Sunset Echoes (Original Audio)',
-    avatarGradient: ['#3A3B4D', '#2B2C3B', '#1E1F2A'],
+    avatarGradient: ['#242424', '#141414'],
   },
   {
     id: 'reel_2',
     author: 'Christian Lue',
     username: 'christian.lue',
     location: 'Ghent, Belgium',
-    gradient: ['#1A2B4C', '#2C4A7A', '#4A72B0', '#7AA5E0'],
+    gradient: ['#2A2A2A', '#161616', '#0A0A0A'],
     likes: '3.8k',
     likesCount: 3820,
     comments: '290',
@@ -296,14 +296,14 @@ const REELS_DATA: ReelData[] = [
     caption: 'Late night design studio session in Ghent ☕️💻 Crafting new Shadow interactions',
     tags: ['#creativestudio', '#shadowapp', '#nightshift'],
     audioTrack: 'Lofi Beats • Studio Chill Vol. 3',
-    avatarGradient: ['#1B2A4A', '#283E6B', '#3B5998'],
+    avatarGradient: ['#242424', '#141414'],
   },
   {
     id: 'reel_3',
     author: 'Sofia Martinez',
     username: 'sofia.mtz',
     location: 'Tokyo, Japan',
-    gradient: ['#1A365D', '#2B6CB0', '#4299E1', '#90CDF4'],
+    gradient: ['#2A2A2A', '#161616', '#0A0A0A'],
     likes: '5.1k',
     likesCount: 5120,
     comments: '412',
@@ -315,14 +315,14 @@ const REELS_DATA: ReelData[] = [
     caption: 'Neon reflections across Shibuya crossing under midnight rain 🌧️⚡️',
     tags: ['#tokyo', '#cyberpunk', '#streetphotography'],
     audioTrack: 'Sofia Martinez • Tokyo Rain (Ambient Mix)',
-    avatarGradient: ['#1A2536', '#131C2A', '#0D1420'],
+    avatarGradient: ['#242424', '#141414'],
   },
   {
     id: 'reel_4',
     author: 'Mauricio Lopez',
     username: 'mauricio.lopez',
     location: 'Valencia, Spain',
-    gradient: ['#4E137D', '#791DA6', '#C724B1', '#FF3B8A'],
+    gradient: ['#2A2A2A', '#161616', '#0A0A0A'],
     likes: '4.2k',
     likesCount: 4210,
     comments: '330',
@@ -334,7 +334,7 @@ const REELS_DATA: ReelData[] = [
     caption: 'Shadow Dynamic Lighting & Concept Component System preview 🔮🎨',
     tags: ['#shadowcampus', '#uidesign', '#minimalism'],
     audioTrack: 'Mauricio Lopez • Shadow Pulse',
-    avatarGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
+    avatarGradient: ['#242424', '#141414'],
   },
 ];
 
@@ -343,7 +343,7 @@ const NOTIFICATIONS_DATA = [
     id: 'n1',
     user: 'Elena Rostova',
     username: 'elena.art',
-    gradient: ['#7B52B9', '#8456C5', '#D4C4EB'],
+    gradient: ['#2A2A2A', '#161616', '#0A0A0A'],
     action: 'liked your post "SACRIFICE | VIRUS"',
     time: '5m ago',
     unread: true,
@@ -352,7 +352,7 @@ const NOTIFICATIONS_DATA = [
     id: 'n2',
     user: 'Carlos Valenzuela',
     username: 'carlos_v',
-    gradient: ['#06B6D4', '#3B82F6', '#6366F1'],
+    gradient: ['#2A2A2A', '#161616', '#0A0A0A'],
     action: 'commented: "The color palette and composition are incredible 🔥"',
     time: '23m ago',
     unread: true,
@@ -361,7 +361,7 @@ const NOTIFICATIONS_DATA = [
     id: 'n3',
     user: 'Sofia Mendez',
     username: 'sofia_art',
-    gradient: ['#F59E0B', '#D97706', '#78350F'],
+    gradient: ['#2A2A2A', '#161616', '#0A0A0A'],
     action: 'started following you.',
     time: '2h ago',
     unread: false,
@@ -877,7 +877,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
       id: `post_${Date.now()}`,
       authorName: currentUser.name,
       username: currentUser.name.toLowerCase().replace(/\s+/g, '.'),
-      avatarGradient: ['#7B52B9', '#8456C5', '#5E3A89'],
+      avatarGradient: ['#242424', '#141414'],
       timeAgo: 'Just now',
       imageGradient: gradientPresets[selectedGradientIndex] as any,
       content: createBody.trim() || 'Shared via Shadow Mobile',
@@ -902,7 +902,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
     <div className="w-full flex justify-center py-4 px-2 sm:px-4">
       {/* Toast Notification */}
       {toastMsg && (
-        <div className="fixed top-20 z-50 px-4 py-2 bg-gradient-to-r from-[#7B52B9] to-[#5E3A89] text-white text-xs font-bold rounded-full shadow-2xl animate-fade-in flex items-center gap-2">
+        <div className="fixed top-20 z-50 px-4 py-2 bg-gradient-to-r from-black to-neutral-900 text-white text-xs font-bold rounded-full shadow-2xl animate-fade-in flex items-center gap-2">
           <Sparkles size={14} />
           {toastMsg}
         </div>
@@ -910,7 +910,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
       {/* Concept Phone Frame */}
       <div
-        className="w-full max-w-[420px] min-h-[780px] h-[830px] rounded-[52px] p-3 shadow-[0_25px_65px_-15px_rgba(0,0,0,0.85)] border-[7px] border-[#25283D] flex flex-col relative overflow-hidden transition-colors duration-300"
+        className="w-full max-w-[420px] min-h-[780px] h-[830px] rounded-[52px] p-3 shadow-[0_25px_65px_-15px_rgba(0,0,0,0.85)] border-[7px] border-[#181818] flex flex-col relative overflow-hidden transition-colors duration-300"
         style={{ backgroundColor: isDark ? '#12131A' : '#F4F5F7' }}
       >
         {/* Dynamic Island Notch */}
@@ -974,7 +974,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               {/* Swipe Right Visual Cue: Return to Feed */}
               {isSwipingReels && reelSwipeDeltaX > 20 && (
                 <div className="fixed left-6 top-1/2 -translate-y-1/2 z-50 bg-black/85 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-2 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
-                  <ChevronLeft size={16} className="text-[#D4C4EB]" />
+                  <ChevronLeft size={16} className="text-white" />
                   <span>Return to Feed</span>
                 </div>
               )}
@@ -983,7 +983,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               {isSwipingReels && reelSwipeDeltaX < -20 && (
                 <div className="fixed right-6 top-1/2 -translate-y-1/2 z-50 bg-black/85 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-bold border border-white/20 flex items-center gap-2 shadow-2xl pointer-events-none animate-in fade-in zoom-in-95">
                   <span>View Profile</span>
-                  <ChevronRight size={16} className="text-[#991BEA]" />
+                  <ChevronRight size={16} className="text-white" />
                 </div>
               )}
 
@@ -1017,7 +1017,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       {/* Double tap heart pop animation */}
                       {isHeartPopping && (
                         <div className="absolute flex items-center justify-center animate-ping pointer-events-none">
-                          <Heart size={90} className="fill-[#FF2A55] text-[#FF2A55] drop-shadow-2xl" />
+                          <Heart size={90} className="fill-white text-white drop-shadow-2xl" />
                         </div>
                       )}
                     </div>
@@ -1064,7 +1064,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           <div
                             className="w-9 h-9 rounded-[11px] p-0.5 flex items-center justify-center shadow-lg"
                             style={{
-                              background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
+                              background: 'linear-gradient(135deg, #2A2A2A 0%, #161616 100%)',
                             }}
                           >
                             <div
@@ -1097,7 +1097,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                               </button>
                             </div>
                             <div className="flex items-center gap-1 text-[11px] text-white/80">
-                              <MapPin size={10} className="text-[#D4C4EB]" />
+                              <MapPin size={10} className="text-white" />
                               <span>{reel.location}</span>
                             </div>
                           </div>
@@ -1115,7 +1115,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                                 e.stopPropagation();
                                 showToast(`Explore tag ${tag}`);
                               }}
-                              className="text-[10px] font-semibold text-[#D4C4EB] hover:text-white cursor-pointer drop-shadow-sm"
+                              className="text-[10px] font-semibold text-white hover:text-white cursor-pointer drop-shadow-sm"
                             >
                               {tag}
                             </span>
@@ -1124,7 +1124,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
                         {/* Music Audio Ticker */}
                         <div className="flex items-center gap-2 mt-0.5 py-1 px-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 self-start text-[10px] text-white/90">
-                          <Music size={11} className="text-[#D4C4EB] animate-pulse shrink-0" />
+                          <Music size={11} className="text-white animate-pulse shrink-0" />
                           <span className="truncate max-w-[190px] font-medium">
                             {reel.audioTrack}
                           </span>
@@ -1144,7 +1144,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           <div
                             className={`w-11 h-11 rounded-[14px] backdrop-blur-md border flex items-center justify-center transition-all group-active:scale-90 ${
                               reel.isLiked
-                                ? 'bg-[#7B52B9]/30 border-[#7B52B9]/50 shadow-lg shadow-[#7B52B9]/20'
+                                ? 'bg-white/10 border-white/20 shadow-lg shadow-black'
                                 : 'bg-black/45 border-white/15 hover:bg-black/60'
                             }`}
                           >
@@ -1152,7 +1152,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                               size={21}
                               className={
                                 reel.isLiked
-                                  ? 'fill-[#FF2A55] text-[#FF2A55] scale-110'
+                                  ? 'fill-white text-white scale-110'
                                   : 'text-white group-hover:scale-110 transition-transform'
                               }
                             />
@@ -1189,7 +1189,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           <div
                             className={`w-11 h-11 rounded-[14px] backdrop-blur-md border flex items-center justify-center transition-all group-active:scale-90 ${
                               reel.isSaved
-                                ? 'bg-amber-500/30 border-amber-400/50 shadow-lg shadow-amber-500/20'
+                                ? 'bg-white/10 border-white/20 shadow-lg shadow-black'
                                 : 'bg-black/45 border-white/15 hover:bg-black/60'
                             }`}
                           >
@@ -1197,7 +1197,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                               size={20}
                               className={
                                 reel.isSaved
-                                  ? 'fill-amber-400 text-amber-400 scale-110'
+                                  ? 'fill-white text-white scale-110'
                                   : 'text-white group-hover:scale-110 transition-transform'
                               }
                             />
@@ -1240,7 +1240,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
 
                     {/* Progress Bar at bottom */}
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-20">
-                      <div className="h-full bg-gradient-to-r from-[#7B52B9] via-[#8456C5] to-[#5E3A89] w-2/3 animate-pulse" />
+                      <div className="h-full bg-gradient-to-r from-black via-neutral-900 to-neutral-900 w-2/3 animate-pulse" />
                     </div>
                   </div>
                 );
@@ -1250,17 +1250,17 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
               {isLoadingMoreReels && (
                 <div className="w-full h-full snap-start snap-always relative shrink-0 overflow-hidden flex flex-col items-center justify-center bg-black gap-3 text-white select-none">
                   <div
-                    className="w-12 h-12 rounded-2xl p-0.5 shadow-lg shadow-[#7B52B9]/30 flex items-center justify-center animate-pulse"
+                    className="w-12 h-12 rounded-2xl p-0.5 shadow-lg shadow-black flex items-center justify-center animate-pulse"
                     style={{
-                      background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
+                      background: 'linear-gradient(135deg, #2A2A2A 0%, #161616 100%)',
                     }}
                   >
                     <div className="w-full h-full rounded-[14px] bg-[#0F111D] flex items-center justify-center">
-                      <span className="font-shadow-script text-2xl text-[#D4C4EB]">S</span>
+                      <span className="font-shadow-script text-2xl text-white">S</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-                    <span className="w-4 h-4 rounded-full border-2 border-[#7B52B9] border-t-transparent animate-spin" />
+                    <span className="w-4 h-4 rounded-full border-2 border-white/20 border-t-transparent animate-spin" />
                     Loading next Reel...
                   </div>
                 </div>
@@ -1292,7 +1292,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   shadowId: currentUser.shadowId,
                   rank: currentUser.shadowRank,
                   isVerified: currentUser.verification === 'VERIFIED',
-                  avatarGradient: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
+                  avatarGradient: 'linear-gradient(135deg, #2A2A2A 0%, #161616 100%)',
                 }}
                 onToast={(msg) => showToast(msg)}
               />
@@ -1314,19 +1314,19 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     aria-label="Open My Shadow directly from Home Feed"
                   >
                     <div
-                      className="w-9 h-9 rounded-full p-[1.5px] shadow-md shadow-[#7B52B9]/25 flex items-center justify-center transition-all group-hover:scale-105"
+                      className="w-9 h-9 rounded-full p-[1.5px] shadow-md shadow-black flex items-center justify-center transition-all group-hover:scale-105"
                       style={{
-                        background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
+                        background: 'linear-gradient(135deg, #2A2A2A 0%, #161616 100%)',
                       }}
                     >
                       <div
                         className="w-full h-full rounded-full flex items-center justify-center transition-colors"
                         style={{ backgroundColor: colors.background }}
                       >
-                        <span className="text-sm font-bold text-[#7B52B9]">♙</span>
+                        <span className="text-sm font-bold text-white">♙</span>
                       </div>
                     </div>
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#0B0C14] shadow-xs" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-white/10 border-2 border-[#0B0C14] shadow-xs" />
                   </button>
 
                   <h1
@@ -1348,7 +1348,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     >
                       <RotateCw
                         size={14}
-                        className={`text-[#7B52B9] transition-all ${isPullRefreshing ? 'animate-spin' : ''}`}
+                        className={`text-white transition-all ${isPullRefreshing ? 'animate-spin' : ''}`}
                       />
                     </button>
 
@@ -1358,9 +1358,9 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       style={{ backgroundColor: colors.inputBackground }}
                     >
                       {isDark ? (
-                        <Sun size={15} className="text-yellow-400" />
+                        <Sun size={15} className="text-white" />
                       ) : (
-                        <Moon size={15} className="text-[#7B52B9]" />
+                        <Moon size={15} className="text-white" />
                       )}
                     </button>
 
@@ -1398,11 +1398,11 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     }}
                   >
                     {isPullRefreshing ? (
-                      <RotateCw size={15} className="animate-spin text-[#7B52B9]" />
+                      <RotateCw size={15} className="animate-spin text-white" />
                     ) : (
                       <ArrowDown
                         size={15}
-                        className="text-[#7B52B9] transition-transform duration-200"
+                        className="text-white transition-transform duration-200"
                         style={{
                           transform: `rotate(${pullDownDistance >= PULL_THRESHOLD ? 180 : (pullDownDistance / PULL_THRESHOLD) * 180}deg)`,
                         }}
@@ -1506,13 +1506,13 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                                 {post.timeAgo}
                               </span>
                               {post.shadowEncounter && (
-                                <span className="inline-flex items-center gap-1 text-[9.5px] font-semibold text-[#00B5AD]">
+                                <span className="inline-flex items-center gap-1 text-[9.5px] font-semibold text-white">
                                   <span>·</span>
                                   <span>📍 {post.shadowEncounter.location.placeName}</span>
                                   <span className={`px-1.5 py-0.2 rounded-full text-[8.5px] font-bold ${
                                     post.shadowEncounter.validationStatus === 'verified'
-                                      ? 'bg-emerald-500/20 text-emerald-500'
-                                      : 'bg-amber-500/20 text-amber-500'
+                                      ? 'bg-white/10 text-white'
+                                      : 'bg-white/10 text-white'
                                   }`}>
                                     {post.shadowEncounter.validationStatus.toUpperCase()}
                                   </span>
@@ -1541,7 +1541,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         >
                           <div className="bg-black/40 backdrop-blur-sm rounded-xl p-3 border border-white/10">
                             {post.captionTitle && (
-                              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#D4C4EB] block mb-1">
+                              <span className="text-[10px] font-extrabold uppercase tracking-wider text-white block mb-1">
                                 {post.captionTitle}
                               </span>
                             )}
@@ -1561,7 +1561,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           >
                             <Heart
                               size={20}
-                              className={post.isLiked ? 'fill-[#7B52B9] text-[#7B52B9]' : ''}
+                              className={post.isLiked ? 'fill-[#7B52B9] text-white' : ''}
                               style={{ color: post.isLiked ? '#7B52B9' : colors.text }}
                             />
                           </button>
@@ -1614,7 +1614,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                 {/* Endless Feed Dynamic Loading Indicator */}
                 {isLoadingMoreFeed && (
                   <div className="py-6 flex flex-col items-center justify-center gap-2 animate-in fade-in duration-200">
-                    <div className="w-6 h-6 rounded-full border-2 border-[#7B52B9]/30 border-t-[#7B52B9] animate-spin" />
+                    <div className="w-6 h-6 rounded-full border-2 border-white/20 border-t-white animate-spin" />
                     <span className="text-[11px] font-semibold" style={{ color: colors.secondaryText }}>
                       Loading more Shadow moments...
                     </span>
@@ -1645,7 +1645,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     className="w-8 h-8 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: colors.inputBackground }}
                   >
-                    {isDark ? <Sun size={15} className="text-yellow-400" /> : <Moon size={15} />}
+                    {isDark ? <Sun size={15} className="text-white" /> : <Moon size={15} />}
                   </button>
                 </div>
 
@@ -1771,7 +1771,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                           onClick={() => setSelectedGradientIndex(i)}
                           className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                             selectedGradientIndex === i
-                              ? 'border-[#7B52B9] bg-[#7B52B9]/20 text-[#7B52B9]'
+                              ? 'border-white/20 bg-white/10 text-white'
                               : isDark
                               ? 'border-white/10 text-[#8E92A0] hover:text-white'
                               : 'border-[#E0E1E2] text-[#767676] bg-[#F7F8FA] hover:text-[#1B1C1D]'
@@ -1836,7 +1836,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
                       showToast('All marked as read');
                     }}
-                    className="text-xs font-bold text-[#7B52B9] hover:underline cursor-pointer"
+                    className="text-xs font-bold text-white hover:underline cursor-pointer"
                   >
                     Mark as read
                   </button>
@@ -1912,7 +1912,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       className="w-8 h-8 rounded-full flex items-center justify-center"
                       style={{ backgroundColor: colors.inputBackground }}
                     >
-                      {isDark ? <Sun size={15} className="text-yellow-400" /> : <Moon size={15} />}
+                      {isDark ? <Sun size={15} className="text-white" /> : <Moon size={15} />}
                     </button>
                     <button
                       onClick={() => {
@@ -1932,7 +1932,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   <div
                     className="w-20 h-20 rounded-[26px] p-1 shadow-xl flex items-center justify-center mb-3"
                     style={{
-                      background: 'linear-gradient(135deg, #7B52B9 0%, #8456C5 50%, #5E3A89 100%)',
+                      background: 'linear-gradient(135deg, #2A2A2A 0%, #161616 100%)',
                     }}
                   >
                     <div
@@ -1942,7 +1942,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                       <div
                         className="w-full h-full rounded-[19px] flex items-center justify-center text-white text-xl font-extrabold"
                         style={{
-                          background: 'linear-gradient(135deg, #7B52B9 0%, #5E3A89 100%)',
+                          background: 'linear-gradient(135deg, #2A2A2A 0%, #161616 100%)',
                         }}
                       >
                         {currentUser.name
@@ -1956,7 +1956,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   <h3 className="text-lg font-bold" style={{ color: colors.text }}>
                     {currentUser.name}
                   </h3>
-                  <span className="text-xs font-semibold text-[#D4C4EB] mt-0.5">
+                  <span className="text-xs font-semibold text-white mt-0.5">
                     {currentUser.email}
                   </span>
                   <p className="text-xs mt-1 max-w-xs" style={{ color: colors.secondaryText }}>
@@ -1970,7 +1970,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                   >
                     <div className="flex items-center justify-between pb-2 mb-2.5 border-b" style={{ borderColor: colors.border }}>
                       <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#7B52B9] animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
                         <span className="text-[10px] font-extrabold tracking-wider uppercase" style={{ color: colors.secondaryText }}>
                           Shadow Identity
                         </span>
@@ -1981,7 +1981,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         }`}
                         style={{ color: colors.text }}
                       >
-                        <span className="text-[#7B52B9] font-bold">ID:</span>
+                        <span className="text-white font-bold">ID:</span>
                         <span>{currentUser.shadowId}</span>
                       </div>
                     </div>
@@ -2005,15 +2005,15 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg border text-[9.5px] font-extrabold transition-all cursor-pointer active:scale-95 ${
                           currentUser.shadowRank === 'PAWN'
                             ? isDark
-                              ? 'bg-purple-500/15 border-purple-500/35 text-purple-300'
-                              : 'bg-purple-50 border-purple-200 text-[#6435C9]'
+                              ? 'bg-white/10 border-white/20 text-white'
+                              : 'bg-white/10 border-white/20 text-[#6435C9]'
                             : isDark
-                              ? 'bg-[#7B52B9]/20 border-[#7B52B9]/40 text-[#D4C4EB]'
-                              : 'bg-[#F2EDFA] border-[#D4C4EB] text-[#7B52B9]'
+                              ? 'bg-white/10 border-white/20 text-white'
+                              : 'bg-neutral-800 border-white/20 text-white'
                         } ${isPromotingRank ? 'scale-105 ring-2 ring-[#7B52B9]/50 shadow-sm' : ''}`}
                         title="Simulate Shadow Rank Progression: PAWN ↔ KNIGHT"
                       >
-                        <Sparkles size={11} className={isPromotingRank ? 'animate-spin text-[#D4C4EB]' : currentUser.shadowRank === 'PAWN' ? (isDark ? 'text-cyan-400' : 'text-[#00B5AD]') : (isDark ? 'text-[#D4C4EB]' : 'text-[#7B52B9]')} />
+                        <Sparkles size={11} className={isPromotingRank ? 'animate-spin text-white' : currentUser.shadowRank === 'PAWN' ? (isDark ? 'text-white' : 'text-white') : (isDark ? 'text-white' : 'text-white')} />
                         <span>{currentUser.shadowRank === 'PAWN' ? 'Elevate to KNIGHT' : 'Revert to PAWN'}</span>
                       </button>
 
@@ -2026,11 +2026,11 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all hover:scale-105 active:scale-95 cursor-pointer ${
                           currentUser.verification === 'VERIFIED'
                             ? isDark
-                              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                              : 'bg-[#21BA45]/10 border-[#21BA45]/30 text-[#1E7E34]'
+                              ? 'bg-white/10 border-white/20 text-white'
+                              : 'bg-white/10 border-white/20 text-white'
                             : isDark
-                              ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                              : 'bg-[#F2711C]/10 border-[#F2711C]/30 text-[#C35108]'
+                              ? 'bg-white/10 border-white/20 text-white'
+                              : 'bg-white/10 border-white/20 text-white'
                         }`}
                         title="Independent Verification Status - Click to toggle"
                       >
@@ -2084,7 +2084,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                     </button>
                     <button
                       onClick={() => handleTabChange('create')}
-                      className="px-4 py-2.5 rounded-full font-bold text-xs border border-[#7B52B9]/40 text-[#D4C4EB] bg-[#7B52B9]/15 hover:bg-[#7B52B9]/25 transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                      className="px-4 py-2.5 rounded-full font-bold text-xs border border-white/20 text-white bg-white/10 hover:bg-black/25 transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer"
                       title="Create Post (+)"
                     >
                       <Plus size={14} strokeWidth={2.5} />
@@ -2104,7 +2104,7 @@ export const UnifiedShadowApp: React.FC<UnifiedShadowAppProps> = ({
                         <div
                           className="w-14 h-14 rounded-[18px] p-0.5"
                           style={{
-                            background: 'linear-gradient(135deg, #164E63 0%, #06B6D4 100%)',
+                            background: 'linear-gradient(135deg, #2A2A2A 0%, #161616 100%)',
                           }}
                         >
                           <div

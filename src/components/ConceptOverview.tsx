@@ -12,23 +12,23 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
   onFocusDevice,
 }) => {
   return (
-    <div className="w-full min-h-screen py-10 px-4 sm:px-8 flex flex-col items-center justify-center bg-gradient-to-b from-[#181926] via-[#1F2133] to-[#12131D]">
-      {/* Title & Concept Header matching reference screenshot */}
+    <div className="w-full min-h-screen py-10 px-4 sm:px-8 flex flex-col items-center justify-center bg-black">
+      {/* Title & Concept Header */}
       <div className="text-center max-w-2xl mb-12">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight drop-shadow-sm">
           Shadow — Concept UI
         </h1>
-        <p className="text-xs sm:text-sm text-slate-300/80 mt-2 font-medium max-w-lg mx-auto leading-relaxed">
-          Feed, explore, and profile in light and dark modes. All screens are interactive: tap stories, tabs, follow button, and likes.
+        <p className="text-xs sm:text-sm text-neutral-400 mt-2 font-medium max-w-lg mx-auto leading-relaxed">
+          Feed, explore, and profile in stealth black and matt black modes. All screens are interactive: tap stories, tabs, follow button, and likes.
         </p>
       </div>
 
-      {/* Main Responsive Grid Layout replicating the reference screenshot */}
+      {/* Main Responsive Grid Layout */}
       <div className="w-full max-w-7xl flex flex-col items-center gap-12">
         {/* Row 1: Center Top - Dark Mode Explore */}
         <div className="flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-purple-950/60 border border-purple-500/30 text-[11px] font-semibold text-purple-200">
-            <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-[11px] font-semibold text-neutral-300">
+            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
             Explore / Discover (Dark Mode)
           </div>
           <div className="transform hover:scale-[1.01] transition-transform duration-300">
@@ -42,13 +42,13 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
           </div>
         </div>
 
-        {/* Row 2: Side-by-Side arrangement (Light Feed | Dark Feed | Light Profile) */}
+        {/* Row 2: Side-by-Side arrangement */}
         <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 justify-items-center items-start">
           {/* Left Column: Light Mode Feed */}
           <div className="flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-slate-800/80 border border-white/10 text-[11px] font-semibold text-slate-300">
-              <span className="w-2 h-2 rounded-full bg-[#7B52B9]" />
-              Feed / Home (Light Mode)
+            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-[11px] font-semibold text-neutral-300">
+              <span className="w-2 h-2 rounded-full bg-neutral-400" />
+              Feed / Home (Matt Black Mode)
             </div>
             <div className="transform hover:scale-[1.01] transition-transform duration-300">
               <PhoneSimulator
@@ -63,9 +63,9 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
 
           {/* Center Column: Dark Mode Feed */}
           <div className="flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-slate-900/90 border border-purple-500/20 text-[11px] font-semibold text-purple-300">
-              <span className="w-2 h-2 rounded-full bg-purple-500" />
-              Feed / Home (Dark Mode)
+            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-[11px] font-semibold text-neutral-300">
+              <span className="w-2 h-2 rounded-full bg-white" />
+              Feed / Home (Pure Black Mode)
             </div>
             <div className="transform hover:scale-[1.01] transition-transform duration-300">
               <PhoneSimulator
@@ -80,9 +80,9 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
 
           {/* Right Column: Light Mode Profile */}
           <div className="flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-[#1C0D36] border border-[#7B52B9]/30 text-[11px] font-semibold text-[#D4C4EB]">
-              <span className="w-2 h-2 rounded-full bg-[#7B52B9]" />
-              Profile Mauricio Lopez (Light Mode)
+            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-[11px] font-semibold text-neutral-300">
+              <span className="w-2 h-2 rounded-full bg-neutral-400" />
+              Profile Mauricio Lopez
             </div>
             <div className="transform hover:scale-[1.01] transition-transform duration-300">
               <PhoneSimulator
@@ -96,10 +96,10 @@ export const ConceptOverview: React.FC<ConceptOverviewProps> = ({
           </div>
         </div>
 
-        {/* Row 3: Reels UI (Matching Reference Screenshot - Eliott Johnson & Christian Lue) */}
+        {/* Row 3: Reels UI */}
         <div className="flex flex-col items-center mt-6">
-          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-gradient-to-r from-[#1C0D36] to-[#2B1048] border border-[#7B52B9]/30 text-[11px] font-semibold text-[#D4C4EB]">
-            <span className="w-2 h-2 rounded-full bg-[#7B52B9]" />
+          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-[11px] font-semibold text-neutral-300">
+            <span className="w-2 h-2 rounded-full bg-white" />
             Reels Section (Eliott Johnson & Christian Lue)
           </div>
           <div className="transform hover:scale-[1.01] transition-transform duration-300">
